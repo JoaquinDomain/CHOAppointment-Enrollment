@@ -105,7 +105,7 @@ const serviceOptions: ServiceOption[] = [
 interface ServiceSelectorProps {
   selectedService: string | null
   onServiceSelect: (serviceId: string) => void
-  selectedDate?: string
+  selectedDate?: string | null
   currentBookings?: { [key: string]: number } // Map of serviceId to current booking count
 }
 
