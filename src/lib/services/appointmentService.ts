@@ -178,7 +178,7 @@ export class AppointmentService {
    * Get count of appointments for a specific date and service
    */
   async getAppointmentsCount(date: string, serviceType: string): Promise<number> {
-    const { data, error } = await supabase
+    const { count, error } = await supabase
       .from('appointments')
       .select('id', { count: 'exact', head: true })
       .eq('appointment_date', date)
@@ -188,7 +188,7 @@ export class AppointmentService {
       throw new Error(`Failed to count appointments: ${error.message}`)
     }
 
-    return data || 0
+    return count || 0
   }
 }
 
