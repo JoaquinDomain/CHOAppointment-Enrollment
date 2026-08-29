@@ -1,8 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''
-const supabase = createClient(supabaseUrl, supabaseKey)
+// Lazy initialization to avoid build-time errors
+const getSupabaseClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || ''
+  
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase credentials are required')
+  }
+  
+  return createClient(supabaseUrl, supabaseKey)
+}
 
 export interface Appointment {
   id?: string
@@ -42,6 +50,7 @@ export class AppointmentService {
    * Create a new appointment
    */
   async createAppointment(appointment: Appointment): Promise<Appointment> {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .insert(appointment)
@@ -59,6 +68,7 @@ export class AppointmentService {
    * Get all appointments (admin only)
    */
   async getAllAppointments(): Promise<Appointment[]> {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .select('*')
@@ -75,6 +85,7 @@ export class AppointmentService {
    * Get appointment by ID
    */
   async getAppointmentById(id: string): Promise<Appointment | null> {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .select('*')
@@ -95,6 +106,7 @@ export class AppointmentService {
    * Get appointments by date
    */
   async getAppointmentsByDate(date: string): Promise<Appointment[]> {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .select('*')
@@ -112,6 +124,7 @@ export class AppointmentService {
    * Get appointments by facility
    */
   async getAppointmentsByFacility(facility: string): Promise<Appointment[]> {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .select('*')
@@ -129,6 +142,7 @@ export class AppointmentService {
    * Search appointments by patient name
    */
   async searchAppointmentsByName(name: string): Promise<Appointment[]> {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .select('*')
@@ -146,6 +160,7 @@ export class AppointmentService {
    * Update appointment
    */
   async updateAppointment(id: string, updates: Partial<Appointment>): Promise<Appointment> {
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .update(updates)
@@ -164,6 +179,7 @@ export class AppointmentService {
    * Delete appointment
    */
   async deleteAppointment(id: string): Promise<void> {
+    const supabase = getSupabaseClient()
     const { error } = await supabase
       .from('appointments')
       .delete()
@@ -178,6 +194,7 @@ export class AppointmentService {
    * Get count of appointments for a specific date and service
    */
   async getAppointmentsCount(date: string, serviceType: string): Promise<number> {
+    const supabase = getSupabaseClient()
     const { count, error } = await supabase
       .from('appointments')
       .select('id', { count: 'exact', head: true })

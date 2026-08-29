@@ -1,9 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
-const supabase = createClient(supabaseUrl, supabaseKey)
+// Lazy initialization to avoid build-time errors
+const getSupabaseClient = () => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+  
+  if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Supabase credentials are required')
+  }
+  
+  return createClient(supabaseUrl, supabaseKey)
+}
 
 /**
  * Validate if a date is a weekend (Saturday = 6, Sunday = 0)
@@ -34,6 +42,7 @@ export async function GET(request: NextRequest) {
     
     // For now, we'll allow public access for development
     // In production, verify the user is authenticated admin
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .select('*')
@@ -95,6 +104,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Insert appointment into database
+    const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
       .insert({
