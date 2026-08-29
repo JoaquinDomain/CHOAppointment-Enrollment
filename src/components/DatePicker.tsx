@@ -109,7 +109,9 @@ export default function DatePicker({
                 : 'border-slate-300 focus:border-teal-500 focus:ring-teal-200'
               }
               focus:outline-none focus:ring-2
+              text-slate-800
             `}
+            style={{ color: '#1e293b' }}
           />
         </div>
 

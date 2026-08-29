@@ -23,3 +23,23 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
+
+/* Improve placeholder visibility */
+::placeholder {
+  color: #94a3b8 !important;
+  opacity: 1 !important;
+}
+
+/* Improve select option visibility */
+select option {
+  color: #1e293b !important;
+}
+
+select option:disabled {
+  color: #94a3b8 !important;
+}
+
+/* Improve input visibility */
+input, select, textarea {
+  color: #1e293b !important;
+}
