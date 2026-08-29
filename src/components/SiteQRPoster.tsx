@@ -28,7 +28,7 @@ export default function SiteQRPoster({
           <h1 className="text-2xl font-bold text-white">City Health Office</h1>
         </div>
         <h2 className="text-lg font-semibold text-teal-100">Bacolod City</h2>
-        <p className="text-teal-200 text-sm mt-1">Laboratory Appointment System</p>
+        <p className="text-teal-100 text-sm mt-1">Laboratory Appointment System</p>
       </div>
 
       {/* Main Content */}
@@ -54,8 +54,8 @@ export default function SiteQRPoster({
 
         {/* URL Display */}
         <div className="text-center">
-          <p className="text-xs text-slate-500 mb-1">Visit:</p>
-          <p className="text-sm font-mono text-teal-700 break-all">{siteUrl}</p>
+          <p className="text-xs text-slate-600 mb-1">Visit:</p>
+          <p className="text-sm font-mono text-teal-800 break-all">{siteUrl}</p>
         </div>
       </div>
 
@@ -66,7 +66,7 @@ export default function SiteQRPoster({
             <Clock className="w-5 h-5 text-teal-200" />
             <h4 className="font-semibold text-white">Office Hours</h4>
           </div>
-          <p className="text-teal-100 text-sm">
+          <p className="text-teal-50 text-sm">
             Monday - Friday<br />
             8:00 AM - 5:00 PM
           </p>
@@ -77,7 +77,7 @@ export default function SiteQRPoster({
             <MapPin className="w-5 h-5 text-teal-200" />
             <h4 className="font-semibold text-white">Location</h4>
           </div>
-          <p className="text-teal-100 text-sm">
+          <p className="text-teal-50 text-sm">
             CHO Main Office<br />
             Bacolod City Health Office
           </p>
@@ -88,7 +88,7 @@ export default function SiteQRPoster({
             <Phone className="w-5 h-5 text-teal-200" />
             <h4 className="font-semibold text-white">Contact</h4>
           </div>
-          <p className="text-teal-100 text-sm">
+          <p className="text-teal-50 text-sm">
             (034) XXX-XXXX<br />
             cho@bacolodcity.gov.ph
           </p>
@@ -99,7 +99,7 @@ export default function SiteQRPoster({
             <Globe className="w-5 h-5 text-teal-200" />
             <h4 className="font-semibold text-white">Services</h4>
           </div>
-          <p className="text-teal-100 text-sm">
+          <p className="text-teal-50 text-sm">
             Laboratory Tests<br />
             Health Certificates & More
           </p>
@@ -109,7 +109,7 @@ export default function SiteQRPoster({
       {/* Instructions */}
       <div className="bg-white/10 rounded-lg p-4 mb-6">
         <h4 className="font-semibold text-white mb-2">How to Use:</h4>
-        <ol className="text-teal-100 text-sm space-y-1 list-decimal list-inside">
+        <ol className="text-teal-50 text-sm space-y-1 list-decimal list-inside">
           <li>Open your phone's camera or QR scanner app</li>
           <li>Point it at the QR code above</li>
           <li>Follow the instructions to book your appointment</li>
@@ -119,7 +119,7 @@ export default function SiteQRPoster({
 
       {/* Footer */}
       <div className="text-center">
-        <p className="text-teal-200 text-xs">
+        <p className="text-teal-50 text-xs">
           © 2024 City Health Office Bacolod • Serving the Community
         </p>
       </div>
