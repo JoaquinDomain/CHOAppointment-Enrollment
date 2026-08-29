@@ -2,6 +2,9 @@
 
 A comprehensive appointment booking system for the City Health Office (CHO) Bacolod, built with Next.js 14, Supabase, and Tailwind CSS.
 
+## Build Status
+✅ Latest build includes all TypeScript fixes and visibility improvements
+
 ## Features
 
 ### Patient Portal
