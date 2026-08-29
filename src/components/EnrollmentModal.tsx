@@ -187,7 +187,8 @@ export default function EnrollmentModal({
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800"
+                      style={{ color: '#1e293b' }}
                     />
                   </div>
                   <div>
@@ -198,7 +199,8 @@ export default function EnrollmentModal({
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800"
+                      style={{ color: '#1e293b' }}
                     />
                   </div>
                   <div>
@@ -208,7 +210,8 @@ export default function EnrollmentModal({
                       name="middleName"
                       value={formData.middleName}
                       onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800"
+                      style={{ color: '#1e293b' }}
                     />
                   </div>
                 </div>
@@ -307,7 +310,8 @@ export default function EnrollmentModal({
                       onChange={handleInputChange}
                       required
                       placeholder="09XXXXXXXXX"
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800"
+                      style={{ color: '#1e293b' }}
                     />
                   </div>
                   <div>

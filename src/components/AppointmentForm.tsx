@@ -331,8 +331,9 @@ export default function AppointmentForm() {
                     type="text"
                     value={patientInfo.fullName}
                     onChange={(e) => setPatientInfo({ ...patientInfo, fullName: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none text-slate-800"
                     placeholder="Enter your full name"
+                    style={{ color: '#1e293b' }}
                   />
                 </div>
 
@@ -342,9 +343,10 @@ export default function AppointmentForm() {
                     type="number"
                     value={patientInfo.age}
                     onChange={(e) => setPatientInfo({ ...patientInfo, age: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none text-slate-800"
                     placeholder="Enter your age"
                     min="1"
+                    style={{ color: '#1e293b' }}
                   />
                 </div>
 
@@ -353,11 +355,12 @@ export default function AppointmentForm() {
                   <select
                     value={patientInfo.consultingFacility}
                     onChange={(e) => setPatientInfo({ ...patientInfo, consultingFacility: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none"
+                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none text-slate-800"
+                    style={{ color: '#1e293b' }}
                   >
-                    <option value="">Select a facility</option>
+                    <option value="" className="text-slate-400">Select a facility</option>
                     {healthFacilities.map(facility => (
-                      <option key={facility} value={facility}>{facility}</option>
+                      <option key={facility} value={facility} className="text-slate-800">{facility}</option>
                     ))}
                   </select>
                 </div>
@@ -399,11 +402,12 @@ export default function AppointmentForm() {
                       <select
                         value={patientInfo.yakapFacility}
                         onChange={(e) => setPatientInfo({ ...patientInfo, yakapFacility: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none"
+                        className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none text-slate-800"
+                        style={{ color: '#1e293b' }}
                       >
-                        <option value="">Select YAKAP facility</option>
+                        <option value="" className="text-slate-400">Select YAKAP facility</option>
                         {yakapFacilities.map(facility => (
-                          <option key={facility} value={facility}>{facility}</option>
+                          <option key={facility} value={facility} className="text-slate-800">{facility}</option>
                         ))}
                       </select>
                     </div>
