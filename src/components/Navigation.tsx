@@ -21,11 +21,11 @@ export default function Navigation() {
               Book Appointment
             </Link>
             <Link 
-              href="/admin" 
+              href="/admin/login" 
               className="flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors"
             >
               <Shield className="w-4 h-4" />
-              Admin Dashboard
+              Admin Portal
             </Link>
           </div>
         </div>
