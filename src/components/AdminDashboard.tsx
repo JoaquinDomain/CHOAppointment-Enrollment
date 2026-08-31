@@ -5,8 +5,10 @@ import { Search, Filter, Scan, Download, Calendar, MapPin, User, CheckCircle, XC
 import { Html5QrcodeScanner } from 'html5-qrcode'
 import { Appointment } from '../lib/services/appointmentService'
 import SiteQRPoster from './SiteQRPoster'
+import { useRouter } from 'next/navigation'
 
 export default function AdminDashboard() {
+  const router = useRouter()
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [filteredAppointments, setFilteredAppointments] = useState<Appointment[]>([])
   const [loading, setLoading] = useState(true)
@@ -98,6 +100,15 @@ export default function AdminDashboard() {
     }
     setShowQRScanner(false)
     setScannerError(null)
+  }
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/admin/logout', { method: 'POST' })
+      router.push('/admin/login')
+    } catch (error) {
+      console.error('Logout failed:', error)
+    }
   }
 
   useEffect(() => {
@@ -192,7 +203,10 @@ export default function AdminDashboard() {
                 <QrCode className="w-4 h-4" />
                 Site QR Poster
               </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-teal-700 hover:bg-teal-600 rounded-lg transition-colors">
+              <button 
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-teal-700 hover:bg-teal-600 rounded-lg transition-colors"
+              >
                 <LogOut className="w-4 h-4" />
                 Logout
               </button>
