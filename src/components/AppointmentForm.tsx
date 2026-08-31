@@ -1,27 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar, User, MapPin, AlertTriangle, CheckCircle, FileText, QrCode } from 'lucide-react'
+import { Calendar, AlertTriangle, CheckCircle, FileText, QrCode } from 'lucide-react'
 import DatePicker from './DatePicker'
 import ServiceSelector from './ServiceSelector'
 import EnrollmentModal from './EnrollmentModal'
 import { QRCodeCanvas as QRCode } from 'qrcode.react'
-import { Appointment } from '../lib/services/appointmentService'
-
-const healthFacilities = [
-  'CHO Main / Bacolod City Health Office',
-  'Senior Citizen Center',
-  'Alijis Health Station',
-  'Banago Health Station',
-  'Bata Health Station',
-  'Bacolod City Mental Care Center',
-  'Singcang Health Station',
-  'Handumanan Health Station',
-  'Pahanocoy Health Station',
-  'Villamonte Health Station',
-  'Taculing Health Station',
-  'Others'
-]
 
 const laboratoryTests = [
   { id: 'panel', name: 'Panel (CBC, Platelet, Lipid Profile, FBS, Creatinine, Uric Acid)', requiresFasting: true },
@@ -43,18 +27,6 @@ const laboratoryTests = [
   { id: 'ogtt', name: 'OGTT', requiresFasting: true }
 ]
 
-const yakapFacilities = [
-  'CHO Main',
-  'Alijis Health Station',
-  'Banago Health Station',
-  'Bata Health Station',
-  'Singcang Health Station',
-  'Handumanan Health Station',
-  'Pahanocoy Health Station',
-  'Villamonte Health Station',
-  'Taculing Health Station'
-]
-
 export default function AppointmentForm() {
   const [step, setStep] = useState(1)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -67,16 +39,7 @@ export default function AppointmentForm() {
   const [error, setError] = useState<string | null>(null)
   const [currentBookings, setCurrentBookings] = useState<{ [key: string]: number }>({})
 
-  // Patient Information
-  const [patientInfo, setPatientInfo] = useState({
-    fullName: '',
-    age: '',
-    consultingFacility: '',
-    yakapRegistered: false,
-    yakapFacility: ''
-  })
-
-  // Enrollment data
+  // Enrollment data (single source of truth for patient info)
   const [enrollmentData, setEnrollmentData] = useState<any>(null)
 
   const handleTestToggle = (testId: string) => {
@@ -108,20 +71,8 @@ export default function AppointmentForm() {
   }
 
   const validateStep2 = () => {
-    if (!patientInfo.fullName.trim()) {
-      setError('Please enter your full name')
-      return false
-    }
-    if (!patientInfo.age || parseInt(patientInfo.age) <= 0) {
-      setError('Please enter a valid age')
-      return false
-    }
-    if (!patientInfo.consultingFacility) {
-      setError('Please select a health facility')
-      return false
-    }
-    if (patientInfo.yakapRegistered && !patientInfo.yakapFacility) {
-      setError('Please select your YAKAP facility')
+    if (selectedTests.length === 0) {
+      setError('Please select at least one laboratory test')
       return false
     }
     setError(null)
@@ -131,8 +82,6 @@ export default function AppointmentForm() {
   const handleNext = () => {
     if (step === 1 && validateStep1()) {
       setStep(2)
-    } else if (step === 2 && validateStep2()) {
-      setStep(3)
     }
   }
 
@@ -145,20 +94,22 @@ export default function AppointmentForm() {
   const handleSubmit = async () => {
     if (!validateStep2()) return
 
+    // Check if enrollment data is required before submission
+    if (!enrollmentData) {
+      setError('Please complete the Patient Enrollment Record first')
+      setEnrollmentModalOpen(true)
+      return
+    }
+
     setLoading(true)
     setError(null)
 
     try {
       const appointmentData = {
-        full_name: patientInfo.fullName,
-        age: parseInt(patientInfo.age),
-        consulting_facility: patientInfo.consultingFacility,
-        yakap_registered: patientInfo.yakapRegistered,
-        yakap_facility: patientInfo.yakapFacility,
         service_type: selectedService!,
         appointment_date: selectedDate!,
-        // Include enrollment data if available
-        ...(enrollmentData || {})
+        // Include all enrollment data
+        ...enrollmentData
       }
 
       const response = await fetch('/api/appointments', {
@@ -186,6 +137,7 @@ export default function AppointmentForm() {
 
   const handleEnrollmentSave = (data: any) => {
     setEnrollmentData(data)
+    setEnrollmentModalOpen(false)
   }
 
   const resetForm = () => {
@@ -193,13 +145,6 @@ export default function AppointmentForm() {
     setSelectedDate(null)
     setSelectedService(null)
     setSelectedTests([])
-    setPatientInfo({
-      fullName: '',
-      age: '',
-      consultingFacility: '',
-      yakapRegistered: false,
-      yakapFacility: ''
-    })
     setEnrollmentData(null)
     setShowConfirmation(false)
     setAppointmentId(null)
@@ -264,7 +209,7 @@ export default function AppointmentForm() {
 
         {/* Progress Steps */}
         <div className="flex items-center justify-center mb-8">
-          {[1, 2, 3].map((stepNumber) => (
+          {[1, 2].map((stepNumber) => (
             <div key={stepNumber} className="flex items-center">
               <div className={`
                 w-10 h-10 rounded-full flex items-center justify-center font-semibold
@@ -272,7 +217,7 @@ export default function AppointmentForm() {
               `}>
                 {stepNumber}
               </div>
-              {stepNumber < 3 && (
+              {stepNumber < 2 && (
                 <div className={`w-16 h-1 mx-2 ${step > stepNumber ? 'bg-teal-600' : 'bg-slate-200'}`} />
               )}
             </div>
@@ -316,139 +261,8 @@ export default function AppointmentForm() {
             </div>
           )}
 
-          {/* Step 2: Patient Information */}
+          {/* Step 2: Laboratory Tests */}
           {step === 2 && (
-            <div className="space-y-6">
-              <div className="flex items-center gap-2 mb-4">
-                <User className="w-5 h-5 text-teal-700" />
-                <h2 className="text-xl font-semibold text-slate-800">Patient Information</h2>
-              </div>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Full Name *</label>
-                  <input
-                    type="text"
-                    value={patientInfo.fullName}
-                    onChange={(e) => setPatientInfo({ ...patientInfo, fullName: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none text-slate-800"
-                    placeholder="Enter your full name"
-                    style={{ color: '#1e293b' }}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Age *</label>
-                  <input
-                    type="number"
-                    value={patientInfo.age}
-                    onChange={(e) => setPatientInfo({ ...patientInfo, age: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none text-slate-800"
-                    placeholder="Enter your age"
-                    min="1"
-                    style={{ color: '#1e293b' }}
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">Health Facility Where Consulted *</label>
-                  <select
-                    value={patientInfo.consultingFacility}
-                    onChange={(e) => setPatientInfo({ ...patientInfo, consultingFacility: e.target.value })}
-                    className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none text-slate-800"
-                    style={{ color: '#1e293b' }}
-                  >
-                    <option value="" className="text-slate-400">Select a facility</option>
-                    {healthFacilities.map(facility => (
-                      <option key={facility} value={facility} className="text-slate-800">{facility}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">YAKAP Registration Status *</label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        checked={!patientInfo.yakapRegistered}
-                        onChange={() => setPatientInfo({ ...patientInfo, yakapRegistered: false, yakapFacility: '' })}
-                        className="w-4 h-4 text-teal-600 border-slate-300 focus:ring-teal-500"
-                      />
-                      <span className="text-slate-700">NO</span>
-                    </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input
-                        type="radio"
-                        checked={patientInfo.yakapRegistered}
-                        onChange={() => setPatientInfo({ ...patientInfo, yakapRegistered: true })}
-                        className="w-4 h-4 text-teal-600 border-slate-300 focus:ring-teal-500"
-                      />
-                      <span className="text-slate-700">YES</span>
-                    </label>
-                  </div>
-
-                  {!patientInfo.yakapRegistered && (
-                    <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                      <p className="text-sm text-amber-800">
-                        <strong>Note:</strong> YAKAP verification may be done at CHO. Charges or cost may be applied for non-CHO YAKAP registered.
-                      </p>
-                    </div>
-                  )}
-
-                  {patientInfo.yakapRegistered && (
-                    <div className="mt-3">
-                      <label className="block text-sm font-medium text-slate-700 mb-2">YAKAP Facility *</label>
-                      <select
-                        value={patientInfo.yakapFacility}
-                        onChange={(e) => setPatientInfo({ ...patientInfo, yakapFacility: e.target.value })}
-                        className="w-full px-4 py-3 border-2 border-slate-300 rounded-lg focus:border-teal-500 focus:ring-2 focus:ring-teal-200 focus:outline-none text-slate-800"
-                        style={{ color: '#1e293b' }}
-                      >
-                        <option value="" className="text-slate-400">Select YAKAP facility</option>
-                        {yakapFacilities.map(facility => (
-                          <option key={facility} value={facility} className="text-slate-800">{facility}</option>
-                        ))}
-                      </select>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Enrollment Button */}
-              <div className="pt-4 border-t border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => setEnrollmentModalOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium"
-                >
-                  <FileText className="w-4 h-4" />
-                  Fill Up Patient Enrollment Record
-                </button>
-                {enrollmentData && (
-                  <p className="text-sm text-green-600 mt-2">✓ Enrollment record completed</p>
-                )}
-              </div>
-
-              <div className="flex justify-between pt-4">
-                <button
-                  onClick={handleBack}
-                  className="px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
-                >
-                  Next Step
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Step 3: Laboratory Tests */}
-          {step === 3 && (
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4">
                 <QrCode className="w-5 h-5 text-teal-700" />
@@ -479,6 +293,21 @@ export default function AppointmentForm() {
                   </div>
                 </div>
               )}
+
+              {/* Enrollment Button */}
+              <div className="pt-4 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setEnrollmentModalOpen(true)}
+                  className="flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors font-medium"
+                >
+                  <FileText className="w-4 h-4" />
+                  {enrollmentData ? 'Edit Patient Enrollment Record' : 'Fill Up Patient Enrollment Record'}
+                </button>
+                {enrollmentData && (
+                  <p className="text-sm text-green-600 mt-2">✓ Enrollment record completed</p>
+                )}
+              </div>
 
               <div className="flex justify-between pt-4">
                 <button
