@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, FileText, User, Shield, AlertCircle } from 'lucide-react'
+import { X, FileText, User, Shield, AlertCircle, MapPin } from 'lucide-react'
 
 interface EnrollmentData {
   // Demographics
@@ -27,6 +27,10 @@ interface EnrollmentData {
   facilityHouseholdNumber: string
   pwd: boolean
   yakapRegistered: boolean
+  yakapFacility: string
+  
+  // Health Facility
+  consultingFacility: string
   
   // Consent
   dataPrivacyConsent: boolean
@@ -60,6 +64,8 @@ const emptyEnrollmentData: EnrollmentData = {
   facilityHouseholdNumber: '',
   pwd: false,
   yakapRegistered: false,
+  yakapFacility: '',
+  consultingFacility: '',
   dataPrivacyConsent: false
 }
 
@@ -456,6 +462,64 @@ export default function EnrollmentModal({
                       YAKAP Registered
                     </label>
                   </div>
+
+                  {formData.yakapRegistered && (
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">YAKAP Facility</label>
+                      <select
+                        name="yakapFacility"
+                        value={formData.yakapFacility}
+                        onChange={handleInputChange}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800"
+                        style={{ color: '#1e293b' }}
+                      >
+                        <option value="">Select YAKAP facility</option>
+                        <option value="CHO Main">CHO Main</option>
+                        <option value="Alijis Health Station">Alijis Health Station</option>
+                        <option value="Banago Health Station">Banago Health Station</option>
+                        <option value="Bata Health Station">Bata Health Station</option>
+                        <option value="Singcang Health Station">Singcang Health Station</option>
+                        <option value="Handumanan Health Station">Handumanan Health Station</option>
+                        <option value="Pahanocoy Health Station">Pahanocoy Health Station</option>
+                        <option value="Villamonte Health Station">Villamonte Health Station</option>
+                        <option value="Taculing Health Station">Taculing Health Station</option>
+                      </select>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Section 3: Health Facility Information */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <MapPin className="w-5 h-5 text-teal-700" />
+                  <h3 className="text-lg font-semibold text-slate-800">Health Facility Information</h3>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Health Facility Where Consulted *</label>
+                  <select
+                    name="consultingFacility"
+                    value={formData.consultingFacility}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800"
+                    style={{ color: '#1e293b' }}
+                  >
+                    <option value="">Select a facility</option>
+                    <option value="CHO Main / Bacolod City Health Office">CHO Main / Bacolod City Health Office</option>
+                    <option value="Senior Citizen Center">Senior Citizen Center</option>
+                    <option value="Alijis Health Station">Alijis Health Station</option>
+                    <option value="Banago Health Station">Banago Health Station</option>
+                    <option value="Bata Health Station">Bata Health Station</option>
+                    <option value="Bacolod City Mental Care Center">Bacolod City Mental Care Center</option>
+                    <option value="Singcang Health Station">Singcang Health Station</option>
+                    <option value="Handumanan Health Station">Handumanan Health Station</option>
+                    <option value="Pahanocoy Health Station">Pahanocoy Health Station</option>
+                    <option value="Villamonte Health Station">Villamonte Health Station</option>
+                    <option value="Taculing Health Station">Taculing Health Station</option>
+                    <option value="Others">Others</option>
+                  </select>
                 </div>
               </div>
 
