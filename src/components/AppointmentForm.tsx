@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Calendar, AlertTriangle, CheckCircle, FileText, QrCode } from 'lucide-react'
 import DatePicker from './DatePicker'
 import ServiceSelector from './ServiceSelector'
@@ -22,6 +22,13 @@ export default function AppointmentForm() {
 
   // Enrollment data (single source of truth for patient info)
   const [enrollmentData, setEnrollmentData] = useState<any>(null)
+
+  // Automatically open enrollment modal when reaching step 2
+  useEffect(() => {
+    if (step === 2 && !enrollmentData) {
+      setEnrollmentModalOpen(true)
+    }
+  }, [step, enrollmentData])
 
   const validateStep1 = () => {
     if (!selectedDate) {
@@ -93,6 +100,13 @@ export default function AppointmentForm() {
   const handleEnrollmentSave = (data: any) => {
     setEnrollmentData(data)
     setEnrollmentModalOpen(false)
+  }
+
+  const handleEnrollmentClose = () => {
+    // Only allow closing if enrollment data is saved
+    if (enrollmentData) {
+      setEnrollmentModalOpen(false)
+    }
   }
 
   const resetForm = () => {
@@ -223,21 +237,33 @@ export default function AppointmentForm() {
                 <h2 className="text-xl font-semibold text-slate-800">Patient Information</h2>
               </div>
 
-              {/* Enrollment Button */}
+              {/* Enrollment Status */}
               <div className="flex flex-col items-center justify-center py-8">
-                <button
-                  type="button"
-                  onClick={() => setEnrollmentModalOpen(true)}
-                  className="flex items-center gap-2 px-6 py-4 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium text-lg shadow-lg"
-                >
-                  <FileText className="w-5 h-5" />
-                  {enrollmentData ? 'Edit Patient Enrollment Record' : 'Fill Up Patient Enrollment Record'}
-                </button>
-                {enrollmentData && (
-                  <p className="text-sm text-green-600 mt-4 flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4" />
-                    Enrollment record completed
-                  </p>
+                {enrollmentData ? (
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle className="w-8 h-8 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-800 mb-2">Enrollment Record Completed</h3>
+                    <p className="text-slate-600 mb-4">Your patient information has been saved.</p>
+                    <button
+                      type="button"
+                      onClick={() => setEnrollmentModalOpen(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors font-medium"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Edit Patient Enrollment Record
+                    </button>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FileText className="w-8 h-8 text-teal-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-800 mb-2">Patient Enrollment Record</h3>
+                    <p className="text-slate-600 mb-4">Please complete your patient information to proceed.</p>
+                    <p className="text-sm text-teal-600">The enrollment form will open automatically</p>
+                  </div>
                 )}
               </div>
 
@@ -263,9 +289,10 @@ export default function AppointmentForm() {
         {/* Enrollment Modal */}
         <EnrollmentModal
           isOpen={enrollmentModalOpen}
-          onClose={() => setEnrollmentModalOpen(false)}
+          onClose={handleEnrollmentClose}
           onSave={handleEnrollmentSave}
           initialData={enrollmentData}
+          requireSave={step === 2 && !enrollmentData}
         />
       </div>
     </div>
