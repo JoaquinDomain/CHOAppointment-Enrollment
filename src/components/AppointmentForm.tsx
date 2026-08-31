@@ -67,11 +67,31 @@ export default function AppointmentForm() {
     setError(null)
 
     try {
+      // Map enrollment data to API expected format
       const appointmentData = {
         service_type: selectedService!,
         appointment_date: selectedDate!,
-        // Include all enrollment data
-        ...enrollmentData
+        // Map enrollment data fields to API expected fields
+        full_name: `${enrollmentData.firstName} ${enrollmentData.middleName} ${enrollmentData.lastName}`.trim(),
+        age: enrollmentData.age,
+        birthdate: enrollmentData.birthdate,
+        gender: enrollmentData.gender,
+        civil_status: enrollmentData.civilStatus,
+        residential_address: enrollmentData.residentialAddress,
+        contact_number: enrollmentData.contactNumber,
+        spouse_name: enrollmentData.spouseName,
+        mothers_maiden_name: enrollmentData.mothersMaidenName,
+        employment_status: enrollmentData.employmentStatus,
+        primary_care_benefit_member: enrollmentData.primaryCareBenefitMember,
+        consulting_facility: enrollmentData.consultingFacility,
+        yakap_registered: enrollmentData.yakapRegistered,
+        yakap_facility: enrollmentData.yakapFacility,
+        philhealth_member: enrollmentData.philhealthMember,
+        philhealth_number: enrollmentData.philhealthNumber,
+        philhealth_status: enrollmentData.philhealthStatus,
+        facility_household_number: enrollmentData.facilityHouseholdNumber,
+        pwd: enrollmentData.pwd,
+        data_privacy_consent: enrollmentData.dataPrivacyConsent,
       }
 
       const response = await fetch('/api/appointments', {
