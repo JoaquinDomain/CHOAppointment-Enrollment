@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, FileText, User, Shield, AlertCircle, MapPin } from 'lucide-react'
+import { X, FileText, User, Shield, AlertCircle, MapPin, Printer, Save } from 'lucide-react'
 
 interface EnrollmentData {
   // Demographics
@@ -151,20 +151,24 @@ export default function EnrollmentModal({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-slate-200">
           {/* Header */}
-          <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between z-10">
+          <div className="sticky top-0 bg-gradient-to-r from-teal-700 to-teal-800 px-6 py-5 flex items-center justify-between z-10 shadow-lg">
             <div className="flex items-center gap-3">
-              <FileText className="w-6 h-6 text-teal-700" />
-              <h2 className="text-xl font-semibold text-slate-800">Patient Enrollment Record / ITR</h2>
+              <div className="bg-white/20 p-2 rounded-lg">
+                <FileText className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-xl font-bold text-white">Patient Enrollment Record / ITR</h2>
+                <p className="text-teal-100 text-sm">Individual Treatment Record</p>
+              </div>
             </div>
             <button
               onClick={onClose}
-              disabled={requireSave && !initialData}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 hover:bg-white/20 rounded-lg transition-colors z-20 group"
             >
-              <X className="w-5 h-5 text-slate-600" />
+              <X className="w-5 h-5 text-white group-hover:text-teal-200" />
             </button>
           </div>
 
@@ -182,9 +186,11 @@ export default function EnrollmentModal({
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Section 1: Demographics */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
-                  <User className="w-5 h-5 text-teal-700" />
-                  <h3 className="text-lg font-semibold text-slate-800">Patient Demographics</h3>
+                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
+                  <div className="bg-teal-100 p-2 rounded-lg">
+                    <User className="w-5 h-5 text-teal-700" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800">Patient Demographics</h3>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -381,9 +387,11 @@ export default function EnrollmentModal({
 
               {/* Section 2: Program & Coverage */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
-                  <Shield className="w-5 h-5 text-teal-700" />
-                  <h3 className="text-lg font-semibold text-slate-800">Program & Coverage</h3>
+                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
+                  <div className="bg-teal-100 p-2 rounded-lg">
+                    <Shield className="w-5 h-5 text-teal-700" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800">Program & Coverage</h3>
                 </div>
 
                 <div className="space-y-3">
@@ -494,9 +502,11 @@ export default function EnrollmentModal({
 
               {/* Section 3: Health Facility Information */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
-                  <MapPin className="w-5 h-5 text-teal-700" />
-                  <h3 className="text-lg font-semibold text-slate-800">Health Facility Information</h3>
+                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
+                  <div className="bg-teal-100 p-2 rounded-lg">
+                    <MapPin className="w-5 h-5 text-teal-700" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800">Health Facility Information</h3>
                 </div>
 
                 <div>
@@ -604,19 +614,21 @@ export default function EnrollmentModal({
 
               {/* Section 4: Consent */}
               <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
-                  <AlertCircle className="w-5 h-5 text-teal-700" />
-                  <h3 className="text-lg font-semibold text-slate-800">Data Privacy Consent</h3>
+                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
+                  <div className="bg-teal-100 p-2 rounded-lg">
+                    <AlertCircle className="w-5 h-5 text-teal-700" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-800">Data Privacy Consent</h3>
                 </div>
 
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                  <p className="text-sm text-amber-900 mb-3">
+                <div className="p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-xl shadow-sm">
+                  <p className="text-sm text-amber-900 mb-3 leading-relaxed">
                     I hereby consent to the collection, processing, and storage of my personal data 
                     by the City Health Office for the purpose of healthcare service delivery and 
                     patient record management. I understand that my data will be handled in 
                     accordance with the Data Privacy Act of 2012.
                   </p>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     <input
                       type="checkbox"
                       name="dataPrivacyConsent"
@@ -624,9 +636,9 @@ export default function EnrollmentModal({
                       checked={formData.dataPrivacyConsent}
                       onChange={handleInputChange}
                       required
-                      className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                      className="w-5 h-5 text-teal-600 border-2 border-slate-300 rounded focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
                     />
-                    <label htmlFor="dataPrivacyConsent" className="text-sm text-amber-900 font-medium">
+                    <label htmlFor="dataPrivacyConsent" className="text-sm text-amber-900 font-semibold">
                       I accept the Data Privacy Consent *
                     </label>
                   </div>
@@ -634,26 +646,28 @@ export default function EnrollmentModal({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t border-slate-200 no-print">
+              <div className="flex gap-3 pt-4 border-t border-slate-200 no-print sticky bottom-0 bg-white pb-2">
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 rounded-lg hover:from-slate-200 hover:to-slate-300 transition-all font-medium shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                 >
+                  <Printer className="w-4 h-4" />
                   Print Form
                 </button>
                 <button
                   type="button"
                   onClick={onClose}
-                  disabled={requireSave && !initialData}
-                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-red-100 to-red-200 text-red-700 rounded-lg hover:from-red-200 hover:to-red-300 transition-all font-medium shadow-sm hover:shadow-md flex items-center justify-center gap-2"
                 >
+                  <X className="w-4 h-4" />
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
+                  className="flex-1 px-4 py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:from-teal-700 hover:to-teal-800 transition-all font-medium shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                 >
+                  <Save className="w-4 h-4" />
                   Save Record
                 </button>
               </div>
