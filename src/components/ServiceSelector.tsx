@@ -8,9 +8,9 @@ interface ServiceOption {
   name: string
   icon: React.ReactNode
   dailySlots: number
-  requiresTimeSlot?: boolean // For services with AM/PM slots
+  requiresTimeSlot?: boolean
   description?: string
-  externalLink?: string // For services that redirect to external systems
+  externalLink?: string
 }
 
 const serviceOptions: ServiceOption[] = [
@@ -55,7 +55,7 @@ const serviceOptions: ServiceOption[] = [
     name: 'Health Certificate',
     icon: <FileText className="w-6 h-6" />,
     dailySlots: 0,
-    externalLink: 'https://envi.system.com', // Replace with actual ENVI system URL
+    externalLink: 'https://envi.system.com',
     description: 'Redirect to ENVI System'
   },
   {
@@ -106,7 +106,7 @@ interface ServiceSelectorProps {
   selectedService: string | null
   onServiceSelect: (serviceId: string) => void
   selectedDate?: string | null
-  currentBookings?: { [key: string]: number } // Map of serviceId to current booking count
+  currentBookings?: { [key: string]: number }
 }
 
 export default function ServiceSelector({ 
@@ -118,8 +118,8 @@ export default function ServiceSelector({
   const [hoveredService, setHoveredService] = useState<string | null>(null)
 
   const isSlotAvailable = (service: ServiceOption) => {
-    if (service.externalLink) return true // External links don't have slot limits
-    if (!selectedDate) return true // Show all services if no date selected
+    if (service.externalLink) return true
+    if (!selectedDate) return true
     
     const currentBookingsCount = currentBookings[service.id] || 0
     return currentBookingsCount < service.dailySlots
@@ -142,7 +142,7 @@ export default function ServiceSelector({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
-        <Calendar className="w-5 h-5 text-teal-700" />
+        <Calendar className="w-5 h-5 text-emerald-600" />
         <h2 className="text-xl font-semibold text-slate-800">Select Service</h2>
       </div>
       
@@ -159,11 +159,11 @@ export default function ServiceSelector({
               onMouseEnter={() => setHoveredService(service.id)}
               onMouseLeave={() => setHoveredService(null)}
               className={`
-                relative p-4 rounded-lg border-2 cursor-pointer transition-all duration-200
+                relative p-4 rounded border cursor-pointer transition-all duration-200
                 ${isSelected 
-                  ? 'border-teal-600 bg-teal-50 shadow-md' 
+                  ? 'border-emerald-600 bg-emerald-50 shadow' 
                   : isAvailable
-                    ? 'border-slate-200 bg-white hover:border-teal-400 hover:shadow-md'
+                    ? 'border-slate-200 bg-white hover:border-emerald-400 hover:shadow'
                     : 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
                 }
               `}
@@ -171,8 +171,8 @@ export default function ServiceSelector({
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-3">
                   <div className={`
-                    p-2 rounded-lg
-                    ${isSelected ? 'bg-teal-600 text-white' : 'bg-teal-100 text-teal-700'}
+                    p-2 rounded
+                    ${isSelected ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'}
                   `}>
                     {service.icon}
                   </div>
@@ -185,7 +185,7 @@ export default function ServiceSelector({
                 </div>
                 
                 {isSelected && (
-                  <div className="bg-teal-600 text-white p-1 rounded-full">
+                  <div className="bg-emerald-600 text-white p-1 rounded-full">
                     <Check className="w-4 h-4" />
                   </div>
                 )}
@@ -214,14 +214,14 @@ export default function ServiceSelector({
 
               {/* External Link Indicator */}
               {service.externalLink && (
-                <div className="mt-3 text-sm text-teal-600 font-medium">
+                <div className="mt-3 text-sm text-emerald-600 font-medium">
                   Opens in new tab →
                 </div>
               )}
 
               {/* Unavailable Overlay */}
               {!isAvailable && (
-                <div className="absolute inset-0 bg-slate-100/80 rounded-lg flex items-center justify-center">
+                <div className="absolute inset-0 bg-slate-100/80 rounded flex items-center justify-center">
                   <span className="text-slate-600 font-medium">Fully Booked</span>
                 </div>
               )}
@@ -232,19 +232,19 @@ export default function ServiceSelector({
 
       {/* Time Slot Selection for Pre-Natal */}
       {selectedService === 'prenatal' && (
-        <div className="mt-4 p-4 bg-teal-50 rounded-lg border border-teal-200">
-          <h3 className="font-semibold text-teal-900 mb-2">Select Time Slot</h3>
+        <div className="mt-4 p-4 bg-emerald-50 rounded border border-emerald-200">
+          <h3 className="font-semibold text-emerald-900 mb-2">Select Time Slot</h3>
           <div className="flex gap-4">
             <button
-              className={`px-4 py-2 rounded-lg border-2 transition-colors ${
-                'border-teal-300 bg-white hover:bg-teal-100'
+              className={`px-4 py-2 rounded border transition-colors ${
+                'border-emerald-300 bg-white hover:bg-emerald-100'
               }`}
             >
               Morning (AM)
             </button>
             <button
-              className={`px-4 py-2 rounded-lg border-2 transition-colors ${
-                'border-teal-300 bg-white hover:bg-teal-100'
+              className={`px-4 py-2 rounded border transition-colors ${
+                'border-emerald-300 bg-white hover:bg-emerald-100'
               }`}
             >
               Afternoon (PM)

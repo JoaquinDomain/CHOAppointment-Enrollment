@@ -186,26 +186,26 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen bg-slate-50">
       {/* Admin Header */}
-      <div className="bg-teal-800 text-white shadow-lg">
+      <div className="bg-emerald-600 text-white shadow">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-teal-200">City Health Office Bacolod</p>
+              <p className="text-emerald-200">City Health Office Bacolod</p>
             </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowQRPoster(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-teal-700 hover:bg-teal-600 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 rounded transition-colors"
               >
                 <QrCode className="w-4 h-4" />
                 Site QR Poster
               </button>
               <button 
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 bg-teal-700 hover:bg-teal-600 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 rounded transition-colors"
               >
                 <LogOut className="w-4 h-4" />
                 Logout
@@ -218,15 +218,15 @@ export default function AdminDashboard() {
       <div className="max-w-7xl mx-auto px-4 py-8">
         {/* QR Scanner Section */}
         {showQRScanner && (
-          <div className="mb-6 bg-white rounded-xl shadow-lg p-6">
+          <div className="mb-6 bg-white rounded-lg shadow p-6">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                <Scan className="w-5 h-5 text-teal-600" />
+                <Scan className="w-5 h-5 text-emerald-600" />
                 Scan Patient QR Code
               </h2>
               <button
                 onClick={stopQRScanner}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-slate-100 rounded transition-colors"
               >
                 <XCircle className="w-5 h-5 text-slate-600" />
               </button>
@@ -244,7 +244,7 @@ export default function AdminDashboard() {
 
         {/* Selected Appointment Detail */}
         {selectedAppointment && (
-          <div className="mb-6 bg-white rounded-xl shadow-lg p-6 border-l-4 border-teal-500">
+          <div className="mb-6 bg-white rounded-lg shadow p-6 border-l-4 border-emerald-500">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
                 <CheckCircle className="w-5 h-5 text-green-600" />
@@ -302,7 +302,7 @@ export default function AdminDashboard() {
         )}
 
         {/* Controls */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+        <div className="bg-white rounded-lg shadow p-6 mb-6">
           <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
               {/* Search */}
@@ -313,7 +313,7 @@ export default function AdminDashboard() {
                   placeholder="Search by name or ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
                 />
               </div>
 
@@ -323,7 +323,7 @@ export default function AdminDashboard() {
                 <select
                   value={facilityFilter}
                   onChange={(e) => setFacilityFilter(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 appearance-none"
+                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 appearance-none"
                 >
                   <option value="">All Facilities</option>
                   {healthFacilities.map(facility => (
@@ -336,14 +336,14 @@ export default function AdminDashboard() {
             <div className="flex gap-3 w-full md:w-auto">
               <button
                 onClick={startQRScanner}
-                className="flex items-center gap-2 px-4 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors"
               >
                 <Scan className="w-4 h-4" />
                 Scan QR
               </button>
               <button
                 onClick={exportToCSV}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition-colors"
               >
                 <Download className="w-4 h-4" />
                 Export CSV
@@ -354,10 +354,10 @@ export default function AdminDashboard() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-teal-100 rounded-lg">
-                <User className="w-6 h-6 text-teal-600" />
+              <div className="p-3 bg-emerald-100 rounded">
+                <User className="w-6 h-6 text-emerald-600" />
               </div>
               <div>
                 <p className="text-sm text-slate-600">Total Appointments</p>
@@ -365,9 +365,9 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-100 rounded-lg">
+              <div className="p-3 bg-blue-100 rounded">
                 <Calendar className="w-6 h-6 text-blue-600" />
               </div>
               <div>
@@ -381,9 +381,9 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-green-100 rounded-lg">
+              <div className="p-3 bg-green-100 rounded">
                 <CheckCircle className="w-6 h-6 text-green-600" />
               </div>
               <div>
@@ -394,9 +394,9 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-6">
+          <div className="bg-white rounded-lg shadow p-6">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-purple-100 rounded-lg">
+              <div className="p-3 bg-purple-100 rounded">
                 <MapPin className="w-6 h-6 text-purple-600" />
               </div>
               <div>
@@ -410,7 +410,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Appointments Table */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="bg-white rounded-lg shadow overflow-hidden">
           <div className="p-6 border-b border-slate-200">
             <h2 className="text-lg font-semibold text-slate-800">Patient Records</h2>
           </div>

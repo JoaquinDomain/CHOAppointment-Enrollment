@@ -7,8 +7,6 @@ import ServiceSelector from './ServiceSelector'
 import EnrollmentModal from './EnrollmentModal'
 import { QRCodeCanvas as QRCode } from 'qrcode.react'
 
-
-
 export default function AppointmentForm() {
   const [step, setStep] = useState(1)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
@@ -141,26 +139,26 @@ export default function AppointmentForm() {
 
   if (showConfirmation && appointmentId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-teal-50 to-slate-100 py-12 px-4 pt-20">
+      <div className="min-h-screen bg-slate-50 py-8 px-4">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
-            <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-10 h-10 text-teal-600" />
+          <div className="bg-white rounded-lg shadow p-8 text-center">
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-8 h-8 text-emerald-600" />
             </div>
             
-            <h1 className="text-3xl font-bold text-slate-900 mb-4">Appointment Confirmed!</h1>
+            <h1 className="text-2xl font-bold text-slate-900 mb-4">Appointment Confirmed!</h1>
             
-            <div className="bg-teal-50 border border-teal-200 rounded-lg p-6 mb-6">
-              <p className="text-lg text-teal-900 font-medium mb-2">
+            <div className="bg-emerald-50 border border-emerald-200 rounded p-6 mb-6">
+              <p className="text-lg text-emerald-900 font-medium mb-2">
                 Please proceed to CHO Lab on your date of choice at 8:00 AM
               </p>
-              <p className="text-sm text-teal-700">
+              <p className="text-sm text-emerald-700">
                 Appointment ID: <span className="font-mono font-bold">{appointmentId}</span>
               </p>
             </div>
 
             <div className="flex justify-center mb-6">
-              <div className="bg-white p-4 rounded-lg border-2 border-slate-200">
+              <div className="bg-white p-4 rounded border border-slate-200">
                 <QRCode 
                   value={appointmentId} 
                   size={200}
@@ -176,7 +174,7 @@ export default function AppointmentForm() {
 
             <button
               onClick={resetForm}
-              className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium"
+              className="px-6 py-3 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium"
             >
               Book Another Appointment
             </button>
@@ -187,12 +185,12 @@ export default function AppointmentForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 to-slate-100 py-12 px-4 pt-20">
+    <div className="min-h-screen bg-slate-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">CHO Laboratory Appointment</h1>
-          <p className="text-slate-600">City Health Office Bacolod</p>
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">CHO Laboratory Appointment System</h1>
+          <p className="text-slate-600">City Health Office · Bacolod City</p>
         </div>
 
         {/* Progress Steps */}
@@ -200,23 +198,23 @@ export default function AppointmentForm() {
           {[1, 2].map((stepNumber) => (
             <div key={stepNumber} className="flex items-center">
               <div className={`
-                w-10 h-10 rounded-full flex items-center justify-center font-semibold
-                ${step >= stepNumber ? 'bg-teal-600 text-white' : 'bg-slate-200 text-slate-600'}
+                w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm
+                ${step >= stepNumber ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'}
               `}>
                 {stepNumber}
               </div>
               {stepNumber < 2 && (
-                <div className={`w-16 h-1 mx-2 ${step > stepNumber ? 'bg-teal-600' : 'bg-slate-200'}`} />
+                <div className={`w-12 h-0.5 mx-2 ${step > stepNumber ? 'bg-emerald-600' : 'bg-slate-200'}`} />
               )}
             </div>
           ))}
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white rounded-lg shadow p-6 sm:p-8">
           {/* Error Message */}
           {error && (
-            <div className="mb-6 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <div className="mb-6 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded">
               <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
               <p className="text-sm text-red-800">{error}</p>
             </div>
@@ -241,7 +239,7 @@ export default function AppointmentForm() {
                 <button
                   onClick={handleNext}
                   disabled={!selectedDate || !selectedService}
-                  className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next Step
                 </button>
@@ -253,7 +251,7 @@ export default function AppointmentForm() {
           {step === 2 && (
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4">
-                <FileText className="w-5 h-5 text-teal-700" />
+                <FileText className="w-5 h-5 text-emerald-600" />
                 <h2 className="text-xl font-semibold text-slate-800">Patient Information</h2>
               </div>
 
@@ -269,7 +267,7 @@ export default function AppointmentForm() {
                     <button
                       type="button"
                       onClick={() => setEnrollmentModalOpen(true)}
-                      className="flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors font-medium"
+                      className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded hover:bg-emerald-100 transition-colors font-medium"
                     >
                       <FileText className="w-4 h-4" />
                       Edit Patient Enrollment Record
@@ -277,12 +275,12 @@ export default function AppointmentForm() {
                   </div>
                 ) : (
                   <div className="text-center">
-                    <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <FileText className="w-8 h-8 text-teal-600" />
+                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FileText className="w-8 h-8 text-emerald-600" />
                     </div>
                     <h3 className="text-lg font-semibold text-slate-800 mb-2">Patient Enrollment Record</h3>
                     <p className="text-slate-600 mb-4">Please complete your patient information to proceed.</p>
-                    <p className="text-sm text-teal-600">The enrollment form will open automatically</p>
+                    <p className="text-sm text-emerald-600">The enrollment form will open automatically</p>
                   </div>
                 )}
               </div>
@@ -290,14 +288,14 @@ export default function AppointmentForm() {
               <div className="flex justify-between pt-4">
                 <button
                   onClick={handleBack}
-                  className="px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+                  className="px-6 py-3 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 transition-colors font-medium"
                 >
                   Back
                 </button>
                 <button
                   onClick={handleSubmit}
                   disabled={loading || !enrollmentData}
-                  className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-6 py-3 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Submitting...' : 'Submit Appointment'}
                 </button>

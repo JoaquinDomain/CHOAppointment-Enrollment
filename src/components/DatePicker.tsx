@@ -86,8 +86,8 @@ export default function DatePicker({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-4">
-        <Calendar className="w-5 h-5 text-teal-700" />
-        <h2 className="text-xl font-semibold text-slate-800">Select Appointment Date</h2>
+        <Calendar className="w-5 h-5 text-emerald-600" />
+        <h2 className="text-xl font-semibold text-slate-800">Appointment Date</h2>
       </div>
 
       <div className="space-y-3">
@@ -103,10 +103,10 @@ export default function DatePicker({
             min={getMinDateString()}
             max={getMaxDateString()}
             className={`
-              w-full px-4 py-3 rounded-lg border-2 transition-colors
+              w-full px-4 py-3 rounded border transition-colors
               ${error 
                 ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                : 'border-slate-300 focus:border-teal-500 focus:ring-teal-200'
+                : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-200'
               }
               focus:outline-none focus:ring-2
               text-slate-800
@@ -117,7 +117,7 @@ export default function DatePicker({
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded">
             <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-red-800">{error}</p>
           </div>
@@ -125,14 +125,14 @@ export default function DatePicker({
 
         {/* Selected Date Display */}
         {selectedDate && !error && (
-          <div className="p-4 bg-teal-50 border border-teal-200 rounded-lg">
-            <p className="text-sm text-teal-600 font-medium">Selected Date:</p>
-            <p className="text-lg font-semibold text-teal-900">{formatDateDisplay(selectedDate)}</p>
+          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded">
+            <p className="text-sm text-emerald-600 font-medium">Selected Date:</p>
+            <p className="text-lg font-semibold text-emerald-900">{formatDateDisplay(selectedDate)}</p>
           </div>
         )}
 
         {/* Info Notice */}
-        <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+        <div className="p-3 bg-amber-50 border border-amber-200 rounded">
           <p className="text-sm text-amber-800">
             <strong>Note:</strong> Appointments are available Monday to Friday only. 
             Weekend dates are disabled.
