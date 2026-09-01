@@ -41,7 +41,7 @@ interface EnrollmentModalProps {
   onClose: () => void
   onSave: (data: EnrollmentData) => void
   initialData?: Partial<EnrollmentData>
-  requireSave?: boolean // If true, modal cannot be closed without saving
+  requireSave?: boolean
 }
 
 export default function EnrollmentModal({
@@ -144,30 +144,28 @@ export default function EnrollmentModal({
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
-        <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto border border-slate-200">
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+        <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-[95vh] overflow-y-auto">
           {/* Header */}
-          <div className="sticky top-0 bg-gradient-to-r from-teal-700 to-teal-800 px-4 sm:px-6 py-3 sm:py-5 flex items-center justify-between z-50 shadow-lg">
+          <div className="bg-emerald-600 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="bg-white/20 p-1.5 sm:p-2 rounded-lg">
-                <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
-              </div>
+              <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               <div>
-                <h2 className="text-base sm:text-xl font-bold text-white">Patient Enrollment Record / ITR</h2>
-                <p className="text-teal-100 text-xs sm:text-sm">Individual Treatment Record</p>
+                <h2 className="text-base sm:text-lg font-semibold text-white">Patient Enrollment Record / ITR</h2>
+                <p className="text-emerald-100 text-xs sm:text-sm">Individual Treatment Record</p>
               </div>
             </div>
             <button
               onClick={handleClose}
-              className="p-2 sm:p-3 hover:bg-white/20 rounded-lg transition-colors z-50 group touch-manipulation"
+              className="p-2 hover:bg-emerald-700 rounded transition-colors text-white"
               type="button"
             >
-              <X className="w-5 h-5 sm:w-6 sm:h-6 text-white group-hover:text-teal-200" />
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
             </button>
           </div>
 
           {/* Printable Form */}
-          <div id="enrollment-form" className="p-3 sm:p-6">
+          <div id="enrollment-form" className="p-4 sm:p-6">
             {/* Print Header - Only visible when printing */}
             <div className="print-only hidden">
               <div className="text-center mb-4">
@@ -180,11 +178,9 @@ export default function EnrollmentModal({
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {/* Section 1: Demographics */}
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
-                  <div className="bg-teal-100 p-1.5 sm:p-2 rounded-lg">
-                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800">Patient Demographics</h3>
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Patient Demographics</h3>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
@@ -196,8 +192,7 @@ export default function EnrollmentModal({
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 text-sm sm:text-base"
-                      style={{ color: '#1e293b' }}
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     />
                   </div>
                   <div>
@@ -208,8 +203,7 @@ export default function EnrollmentModal({
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 text-sm sm:text-base"
-                      style={{ color: '#1e293b' }}
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     />
                   </div>
                   <div>
@@ -219,8 +213,7 @@ export default function EnrollmentModal({
                       name="middleName"
                       value={formData.middleName}
                       onChange={handleInputChange}
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 text-sm sm:text-base"
-                      style={{ color: '#1e293b' }}
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     />
                   </div>
                 </div>
@@ -232,7 +225,7 @@ export default function EnrollmentModal({
                       name="suffix"
                       value={formData.suffix}
                       onChange={handleInputChange}
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     >
                       <option value="">None</option>
                       <option value="Jr.">Jr.</option>
@@ -250,8 +243,7 @@ export default function EnrollmentModal({
                       value={formData.birthdate}
                       onChange={handleBirthdateChange}
                       required
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
-                      style={{ color: '#1e293b' }}
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     />
                   </div>
                   <div>
@@ -262,7 +254,7 @@ export default function EnrollmentModal({
                       value={formData.age}
                       onChange={handleInputChange}
                       readOnly
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg bg-slate-100 text-slate-600 text-sm sm:text-base"
+                      className="w-full px-3 py-2 border border-slate-300 rounded bg-slate-100 text-slate-600 text-sm sm:text-base"
                     />
                   </div>
                   <div>
@@ -272,7 +264,7 @@ export default function EnrollmentModal({
                       value={formData.gender}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     >
                       <option value="">Select Gender</option>
                       <option value="Male">Male</option>
@@ -288,7 +280,7 @@ export default function EnrollmentModal({
                       name="civilStatus"
                       value={formData.civilStatus}
                       onChange={handleInputChange}
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     >
                       <option value="">Select Status</option>
                       <option value="Single">Single</option>
@@ -303,7 +295,7 @@ export default function EnrollmentModal({
                       name="employmentStatus"
                       value={formData.employmentStatus}
                       onChange={handleInputChange}
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     >
                       <option value="">Select Status</option>
                       <option value="Employed">Employed</option>
@@ -323,8 +315,7 @@ export default function EnrollmentModal({
                     value={formData.residentialAddress}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 text-sm sm:text-base"
-                    style={{ color: '#1e293b' }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                   />
                 </div>
 
@@ -336,8 +327,7 @@ export default function EnrollmentModal({
                     value={formData.contactNumber}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 text-sm sm:text-base"
-                    style={{ color: '#1e293b' }}
+                    className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                   />
                 </div>
 
@@ -349,8 +339,7 @@ export default function EnrollmentModal({
                       name="spouseName"
                       value={formData.spouseName}
                       onChange={handleInputChange}
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 text-sm sm:text-base"
-                      style={{ color: '#1e293b' }}
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     />
                   </div>
                   <div>
@@ -360,8 +349,7 @@ export default function EnrollmentModal({
                       name="mothersMaidenName"
                       value={formData.mothersMaidenName}
                       onChange={handleInputChange}
-                      className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-slate-800 text-sm sm:text-base"
-                      style={{ color: '#1e293b' }}
+                      className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                     />
                   </div>
                 </div>
@@ -373,7 +361,7 @@ export default function EnrollmentModal({
                     id="primaryCareBenefitMember"
                     checked={formData.primaryCareBenefitMember}
                     onChange={handleInputChange}
-                    className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                    className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
                   />
                   <label htmlFor="primaryCareBenefitMember" className="text-xs sm:text-sm text-slate-700">
                     Primary Care Benefit Member
@@ -383,11 +371,9 @@ export default function EnrollmentModal({
 
               {/* Section 2: Program & Coverage */}
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
-                  <div className="bg-teal-100 p-1.5 sm:p-2 rounded-lg">
-                    <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800">Program & Coverage</h3>
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Program & Coverage</h3>
                 </div>
 
                 <div className="space-y-3">
@@ -398,7 +384,7 @@ export default function EnrollmentModal({
                       id="philhealthMember"
                       checked={formData.philhealthMember}
                       onChange={handleInputChange}
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                      className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
                     />
                     <label htmlFor="philhealthMember" className="text-xs sm:text-sm text-slate-700">
                       PhilHealth Member
@@ -406,7 +392,7 @@ export default function EnrollmentModal({
                   </div>
 
                   {formData.philhealthMember && (
-                    <div className="space-y-3 pl-4 sm:pl-6 border-l-2 border-teal-200">
+                    <div className="space-y-3 pl-4 sm:pl-6 border-l-2 border-emerald-200">
                       <div>
                         <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">PhilHealth Number</label>
                         <input
@@ -414,8 +400,7 @@ export default function EnrollmentModal({
                           name="philhealthNumber"
                           value={formData.philhealthNumber}
                           onChange={handleInputChange}
-                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
-                          style={{ color: '#1e293b' }}
+                          className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                         />
                       </div>
                       <div>
@@ -425,8 +410,7 @@ export default function EnrollmentModal({
                           name="philhealthStatus"
                           value={formData.philhealthStatus}
                           onChange={handleInputChange}
-                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
-                          style={{ color: '#1e293b' }}
+                          className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                         />
                       </div>
                       <div>
@@ -436,8 +420,7 @@ export default function EnrollmentModal({
                           name="facilityHouseholdNumber"
                           value={formData.facilityHouseholdNumber}
                           onChange={handleInputChange}
-                          className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
-                          style={{ color: '#1e293b' }}
+                          className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                         />
                       </div>
                     </div>
@@ -450,7 +433,7 @@ export default function EnrollmentModal({
                       id="pwd"
                       checked={formData.pwd}
                       onChange={handleInputChange}
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                      className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
                     />
                     <label htmlFor="pwd" className="text-xs sm:text-sm text-slate-700">
                       PWD
@@ -464,7 +447,7 @@ export default function EnrollmentModal({
                       id="yakapRegistered"
                       checked={formData.yakapRegistered}
                       onChange={handleInputChange}
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                      className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
                     />
                     <label htmlFor="yakapRegistered" className="text-xs sm:text-sm text-slate-700">
                       YAKAP Registered
@@ -472,13 +455,13 @@ export default function EnrollmentModal({
                   </div>
 
                   {formData.yakapRegistered && (
-                    <div className="pl-4 sm:pl-6 border-l-2 border-teal-200">
+                    <div className="pl-4 sm:pl-6 border-l-2 border-emerald-200">
                       <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">YAKAP Facility</label>
                       <select
                         name="yakapFacility"
                         value={formData.yakapFacility}
                         onChange={handleInputChange}
-                        className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
+                        className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                       >
                         <option value="">Select Facility</option>
                         <option value="City Health Office">City Health Office</option>
@@ -511,11 +494,9 @@ export default function EnrollmentModal({
 
               {/* Section 3: Health Facility Information */}
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
-                  <div className="bg-teal-100 p-1.5 sm:p-2 rounded-lg">
-                    <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800">Health Facility Information</h3>
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Health Facility Information</h3>
                 </div>
 
                 <div>
@@ -525,7 +506,7 @@ export default function EnrollmentModal({
                     value={formData.consultingFacility}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-2 sm:px-3 py-1.5 sm:py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm sm:text-base"
+                    className="w-full px-3 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm sm:text-base"
                   >
                     <option value="">Select Facility</option>
                     <option value="City Health Office">City Health Office</option>
@@ -556,11 +537,9 @@ export default function EnrollmentModal({
 
               {/* Section 4: Clinical Information (Print Only) */}
               <div className="space-y-3 sm:space-y-4 print-section">
-                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
-                  <div className="bg-teal-100 p-1.5 sm:p-2 rounded-lg">
-                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800">Clinical Information</h3>
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Clinical Information</h3>
                 </div>
 
                 <div className="space-y-3">
@@ -640,21 +619,19 @@ export default function EnrollmentModal({
 
               {/* Section 5: Consent */}
               <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b-2 border-teal-200">
-                  <div className="bg-teal-100 p-1.5 sm:p-2 rounded-lg">
-                    <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-bold text-slate-800">Data Privacy Consent</h3>
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Data Privacy Consent</h3>
                 </div>
 
-                <div className="p-3 sm:p-4 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-xl shadow-sm">
-                  <p className="text-xs sm:text-sm text-amber-900 mb-3 leading-relaxed">
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded">
+                  <p className="text-xs sm:text-sm text-amber-900 mb-3">
                     I hereby consent to the collection, processing, and storage of my personal data 
                     by the City Health Office for the purpose of healthcare service delivery and 
                     patient record management. I understand that my data will be handled in 
                     accordance with the Data Privacy Act of 2012.
                   </p>
-                  <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2">
                     <input
                       type="checkbox"
                       name="dataPrivacyConsent"
@@ -662,9 +639,9 @@ export default function EnrollmentModal({
                       checked={formData.dataPrivacyConsent}
                       onChange={handleInputChange}
                       required
-                      className="w-4 h-4 sm:w-5 sm:h-5 text-teal-600 border-2 border-slate-300 rounded focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+                      className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
                     />
-                    <label htmlFor="dataPrivacyConsent" className="text-xs sm:text-sm text-amber-900 font-semibold">
+                    <label htmlFor="dataPrivacyConsent" className="text-xs sm:text-sm text-amber-900 font-medium">
                       I accept the Data Privacy Consent *
                     </label>
                   </div>
@@ -672,32 +649,26 @@ export default function EnrollmentModal({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-2 sm:gap-3 pt-4 border-t border-slate-200 no-print sticky bottom-0 bg-white pb-2">
+              <div className="flex gap-3 pt-4 border-t border-slate-200 no-print">
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700 rounded-lg hover:from-slate-200 hover:to-slate-300 transition-all font-medium shadow-sm hover:shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm"
+                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 transition-colors font-medium text-sm sm:text-base"
                 >
-                  <Printer className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Print Form</span>
-                  <span className="sm:hidden">Print</span>
+                  Print Form
                 </button>
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-red-100 to-red-200 text-red-700 rounded-lg hover:from-red-200 hover:to-red-300 transition-all font-medium shadow-sm hover:shadow-md flex items-center justify-center gap-2 text-xs sm:text-sm"
+                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 transition-colors font-medium text-sm sm:text-base"
                 >
-                  <X className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Cancel</span>
-                  <span className="sm:hidden">Cancel</span>
+                  Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-3 sm:px-4 py-2 sm:py-3 bg-gradient-to-r from-teal-600 to-teal-700 text-white rounded-lg hover:from-teal-700 hover:to-teal-800 transition-all font-medium shadow-md hover:shadow-lg flex items-center justify-center gap-2 text-xs sm:text-sm"
+                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium text-sm sm:text-base"
                 >
-                  <Save className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="hidden sm:inline">Save Record</span>
-                  <span className="sm:hidden">Save</span>
+                  Save Record
                 </button>
               </div>
             </form>
