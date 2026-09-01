@@ -3,12 +3,8 @@ import { createClient } from '@supabase/supabase-js'
 
 // Lazy initialization to avoid build-time errors
 const getSupabaseClient = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
-  
-  if (!supabaseUrl || !supabaseKey) {
-    throw new Error('Supabase credentials are required')
-  }
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'placeholder-key'
   
   return createClient(supabaseUrl, supabaseKey)
 }

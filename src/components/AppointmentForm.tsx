@@ -1,37 +1,18 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Calendar, AlertTriangle, CheckCircle, FileText, QrCode } from 'lucide-react'
 import DatePicker from './DatePicker'
 import ServiceSelector from './ServiceSelector'
 import EnrollmentModal from './EnrollmentModal'
 import { QRCodeCanvas as QRCode } from 'qrcode.react'
 
-const laboratoryTests = [
-  { id: 'panel', name: 'Panel (CBC, Platelet, Lipid Profile, FBS, Creatinine, Uric Acid)', requiresFasting: true },
-  { id: 'blood-typing', name: 'Blood Typing', requiresFasting: false },
-  { id: 'cbc-platelet', name: 'CBC / Platelet Count', requiresFasting: false },
-  { id: 'fecal-occult', name: 'Fecal Occult Blood', requiresFasting: false },
-  { id: 'stool-exam', name: 'Stool Exam', requiresFasting: false },
-  { id: 'urinalysis', name: 'Urinalysis', requiresFasting: false },
-  { id: 'dengue', name: 'Dengue NS1 / Dengue Duo', requiresFasting: false },
-  { id: 'hbsag', name: 'HBsAg', requiresFasting: false },
-  { id: 'pregnancy', name: 'Pregnancy Test', requiresFasting: false },
-  { id: 'syphilis', name: 'Syphilis', requiresFasting: false },
-  { id: 'sgpt-sgot', name: 'SGPT / SGOT', requiresFasting: false },
-  { id: 'bun', name: 'BUN', requiresFasting: false },
-  { id: 'creatinine', name: 'Creatinine', requiresFasting: false },
-  { id: 'uric-acid', name: 'Uric Acid', requiresFasting: false },
-  { id: 'lipid-profile', name: 'Lipid Profile', requiresFasting: true },
-  { id: 'fbs', name: 'FBS', requiresFasting: true },
-  { id: 'ogtt', name: 'OGTT', requiresFasting: true }
-]
+
 
 export default function AppointmentForm() {
   const [step, setStep] = useState(1)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedService, setSelectedService] = useState<string | null>(null)
-  const [selectedTests, setSelectedTests] = useState<string[]>([])
   const [enrollmentModalOpen, setEnrollmentModalOpen] = useState(false)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [appointmentId, setAppointmentId] = useState<string | null>(null)
@@ -42,20 +23,12 @@ export default function AppointmentForm() {
   // Enrollment data (single source of truth for patient info)
   const [enrollmentData, setEnrollmentData] = useState<any>(null)
 
-  const handleTestToggle = (testId: string) => {
-    setSelectedTests(prev => 
-      prev.includes(testId) 
-        ? prev.filter(id => id !== testId)
-        : [...prev, testId]
-    )
-  }
-
-  const isFastingRequired = () => {
-    return selectedTests.some(testId => {
-      const test = laboratoryTests.find(t => t.id === testId)
-      return test?.requiresFasting
-    })
-  }
+  // Automatically open enrollment modal when reaching step 2
+  useEffect(() => {
+    if (step === 2 && !enrollmentData) {
+      setEnrollmentModalOpen(true)
+    }
+  }, [step, enrollmentData])
 
   const validateStep1 = () => {
     if (!selectedDate) {
@@ -64,15 +37,6 @@ export default function AppointmentForm() {
     }
     if (!selectedService) {
       setError('Please select a service')
-      return false
-    }
-    setError(null)
-    return true
-  }
-
-  const validateStep2 = () => {
-    if (selectedTests.length === 0) {
-      setError('Please select at least one laboratory test')
       return false
     }
     setError(null)
@@ -92,8 +56,6 @@ export default function AppointmentForm() {
   }
 
   const handleSubmit = async () => {
-    if (!validateStep2()) return
-
     // Check if enrollment data is required before submission
     if (!enrollmentData) {
       setError('Please complete the Patient Enrollment Record first')
@@ -105,11 +67,31 @@ export default function AppointmentForm() {
     setError(null)
 
     try {
+      // Map enrollment data to API expected format
       const appointmentData = {
         service_type: selectedService!,
         appointment_date: selectedDate!,
-        // Include all enrollment data
-        ...enrollmentData
+        // Map enrollment data fields to API expected fields
+        full_name: `${enrollmentData.firstName} ${enrollmentData.middleName} ${enrollmentData.lastName}`.trim(),
+        age: enrollmentData.age,
+        birthdate: enrollmentData.birthdate,
+        gender: enrollmentData.gender,
+        civil_status: enrollmentData.civilStatus,
+        residential_address: enrollmentData.residentialAddress,
+        contact_number: enrollmentData.contactNumber,
+        spouse_name: enrollmentData.spouseName,
+        mothers_maiden_name: enrollmentData.mothersMaidenName,
+        employment_status: enrollmentData.employmentStatus,
+        primary_care_benefit_member: enrollmentData.primaryCareBenefitMember,
+        consulting_facility: enrollmentData.consultingFacility,
+        yakap_registered: enrollmentData.yakapRegistered,
+        yakap_facility: enrollmentData.yakapFacility,
+        philhealth_member: enrollmentData.philhealthMember,
+        philhealth_number: enrollmentData.philhealthNumber,
+        philhealth_status: enrollmentData.philhealthStatus,
+        facility_household_number: enrollmentData.facilityHouseholdNumber,
+        pwd: enrollmentData.pwd,
+        data_privacy_consent: enrollmentData.dataPrivacyConsent,
       }
 
       const response = await fetch('/api/appointments', {
@@ -140,11 +122,17 @@ export default function AppointmentForm() {
     setEnrollmentModalOpen(false)
   }
 
+  const handleEnrollmentClose = () => {
+    // Only allow closing if enrollment data is saved
+    if (enrollmentData) {
+      setEnrollmentModalOpen(false)
+    }
+  }
+
   const resetForm = () => {
     setStep(1)
     setSelectedDate(null)
     setSelectedService(null)
-    setSelectedTests([])
     setEnrollmentData(null)
     setShowConfirmation(false)
     setAppointmentId(null)
@@ -261,51 +249,41 @@ export default function AppointmentForm() {
             </div>
           )}
 
-          {/* Step 2: Laboratory Tests */}
+          {/* Step 2: Patient Enrollment */}
           {step === 2 && (
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4">
-                <QrCode className="w-5 h-5 text-teal-700" />
-                <h2 className="text-xl font-semibold text-slate-800">Laboratory Tests</h2>
+                <FileText className="w-5 h-5 text-teal-700" />
+                <h2 className="text-xl font-semibold text-slate-800">Patient Information</h2>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {laboratoryTests.map(test => (
-                  <label key={test.id} className="flex items-start gap-3 p-3 border-2 border-slate-200 rounded-lg cursor-pointer hover:border-teal-300 transition-colors">
-                    <input
-                      type="checkbox"
-                      checked={selectedTests.includes(test.id)}
-                      onChange={() => handleTestToggle(test.id)}
-                      className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500 mt-1"
-                    />
-                    <span className="text-sm text-slate-700">{test.name}</span>
-                  </label>
-                ))}
-              </div>
-
-              {/* Fasting Warning */}
-              {isFastingRequired() && (
-                <div className="flex items-start gap-3 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-amber-900">Fasting Required</p>
-                    <p className="text-sm text-amber-800">10–12 Hours Fasting is required prior to your test.</p>
+              {/* Enrollment Status */}
+              <div className="flex flex-col items-center justify-center py-8">
+                {enrollmentData ? (
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <CheckCircle className="w-8 h-8 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-800 mb-2">Enrollment Record Completed</h3>
+                    <p className="text-slate-600 mb-4">Your patient information has been saved.</p>
+                    <button
+                      type="button"
+                      onClick={() => setEnrollmentModalOpen(true)}
+                      className="flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors font-medium"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Edit Patient Enrollment Record
+                    </button>
                   </div>
-                </div>
-              )}
-
-              {/* Enrollment Button */}
-              <div className="pt-4 border-t border-slate-200">
-                <button
-                  type="button"
-                  onClick={() => setEnrollmentModalOpen(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-teal-50 text-teal-700 rounded-lg hover:bg-teal-100 transition-colors font-medium"
-                >
-                  <FileText className="w-4 h-4" />
-                  {enrollmentData ? 'Edit Patient Enrollment Record' : 'Fill Up Patient Enrollment Record'}
-                </button>
-                {enrollmentData && (
-                  <p className="text-sm text-green-600 mt-2">✓ Enrollment record completed</p>
+                ) : (
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <FileText className="w-8 h-8 text-teal-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-800 mb-2">Patient Enrollment Record</h3>
+                    <p className="text-slate-600 mb-4">Please complete your patient information to proceed.</p>
+                    <p className="text-sm text-teal-600">The enrollment form will open automatically</p>
+                  </div>
                 )}
               </div>
 
@@ -318,7 +296,7 @@ export default function AppointmentForm() {
                 </button>
                 <button
                   onClick={handleSubmit}
-                  disabled={loading || selectedTests.length === 0}
+                  disabled={loading || !enrollmentData}
                   className="px-6 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Submitting...' : 'Submit Appointment'}
@@ -331,9 +309,10 @@ export default function AppointmentForm() {
         {/* Enrollment Modal */}
         <EnrollmentModal
           isOpen={enrollmentModalOpen}
-          onClose={() => setEnrollmentModalOpen(false)}
+          onClose={handleEnrollmentClose}
           onSave={handleEnrollmentSave}
           initialData={enrollmentData}
+          requireSave={step === 2 && !enrollmentData}
         />
       </div>
     </div>
