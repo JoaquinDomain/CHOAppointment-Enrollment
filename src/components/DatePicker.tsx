@@ -103,13 +103,12 @@ export default function DatePicker({
             min={getMinDateString()}
             max={getMaxDateString()}
             className={`
-              w-full px-4 py-3 rounded border transition-colors
+              w-full px-4 py-3 rounded-xl border transition-all text-base font-medium
               ${error 
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-200' 
-                : 'border-slate-300 focus:border-emerald-500 focus:ring-emerald-200'
+                ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+                : 'border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200'
               }
-              focus:outline-none focus:ring-2
-              text-slate-800
+              focus:outline-none text-slate-800 bg-white shadow-sm
             `}
             style={{ color: '#1e293b' }}
           />
@@ -125,17 +124,16 @@ export default function DatePicker({
 
         {/* Selected Date Display */}
         {selectedDate && !error && (
-          <div className="p-4 bg-emerald-50 border border-emerald-200 rounded">
-            <p className="text-sm text-emerald-600 font-medium">Selected Date:</p>
-            <p className="text-lg font-semibold text-emerald-900">{formatDateDisplay(selectedDate)}</p>
+          <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-xl shadow-xs">
+            <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-0.5">Selected Date</p>
+            <p className="text-lg font-bold text-emerald-950">{formatDateDisplay(selectedDate)}</p>
           </div>
         )}
 
         {/* Info Notice */}
-        <div className="p-3 bg-amber-50 border border-amber-200 rounded">
-          <p className="text-sm text-amber-800">
-            <strong>Note:</strong> Appointments are available Monday to Friday only. 
-            Weekend dates are disabled.
+        <div className="p-3.5 bg-amber-50/80 border border-amber-200/80 rounded-xl">
+          <p className="text-xs sm:text-sm text-amber-900 leading-relaxed">
+            <strong className="font-semibold text-amber-950">Note:</strong> Laboratory appointments are available Monday through Friday only (8:00 AM onwards).
           </p>
         </div>
       </div>

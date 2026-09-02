@@ -37,19 +37,21 @@ interface EnrollmentData {
 }
 
 interface EnrollmentModalProps {
-  isOpen: boolean
+  isOpen?: boolean
   onClose: () => void
   onSave: (data: EnrollmentData) => void
   initialData?: Partial<EnrollmentData>
   requireSave?: boolean
+  inline?: boolean
 }
 
 export default function EnrollmentModal({
-  isOpen,
+  isOpen = true,
   onClose,
   onSave,
   initialData,
-  requireSave = false
+  requireSave = false,
+  inline = false
 }: EnrollmentModalProps) {
   const [formData, setFormData] = useState<EnrollmentData>({
     lastName: '',
@@ -129,7 +131,6 @@ export default function EnrollmentModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSave(formData)
-    onClose()
   }
 
   const handlePrint = () => {
@@ -137,17 +138,17 @@ export default function EnrollmentModal({
   }
 
   const handleClose = () => {
-    onClose()
+    if (onClose) {
+      onClose()
+    }
   }
 
-  if (!isOpen) return null
+  if (!inline && !isOpen) return null
 
-  return (
-    <>
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
-        <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-[95vh] overflow-y-auto">
-          {/* Header */}
-          <div className="bg-emerald-600 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+  const formContent = (
+    <div className={`bg-white overflow-hidden ${inline ? 'rounded-xl border border-slate-200 shadow-sm' : 'rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto'}`}>
+      {/* Header */}
+      <div className="bg-emerald-600 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
               <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               <div>
@@ -649,32 +650,30 @@ export default function EnrollmentModal({
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t border-slate-200 no-print">
+              <div className="flex flex-wrap gap-3 pt-6 border-t border-slate-200 no-print">
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 transition-colors font-medium text-sm sm:text-base"
+                  className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all font-semibold text-sm sm:text-base shadow-xs"
                 >
                   Print Form
                 </button>
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 transition-colors font-medium text-sm sm:text-base"
+                  className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all font-semibold text-sm sm:text-base shadow-xs"
                 >
-                  Cancel
+                  Cancel / Back
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium text-sm sm:text-base"
+                  className="flex-1 px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all font-semibold text-sm sm:text-base shadow-md hover:shadow-lg"
                 >
-                  Save Record
+                  Save Record & Submit Appointment
                 </button>
               </div>
             </form>
           </div>
-        </div>
-      </div>
 
       <style jsx global>{`
         @media print {
@@ -705,6 +704,16 @@ export default function EnrollmentModal({
           }
         }
       `}</style>
-    </>
+    </div>
+  )
+
+  if (inline) {
+    return formContent
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+      {formContent}
+    </div>
   )
 }
