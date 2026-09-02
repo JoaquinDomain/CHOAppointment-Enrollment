@@ -159,11 +159,11 @@ export default function ServiceSelector({
               onMouseEnter={() => setHoveredService(service.id)}
               onMouseLeave={() => setHoveredService(null)}
               className={`
-                relative p-4 rounded border cursor-pointer transition-all duration-200
+                relative p-4 rounded-xl border cursor-pointer transition-all duration-200
                 ${isSelected 
-                  ? 'border-emerald-600 bg-emerald-50 shadow' 
+                  ? 'border-emerald-600 bg-emerald-50/70 shadow-md ring-2 ring-emerald-500/20'
                   : isAvailable
-                    ? 'border-slate-200 bg-white hover:border-emerald-400 hover:shadow'
+                    ? 'border-slate-200 bg-white hover:border-emerald-400 hover:shadow-md'
                     : 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
                 }
               `}
@@ -171,21 +171,21 @@ export default function ServiceSelector({
               <div className="flex items-start justify-between mb-2">
                 <div className="flex items-center gap-3">
                   <div className={`
-                    p-2 rounded
-                    ${isSelected ? 'bg-emerald-600 text-white' : 'bg-emerald-100 text-emerald-700'}
+                    p-2.5 rounded-lg transition-colors
+                    ${isSelected ? 'bg-emerald-600 text-white shadow-xs' : 'bg-emerald-100/80 text-emerald-700'}
                   `}>
                     {service.icon}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-slate-800">{service.name}</h3>
+                    <h3 className="font-bold text-slate-900 text-sm sm:text-base">{service.name}</h3>
                     {service.description && (
-                      <p className="text-sm text-slate-600">{service.description}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{service.description}</p>
                     )}
                   </div>
                 </div>
                 
                 {isSelected && (
-                  <div className="bg-emerald-600 text-white p-1 rounded-full">
+                  <div className="bg-emerald-600 text-white p-1 rounded-full shadow-xs flex-shrink-0">
                     <Check className="w-4 h-4" />
                   </div>
                 )}
@@ -193,13 +193,12 @@ export default function ServiceSelector({
 
               {/* Slot Information */}
               {remainingSlots !== null && (
-                <div className="mt-3 flex items-center justify-between">
-                  <div className="text-sm">
-                    <span className="text-slate-600">Daily Limit: </span>
-                    <span className="font-medium text-slate-800">{service.dailySlots}</span>
+                <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                  <div className="text-xs text-slate-500">
+                    Daily Limit: <span className="font-semibold text-slate-800">{service.dailySlots}</span>
                   </div>
                   <div className={`
-                    px-2 py-1 rounded text-xs font-medium
+                    px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-tight
                     ${remainingSlots > 10 
                       ? 'bg-green-100 text-green-800' 
                       : remainingSlots > 5
@@ -207,7 +206,7 @@ export default function ServiceSelector({
                         : 'bg-red-100 text-red-800'
                     }
                   `}>
-                    {remainingSlots} slots left
+                    {remainingSlots} slots
                   </div>
                 </div>
               )}
