@@ -622,17 +622,18 @@ export default function EnrollmentModal({
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
                   <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Data Privacy Consent</h3>
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Section II: Data Privacy Consent</h3>
                 </div>
 
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded">
-                  <p className="text-xs sm:text-sm text-amber-900 mb-3">
+                <div className="consent-box p-4 bg-amber-50/60 border border-slate-900 rounded-lg sm:p-5">
+                  <p className="consent-text text-xs sm:text-sm text-slate-900 mb-4 leading-relaxed">
                     I hereby consent to the collection, processing, and storage of my personal data 
                     by the City Health Office for the purpose of healthcare service delivery and 
                     patient record management. I understand that my data will be handled in 
                     accordance with the Data Privacy Act of 2012.
                   </p>
-                  <div className="flex items-center gap-2">
+
+                  <div className="flex items-center gap-2 mb-6">
                     <input
                       type="checkbox"
                       name="dataPrivacyConsent"
@@ -642,9 +643,26 @@ export default function EnrollmentModal({
                       required
                       className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
                     />
-                    <label htmlFor="dataPrivacyConsent" className="text-xs sm:text-sm text-amber-900 font-medium">
+                    <label htmlFor="dataPrivacyConsent" className="text-xs sm:text-sm text-slate-900 font-medium">
                       I accept the Data Privacy Consent *
                     </label>
+                  </div>
+
+                  {/* Signature Section */}
+                  <div className="signature-row pt-2">
+                    {/* Left Block: Patient */}
+                    <div className="signature-col">
+                      <div className="signature-line"></div>
+                      <div className="signature-label-main">Signature or Name of Patient / Date</div>
+                      <div className="signature-label-sub">(Lagda o Pangalan ng Pasyente / Petsa)</div>
+                    </div>
+
+                    {/* Right Block: Representative */}
+                    <div className="signature-col">
+                      <div className="signature-line"></div>
+                      <div className="signature-label-main">Name and Signature of CHO/BHS Representative</div>
+                      <div className="signature-label-sub">(Pangalan at Lagda ng Kinatawan ng CHO/BHS)</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -676,7 +694,35 @@ export default function EnrollmentModal({
           </div>
 
       <style jsx global>{`
+        .signature-row {
+          display: flex;
+          justify-content: space-between;
+          gap: 20px;
+          margin-top: 25px;
+        }
+        .signature-col {
+          width: 48%;
+          text-align: center;
+        }
+        .signature-line {
+          border-bottom: 1.5px solid #000;
+          margin-bottom: 4px;
+        }
+        .signature-label-main {
+          font-size: 9.5pt;
+          font-weight: 600;
+          color: #0f172a;
+        }
+        .signature-label-sub {
+          font-size: 8.5pt;
+          font-style: italic;
+          color: #475569;
+        }
         @media print {
+          @page {
+            size: A4 portrait;
+            margin: 6mm 10mm;
+          }
           body * {
             visibility: hidden;
           }
@@ -689,7 +735,39 @@ export default function EnrollmentModal({
             top: 0;
             width: 100%;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
+          }
+          .consent-box {
+            border: 1.5px solid #000;
+            padding: 10px;
+            margin-top: 10px;
+          }
+          .consent-text {
+            font-size: 8.5pt;
+            line-height: 1.25;
+            margin-bottom: 20px;
+          }
+          .signature-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 25px;
+          }
+          .signature-col {
+            width: 48%;
+            text-align: center;
+          }
+          .signature-line {
+            border-bottom: 1.5px solid #000;
+            margin-bottom: 4px;
+          }
+          .signature-label-main {
+            font-size: 9.5pt;
+            font-weight: 600;
+          }
+          .signature-label-sub {
+            font-size: 8.5pt;
+            font-style: italic;
           }
           .no-print {
             display: none !important;
