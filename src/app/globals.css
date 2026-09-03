@@ -43,3 +43,47 @@ select option:disabled {
 input, select, textarea {
   color: #1e293b !important;
 }
+
+/* Print Header Styles */
+.print-header {
+  display: none;
+}
+
+@media print {
+  .print-header {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-bottom: 1rem;
+  }
+
+  .print-header-logo {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .print-header-text {
+    font-family: Arial, Inter, sans-serif, system-ui;
+    text-align: left;
+    line-height: 1.25;
+  }
+
+  .print-header-line1 {
+    font-weight: normal;
+    font-size: 11px;
+  }
+
+  .print-header-line2 {
+    font-weight: bold;
+    font-size: 12px;
+  }
+
+  .print-header-line3 {
+    font-weight: normal;
+    font-size: 11px;
+  }
+}
