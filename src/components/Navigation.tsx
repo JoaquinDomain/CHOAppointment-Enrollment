@@ -6,7 +6,7 @@ import { Home, Shield, Stethoscope } from 'lucide-react'
 export default function Navigation() {
   return (
     <nav className="bg-emerald-600 text-white shadow">
-      <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Stethoscope className="w-6 h-6" />

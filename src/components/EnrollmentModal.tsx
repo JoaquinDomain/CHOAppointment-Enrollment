@@ -49,7 +49,8 @@ export default function EnrollmentModal({
   onClose,
   onSave,
   initialData,
-  requireSave = false
+  requireSave = false,
+  inline = false
 }: EnrollmentModalProps) {
   const [formData, setFormData] = useState<EnrollmentData>({
     lastName: '',
@@ -129,7 +130,6 @@ export default function EnrollmentModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onSave(formData)
-    onClose()
   }
 
   const handlePrint = () => {
@@ -137,17 +137,26 @@ export default function EnrollmentModal({
   }
 
   const handleClose = () => {
-    onClose()
+    if (onClose) {
+      onClose()
+    }
   }
 
-  if (!isOpen) return null
+  if (!inline && !isOpen) return null
 
+<<<<<<< HEAD
   return (
     <>
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
         <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-[95vh] overflow-y-auto">
           {/* Header */}
           <div className="bg-emerald-600 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between no-print">
+=======
+  const formContent = (
+    <div className={`bg-white overflow-hidden ${inline ? 'rounded-xl border border-slate-200 shadow-sm' : 'rounded-xl shadow-2xl max-w-4xl w-full max-h-[95vh] overflow-y-auto'}`}>
+      {/* Header */}
+      <div className="bg-emerald-600 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between">
+>>>>>>> 8052b42ab40eb55ab915f6ffd1165f5f0e9e0437
             <div className="flex items-center gap-2 sm:gap-3">
               <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               <div>
@@ -660,38 +669,113 @@ export default function EnrollmentModal({
                 </div>
               </div>
 
+<<<<<<< HEAD
+=======
+              {/* Section 5: Consent */}
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Section II: Data Privacy Consent</h3>
+                </div>
+
+                <div className="consent-box p-4 bg-amber-50/60 border border-slate-900 rounded-lg sm:p-5">
+                  <p className="consent-text text-xs sm:text-sm text-slate-900 mb-4 leading-relaxed">
+                    I hereby consent to the collection, processing, and storage of my personal data 
+                    by the City Health Office for the purpose of healthcare service delivery and 
+                    patient record management. I understand that my data will be handled in 
+                    accordance with the Data Privacy Act of 2012.
+                  </p>
+
+                  <div className="flex items-center gap-2 mb-6">
+                    <input
+                      type="checkbox"
+                      name="dataPrivacyConsent"
+                      id="dataPrivacyConsent"
+                      checked={formData.dataPrivacyConsent}
+                      onChange={handleInputChange}
+                      required
+                      className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
+                    />
+                    <label htmlFor="dataPrivacyConsent" className="text-xs sm:text-sm text-slate-900 font-medium">
+                      I accept the Data Privacy Consent *
+                    </label>
+                  </div>
+
+                  {/* Signature Section */}
+                  <div className="signature-row pt-2">
+                    {/* Left Block: Patient */}
+                    <div className="signature-col">
+                      <div className="signature-line"></div>
+                      <div className="signature-label-main">Signature or Name of Patient / Date</div>
+                      <div className="signature-label-sub">(Lagda o Pangalan ng Pasyente / Petsa)</div>
+                    </div>
+
+                    {/* Right Block: Representative */}
+                    <div className="signature-col">
+                      <div className="signature-line"></div>
+                      <div className="signature-label-main">Name and Signature of CHO/BHS Representative</div>
+                      <div className="signature-label-sub">(Pangalan at Lagda ng Kinatawan ng CHO/BHS)</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+>>>>>>> 8052b42ab40eb55ab915f6ffd1165f5f0e9e0437
               {/* Action Buttons */}
-              <div className="flex gap-3 pt-4 border-t border-slate-200 no-print">
+              <div className="flex flex-wrap gap-3 pt-6 border-t border-slate-200 no-print">
                 <button
                   type="button"
                   onClick={handlePrint}
-                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 transition-colors font-medium text-sm sm:text-base"
+                  className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all font-semibold text-sm sm:text-base shadow-xs"
                 >
                   Print Form
                 </button>
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="flex-1 px-4 py-2 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 transition-colors font-medium text-sm sm:text-base"
+                  className="px-5 py-2.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-all font-semibold text-sm sm:text-base shadow-xs"
                 >
-                  Cancel
+                  Cancel / Back
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium text-sm sm:text-base"
+                  className="flex-1 px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all font-semibold text-sm sm:text-base shadow-md hover:shadow-lg"
                 >
-                  Save Record
+                  Save Record & Submit Appointment
                 </button>
               </div>
             </form>
           </div>
-        </div>
-      </div>
 
       <style jsx global>{`
+        .signature-row {
+          display: flex;
+          justify-content: space-between;
+          gap: 20px;
+          margin-top: 25px;
+        }
+        .signature-col {
+          width: 48%;
+          text-align: center;
+        }
+        .signature-line {
+          border-bottom: 1.5px solid #000;
+          margin-bottom: 4px;
+        }
+        .signature-label-main {
+          font-size: 9.5pt;
+          font-weight: 600;
+          color: #0f172a;
+        }
+        .signature-label-sub {
+          font-size: 8.5pt;
+          font-style: italic;
+          color: #475569;
+        }
         @media print {
           @page {
             size: A4 portrait;
+<<<<<<< HEAD
             margin: 8mm;
           }
           
@@ -701,6 +785,10 @@ export default function EnrollmentModal({
             font-size: 10pt;
           }
           
+=======
+            margin: 6mm 10mm;
+          }
+>>>>>>> 8052b42ab40eb55ab915f6ffd1165f5f0e9e0437
           body * {
             visibility: hidden;
           }
@@ -715,7 +803,39 @@ export default function EnrollmentModal({
             top: 0;
             width: 100%;
             margin: 0;
-            padding: 20px;
+            padding: 10px;
+          }
+          .consent-box {
+            border: 1.5px solid #000;
+            padding: 10px;
+            margin-top: 10px;
+          }
+          .consent-text {
+            font-size: 8.5pt;
+            line-height: 1.25;
+            margin-bottom: 20px;
+          }
+          .signature-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-top: 25px;
+          }
+          .signature-col {
+            width: 48%;
+            text-align: center;
+          }
+          .signature-line {
+            border-bottom: 1.5px solid #000;
+            margin-bottom: 4px;
+          }
+          .signature-label-main {
+            font-size: 9.5pt;
+            font-weight: 600;
+          }
+          .signature-label-sub {
+            font-size: 8.5pt;
+            font-style: italic;
           }
           
           .no-print {
@@ -787,6 +907,16 @@ export default function EnrollmentModal({
           }
         }
       `}</style>
-    </>
+    </div>
+  )
+
+  if (inline) {
+    return formContent
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+      {formContent}
+    </div>
   )
 }
