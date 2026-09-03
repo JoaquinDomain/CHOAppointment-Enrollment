@@ -590,9 +590,20 @@ export default function EnrollmentModal({
           <div className="space-y-2">
             <div className="flex items-center gap-2 pb-1 border-b border-slate-200">
               <AlertCircle className="w-4 h-4 text-emerald-600" />
-              <h3 className="text-xs font-semibold text-slate-800">Section II: Data Privacy Consent</h3>
+              <h3 className="text-xs font-semibold text-slate-800">Section II: Data Privacy Consent (Pahintulot ng Pasyente)</h3>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="consent-text space-y-1.5 text-xs text-slate-600 leading-relaxed">
+              <p>
+                Aking nabasa at naintindihan ang Impormasyon ng Pasyente matapos ako&apos;y bigyang-kaalaman ng mga nilalaman nito. Sa isang pag-uusap kasama ang kinatawan ng CHO/BHS, ako ay binigyang-paunawa nang mahusay tungkol sa kakayahan at kahalagahan ng Integrated Clinic Information System (iClinicSys/YAKAP). Lahat ng aking mga katanungan sa panahon ng pag-uusap ay nasagot ng sapat at ako ay binigyang ng sapat na oras upang magpasya nito.
+              </p>
+              <p>
+                Higit pa rito, pinapayagan ko ang CHO/BHS upang i-encode ang mga impormasyon patungkol sa akin at ang mga nakolektang impormasyon tungkol sa mga sintomas ng aking sakit at konsultasyong kaugnay dito para sa nasabing information system.
+              </p>
+              <p>
+                Nais kong malaman at maipaalam sa aking direktang kapamilya ang aking mga medikal na resulta. Gayundin, maari kong kanselahin ang aking pahintulot sa CHO/BHS anumang oras na walang ibinibigay na dahilan at walang kinalaman sa anumang kawalan para sa aking medikal na pagpapagamot.
+              </p>
+            </div>
+            <div className="flex items-center gap-2 pt-1">
               <input
                 type="checkbox"
                 name="dataPrivacyConsent"
@@ -691,6 +702,11 @@ export default function EnrollmentModal({
             background: #fff !important;
             color: #000 !important;
             font-size: 9pt;
+          }
+
+          .consent-text {
+            font-size: 8.5pt !important;
+            line-height: 1.2 !important;
           }
           
           body * {
