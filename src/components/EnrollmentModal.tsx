@@ -147,7 +147,7 @@ export default function EnrollmentModal({
       <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
         <div className="bg-white rounded-lg shadow-lg max-w-4xl w-full max-h-[95vh] overflow-y-auto">
           {/* Header */}
-          <div className="bg-emerald-600 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <div className="bg-emerald-600 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between no-print">
             <div className="flex items-center gap-2 sm:gap-3">
               <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               <div>
@@ -176,7 +176,7 @@ export default function EnrollmentModal({
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-              {/* Section 1: Demographics */}
+              {/* Section 1: Patient Demographics */}
               <div className="space-y-3 sm:space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
                   <User className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
@@ -535,7 +535,50 @@ export default function EnrollmentModal({
                 </div>
               </div>
 
-              {/* Section 4: Clinical Information (Print Only) */}
+              {/* Section 4: Data Privacy Consent (MOVED HERE) */}
+              <div className="space-y-3 sm:space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Section II: Data Privacy Consent</h3>
+                </div>
+
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded">
+                  <p className="text-xs sm:text-sm text-amber-900 mb-3">
+                    I hereby consent to the collection, processing, and storage of my personal data 
+                    by the City Health Office for the purpose of healthcare service delivery and 
+                    patient record management. I understand that my data will be handled in 
+                    accordance with the Data Privacy Act of 2012.
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="checkbox"
+                      name="dataPrivacyConsent"
+                      id="dataPrivacyConsent"
+                      checked={formData.dataPrivacyConsent}
+                      onChange={handleInputChange}
+                      required
+                      className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
+                    />
+                    <label htmlFor="dataPrivacyConsent" className="text-xs sm:text-sm text-amber-900 font-medium">
+                      I accept the Data Privacy Consent *
+                    </label>
+                  </div>
+                </div>
+
+                {/* Signature Lines */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                  <div>
+                    <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Patient Signature</label>
+                    <div className="h-12 border-b border-slate-300"></div>
+                  </div>
+                  <div>
+                    <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Date</label>
+                    <div className="h-8 border-b border-slate-300"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 5: Clinical Information (Print Only) */}
               <div className="space-y-3 sm:space-y-4 print-section">
                 <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
                   <User className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
@@ -617,37 +660,6 @@ export default function EnrollmentModal({
                 </div>
               </div>
 
-              {/* Section 5: Consent */}
-              <div className="space-y-3 sm:space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
-                  <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
-                  <h3 className="text-base sm:text-lg font-semibold text-slate-800">Data Privacy Consent</h3>
-                </div>
-
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded">
-                  <p className="text-xs sm:text-sm text-amber-900 mb-3">
-                    I hereby consent to the collection, processing, and storage of my personal data 
-                    by the City Health Office for the purpose of healthcare service delivery and 
-                    patient record management. I understand that my data will be handled in 
-                    accordance with the Data Privacy Act of 2012.
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      name="dataPrivacyConsent"
-                      id="dataPrivacyConsent"
-                      checked={formData.dataPrivacyConsent}
-                      onChange={handleInputChange}
-                      required
-                      className="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500"
-                    />
-                    <label htmlFor="dataPrivacyConsent" className="text-xs sm:text-sm text-amber-900 font-medium">
-                      I accept the Data Privacy Consent *
-                    </label>
-                  </div>
-                </div>
-              </div>
-
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4 border-t border-slate-200 no-print">
                 <button
@@ -678,12 +690,25 @@ export default function EnrollmentModal({
 
       <style jsx global>{`
         @media print {
+          @page {
+            size: A4 portrait;
+            margin: 8mm;
+          }
+          
+          body {
+            background: #fff !important;
+            color: #000 !important;
+            font-size: 10pt;
+          }
+          
           body * {
             visibility: hidden;
           }
+          
           #enrollment-form, #enrollment-form * {
             visibility: visible;
           }
+          
           #enrollment-form {
             position: absolute;
             left: 0;
@@ -692,13 +717,70 @@ export default function EnrollmentModal({
             margin: 0;
             padding: 20px;
           }
+          
           .no-print {
             display: none !important;
           }
+          
           .print-only {
             display: block !important;
           }
+          
+          /* Remove boxed input styling and replace with underline fields */
+          input, select, textarea {
+            border: none !important;
+            border-bottom: 1px dashed #444 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            padding: 2px 0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+          }
+          
+          /* Fix select dropdown arrows */
+          select {
+            background-image: none !important;
+          }
+          
+          /* Hide checkboxes in print mode */
+          input[type="checkbox"] {
+            display: none !important;
+          }
+          
+          /* Add better spacing for print */
+          .space-y-3, .space-y-4, .space-y-6 {
+            gap: 0.5rem !important;
+          }
+          
+          /* Make borders darker for print */
+          .border-slate-200, .border-slate-300 {
+            border-color: #000 !important;
+          }
+          
+          /* Ensure text is black for print */
+          .text-slate-600, .text-slate-700, .text-slate-800, .text-slate-900 {
+            color: #000 !important;
+          }
+          
+          /* Remove background colors */
+          .bg-amber-50, .bg-emerald-50, .bg-teal-50, .bg-slate-100 {
+            background: transparent !important;
+          }
+          
+          /* Remove colored backgrounds and borders */
+          .bg-amber-50, .border-amber-200 {
+            background: transparent !important;
+            border: none !important;
+          }
+          
+          .text-amber-900, .text-emerald-900, .text-teal-900 {
+            color: #000 !important;
+          }
         }
+        
         @media (max-width: 640px) {
           #enrollment-form {
             padding: 12px;
