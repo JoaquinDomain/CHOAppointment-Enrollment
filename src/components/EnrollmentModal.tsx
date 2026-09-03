@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { X, FileText, User, Shield, AlertCircle, MapPin, Printer, Save } from 'lucide-react'
+import { BACOLOD_HEALTH_FACILITIES, BACOLOD_YAKAP_FACILITIES } from '@/constants/facilities'
 
 interface EnrollmentData {
   // Demographics
@@ -545,14 +546,19 @@ export default function EnrollmentModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded mt-2">
                 <div>
                   <label className="block text-xs font-medium text-slate-700 mb-1">YAKAP Facility</label>
-                  <input
-                    type="text"
+                  <select
                     name="yakapFacility"
                     value={formData.yakapFacility}
                     onChange={handleInputChange}
-                    placeholder="Enter YAKAP Facility"
                     className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
-                  />
+                  >
+                    <option value="">Select Facility</option>
+                    {BACOLOD_YAKAP_FACILITIES.map(facility => (
+                      <option key={facility} value={facility}>
+                        {facility}
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
             )}
@@ -572,8 +578,11 @@ export default function EnrollmentModal({
               className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
             >
               <option value="">Select Facility</option>
-              <option value="City Health Office">City Health Office</option>
-              <option value="Alangilan Health Station">Alangilan Health Station</option>
+              {BACOLOD_HEALTH_FACILITIES.map(facility => (
+                <option key={facility} value={facility}>
+                  {facility}
+                </option>
+              ))}
             </select>
           </div>
 
