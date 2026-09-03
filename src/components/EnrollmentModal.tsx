@@ -698,7 +698,7 @@ export default function EnrollmentModal({
           display: flex;
           justify-content: space-between;
           gap: 20px;
-          margin-top: 25px;
+          margin-top: 20px;
         }
         .signature-col {
           width: 48%;
@@ -720,8 +720,12 @@ export default function EnrollmentModal({
         }
         @media print {
           @page {
-            size: A4 portrait;
-            margin: 6mm 10mm;
+            size: letter portrait;
+            margin: 4mm 8mm;
+          }
+          body {
+            background: white !important;
+            font-size: 8pt !important;
           }
           body * {
             visibility: hidden;
@@ -735,45 +739,133 @@ export default function EnrollmentModal({
             top: 0;
             width: 100%;
             margin: 0;
-            padding: 10px;
+            padding: 0 !important;
+            font-size: 8pt !important;
           }
-          .consent-box {
-            border: 1.5px solid #000;
-            padding: 10px;
-            margin-top: 10px;
-          }
-          .consent-text {
-            font-size: 8.5pt;
-            line-height: 1.25;
-            margin-bottom: 20px;
-          }
-          .signature-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 25px;
-          }
-          .signature-col {
-            width: 48%;
-            text-align: center;
-          }
-          .signature-line {
-            border-bottom: 1.5px solid #000;
-            margin-bottom: 4px;
-          }
-          .signature-label-main {
-            font-size: 9.5pt;
-            font-weight: 600;
-          }
-          .signature-label-sub {
-            font-size: 8.5pt;
-            font-style: italic;
-          }
+          /* Hide non-print UI headers / buttons */
           .no-print {
             display: none !important;
           }
           .print-only {
             display: block !important;
+          }
+
+          /* Compress spacing to guarantee single page fit */
+          #enrollment-form form {
+            display: flex;
+            flex-direction: column;
+            gap: 3px !important;
+          }
+          #enrollment-form .space-y-3,
+          #enrollment-form .space-y-4,
+          #enrollment-form .space-y-6 {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+            gap: 2px !important;
+          }
+          #enrollment-form .grid {
+            gap: 4px !important;
+          }
+
+          /* Compact input fields & text */
+          #enrollment-form label {
+            font-size: 7pt !important;
+            margin-bottom: 0px !important;
+            font-weight: 600 !important;
+            color: #0f172a !important;
+            line-height: 1.1 !important;
+          }
+          #enrollment-form input[type="text"],
+          #enrollment-form input[type="tel"],
+          #enrollment-form input[type="date"],
+          #enrollment-form input[type="number"],
+          #enrollment-form select {
+            height: 17px !important;
+            padding: 0px 3px !important;
+            font-size: 7.5pt !important;
+            border: 1px solid #94a3b8 !important;
+            border-radius: 2px !important;
+            background-color: transparent !important;
+            line-height: 1 !important;
+            -webkit-appearance: none;
+            appearance: none;
+          }
+
+          /* Compact headers & section dividers */
+          #enrollment-form .print-only .text-center {
+            margin-bottom: 4px !important;
+          }
+          #enrollment-form h1 {
+            font-size: 11pt !important;
+            margin-bottom: 0px !important;
+            line-height: 1.1 !important;
+          }
+          #enrollment-form h2 {
+            font-size: 9pt !important;
+            margin-top: 0px !important;
+            margin-bottom: 0px !important;
+            line-height: 1.1 !important;
+          }
+          #enrollment-form h3 {
+            font-size: 8pt !important;
+            padding-bottom: 0px !important;
+            line-height: 1.1 !important;
+          }
+          #enrollment-form .border-b {
+            padding-bottom: 1px !important;
+            margin-bottom: 2px !important;
+          }
+          #enrollment-form svg {
+            width: 12px !important;
+            height: 12px !important;
+          }
+
+          /* Compact Clinical Info placeholders */
+          #enrollment-form .h-16,
+          #enrollment-form .h-20,
+          #enrollment-form .h-24,
+          #enrollment-form .h-32 {
+            height: 12px !important;
+          }
+          #enrollment-form .h-8 {
+            height: 10px !important;
+          }
+
+          /* Consent box print compactness */
+          .consent-box {
+            border: 1px solid #000 !important;
+            padding: 4px 8px !important;
+            margin-top: 2px !important;
+            background: transparent !important;
+            border-radius: 3px !important;
+          }
+          .consent-text {
+            font-size: 7pt !important;
+            line-height: 1.1 !important;
+            margin-bottom: 4px !important;
+          }
+          .signature-row {
+            display: flex !important;
+            justify-content: space-between !important;
+            gap: 12px !important;
+            margin-top: 8px !important;
+            padding-top: 0 !important;
+          }
+          .signature-col {
+            width: 48% !important;
+            text-align: center !important;
+          }
+          .signature-line {
+            border-bottom: 1px solid #000 !important;
+            margin-bottom: 2px !important;
+          }
+          .signature-label-main {
+            font-size: 7.5pt !important;
+            font-weight: 600 !important;
+          }
+          .signature-label-sub {
+            font-size: 7pt !important;
+            font-style: italic !important;
           }
         }
         @media (max-width: 640px) {
