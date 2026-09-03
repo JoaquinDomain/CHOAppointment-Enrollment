@@ -302,6 +302,7 @@ export default function AppointmentForm() {
           {step === 2 && (
             <div className="space-y-6">
               <EnrollmentModal
+                isOpen={true}
                 inline={true}
                 onClose={handleEnrollmentClose}
                 onSave={handleEnrollmentSave}
