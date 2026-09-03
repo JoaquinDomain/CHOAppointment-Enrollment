@@ -302,11 +302,11 @@ export default function AppointmentForm() {
           {step === 2 && (
             <div className="space-y-6">
               <EnrollmentModal
-                isOpen={enrollmentModalOpen}
+                isOpen={true}
+                inline={true}
                 onClose={handleEnrollmentClose}
                 onSave={handleEnrollmentSave}
                 initialData={enrollmentData}
-                requireSave={step === 2 && !enrollmentData}
               />
             </div>
           )}
