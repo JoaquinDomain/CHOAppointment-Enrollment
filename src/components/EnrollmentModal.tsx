@@ -364,69 +364,198 @@ export default function EnrollmentModal({
               </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Residential Address *</label>
-              <input
-                type="text"
-                name="residentialAddress"
-                value={formData.residentialAddress}
-                onChange={handleInputChange}
-                required
-                className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Civil Status</label>
+                <select
+                  name="civilStatus"
+                  value={formData.civilStatus}
+                  onChange={handleInputChange}
+                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                >
+                  <option value="">Select</option>
+                  <option value="Single">Single</option>
+                  <option value="Married">Married</option>
+                  <option value="Widowed">Widowed</option>
+                  <option value="Separated">Separated</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Employment Status</label>
+                <select
+                  name="employmentStatus"
+                  value={formData.employmentStatus}
+                  onChange={handleInputChange}
+                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                >
+                  <option value="">Select</option>
+                  <option value="Employed">Employed</option>
+                  <option value="Unemployed">Unemployed</option>
+                  <option value="Self-Employed">Self-Employed</option>
+                  <option value="Student">Student</option>
+                  <option value="Retired">Retired</option>
+                </select>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">Contact Number *</label>
-              <input
-                type="tel"
-                name="contactNumber"
-                value={formData.contactNumber}
-                onChange={handleInputChange}
-                required
-                className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Spouse Name (if applicable)</label>
+                <input
+                  type="text"
+                  name="spouseName"
+                  value={formData.spouseName}
+                  onChange={handleInputChange}
+                  placeholder="Enter spouse name"
+                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Mother&apos;s Maiden Name</label>
+                <input
+                  type="text"
+                  name="mothersMaidenName"
+                  value={formData.mothersMaidenName}
+                  onChange={handleInputChange}
+                  placeholder="Enter mother's maiden name"
+                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+              <div className="sm:col-span-2">
+                <label className="block text-xs font-medium text-slate-700 mb-1">Residential Address *</label>
+                <input
+                  type="text"
+                  name="residentialAddress"
+                  value={formData.residentialAddress}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Contact Number *</label>
+                <input
+                  type="tel"
+                  name="contactNumber"
+                  value={formData.contactNumber}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                />
+              </div>
             </div>
           </div>
 
-          {/* Section 2: Program & Coverage - Condensed */}
+          {/* Section 2: Program & Coverage */}
           <div className="space-y-2">
             <div className="flex items-center gap-2 pb-1 border-b border-slate-200">
               <Shield className="w-4 h-4 text-emerald-600" />
               <h3 className="text-xs font-semibold text-slate-800">Program & Coverage</h3>
             </div>
-            <div className="flex gap-3 text-xs">
-              <label className="flex items-center gap-1">
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+              <label className="flex items-center gap-1.5 cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="primaryCareBenefitMember"
+                  checked={formData.primaryCareBenefitMember}
+                  onChange={handleInputChange}
+                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
+                />
+                <span className="text-slate-700 font-medium">PCB Member</span>
+              </label>
+              <label className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
                   name="philhealthMember"
                   checked={formData.philhealthMember}
                   onChange={handleInputChange}
-                  className="w-3 h-3"
+                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                PhilHealth
+                <span className="text-slate-700 font-medium">PhilHealth Member</span>
               </label>
-              <label className="flex items-center gap-1">
+              <label className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
                   name="pwd"
                   checked={formData.pwd}
                   onChange={handleInputChange}
-                  className="w-3 h-3"
+                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                PWD
+                <span className="text-slate-700 font-medium">PWD</span>
               </label>
-              <label className="flex items-center gap-1">
+              <label className="flex items-center gap-1.5 cursor-pointer">
                 <input
                   type="checkbox"
                   name="yakapRegistered"
                   checked={formData.yakapRegistered}
                   onChange={handleInputChange}
-                  className="w-3 h-3"
+                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
                 />
-                YAKAP
+                <span className="text-slate-700 font-medium">YAKAP Registered</span>
               </label>
             </div>
+
+            {/* Conditional PhilHealth Fields */}
+            {formData.philhealthMember && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded mt-2">
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">PhilHealth Number (PIN)</label>
+                  <input
+                    type="text"
+                    name="philhealthNumber"
+                    value={formData.philhealthNumber}
+                    onChange={handleInputChange}
+                    placeholder="Enter PhilHealth PIN"
+                    className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">PhilHealth Category / Status</label>
+                  <select
+                    name="philhealthStatus"
+                    value={formData.philhealthStatus}
+                    onChange={handleInputChange}
+                    className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
+                  >
+                    <option value="">Select Category</option>
+                    <option value="MEMBER">MEMBER</option>
+                    <option value="DEPENDENT">DEPENDENT</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">Facility Household Number</label>
+                  <input
+                    type="text"
+                    name="facilityHouseholdNumber"
+                    value={formData.facilityHouseholdNumber}
+                    onChange={handleInputChange}
+                    placeholder="Enter Household No."
+                    className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Conditional YAKAP Fields */}
+            {formData.yakapRegistered && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded mt-2">
+                <div>
+                  <label className="block text-xs font-medium text-slate-700 mb-1">YAKAP Facility</label>
+                  <input
+                    type="text"
+                    name="yakapFacility"
+                    value={formData.yakapFacility}
+                    onChange={handleInputChange}
+                    placeholder="Enter YAKAP Facility"
+                    className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Section 3: Health Facility Information */}
