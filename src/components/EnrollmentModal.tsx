@@ -481,17 +481,17 @@ export default function EnrollmentModal({
             </div>
           </div>
 
-          {/* Section 5: Clinical Information - Instance 1 */}
-          <div className="pt-4 border-t-2 border-slate-300">
+          {/* Section 5: Clinical Information - Instance 1 (PRINT ONLY) */}
+          <div className="hidden print:block pt-4 border-t-2 border-slate-300">
             <h3 className="text-xs font-semibold text-slate-800 mb-3">Clinical Information (Instance 1)</h3>
             <ClinicalInformationSection />
           </div>
 
-          {/* Divider Line */}
-          <div className="border-t-2 border-dashed border-slate-400 my-4"></div>
+          {/* Divider Line (PRINT ONLY) */}
+          <div className="hidden print:block border-t-2 border-dashed border-slate-400 my-4"></div>
 
-          {/* Section 6: Clinical Information - Instance 2 */}
-          <div className="pt-4">
+          {/* Section 6: Clinical Information - Instance 2 (PRINT ONLY) */}
+          <div className="hidden print:block pt-4">
             <h3 className="text-xs font-semibold text-slate-800 mb-3">Clinical Information (Instance 2)</h3>
             <ClinicalInformationSection />
           </div>
