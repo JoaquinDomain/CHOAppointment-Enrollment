@@ -6,6 +6,7 @@ import { Html5QrcodeScanner } from 'html5-qrcode'
 import { Appointment } from '../lib/services/appointmentService'
 import SiteQRPoster from './SiteQRPoster'
 import { useRouter } from 'next/navigation'
+import { BACOLOD_HEALTH_FACILITIES } from '@/constants/facilities'
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -20,20 +21,7 @@ export default function AdminDashboard() {
   const [scannerError, setScannerError] = useState<string | null>(null)
   const scannerRef = useRef<Html5QrcodeScanner | null>(null)
 
-  const healthFacilities = [
-    'CHO Main / Bacolod City Health Office',
-    'Senior Citizen Center',
-    'Alijis Health Station',
-    'Banago Health Station',
-    'Bata Health Station',
-    'Bacolod City Mental Care Center',
-    'Singcang Health Station',
-    'Handumanan Health Station',
-    'Pahanocoy Health Station',
-    'Villamonte Health Station',
-    'Taculing Health Station',
-    'Others'
-  ]
+  const healthFacilities = BACOLOD_HEALTH_FACILITIES
 
   // Load appointments on component mount
   useEffect(() => {
