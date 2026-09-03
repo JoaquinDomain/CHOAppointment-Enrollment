@@ -52,10 +52,16 @@ input, select, textarea {
 @media print {
   .print-header {
     display: flex !important;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
     margin-bottom: 1rem;
+  }
+
+  .print-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
   .print-header-logo {
@@ -85,5 +91,24 @@ input, select, textarea {
   .print-header-line3 {
     font-weight: normal;
     font-size: 11px;
+  }
+
+  .print-header-middle {
+    text-align: center;
+    margin: 0 auto;
+    line-height: 1.2;
+    font-family: Arial, Inter, sans-serif, system-ui;
+  }
+
+  .print-header-mid-line1 {
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .print-header-mid-line2 {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
   }
 }
