@@ -21,13 +21,6 @@ export default function AppointmentForm() {
   // Enrollment data (single source of truth for patient info)
   const [enrollmentData, setEnrollmentData] = useState<any>(null)
 
-  // Automatically open enrollment modal when reaching step 2
-  useEffect(() => {
-    if (step === 2 && !enrollmentData) {
-      setEnrollmentModalOpen(true)
-    }
-  }, [step, enrollmentData])
-
   const validateStep1 = () => {
     if (!selectedDate) {
       setError('Please select an appointment date')
@@ -115,15 +108,66 @@ export default function AppointmentForm() {
     }
   }
 
-  const handleEnrollmentSave = (data: any) => {
+  const handleEnrollmentSave = async (data: any) => {
     setEnrollmentData(data)
-    setEnrollmentModalOpen(false)
+    await submitAppointmentWithData(data)
   }
 
   const handleEnrollmentClose = () => {
-    // Only allow closing if enrollment data is saved
-    if (enrollmentData) {
-      setEnrollmentModalOpen(false)
+    setStep(1)
+    setError(null)
+  }
+
+  const submitAppointmentWithData = async (data: any) => {
+    setLoading(true)
+    setError(null)
+
+    try {
+      const appointmentData = {
+        service_type: selectedService!,
+        appointment_date: selectedDate!,
+        full_name: `${data.firstName} ${data.middleName} ${data.lastName}`.trim(),
+        age: data.age,
+        birthdate: data.birthdate,
+        gender: data.gender,
+        civil_status: data.civilStatus,
+        residential_address: data.residentialAddress,
+        contact_number: data.contactNumber,
+        spouse_name: data.spouseName,
+        mothers_maiden_name: data.mothersMaidenName,
+        employment_status: data.employmentStatus,
+        primary_care_benefit_member: data.primaryCareBenefitMember,
+        consulting_facility: data.consultingFacility,
+        yakap_registered: data.yakapRegistered,
+        yakap_facility: data.yakapFacility,
+        philhealth_member: data.philhealthMember,
+        philhealth_number: data.philhealthNumber,
+        philhealth_status: data.philhealthStatus,
+        facility_household_number: data.facilityHouseholdNumber,
+        pwd: data.pwd,
+        data_privacy_consent: data.dataPrivacyConsent,
+      }
+
+      const response = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(appointmentData),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to create appointment')
+      }
+
+      const result = await response.json()
+      setAppointmentId(result.id || null)
+      setShowConfirmation(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create appointment')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -139,26 +183,27 @@ export default function AppointmentForm() {
 
   if (showConfirmation && appointmentId) {
     return (
-      <div className="min-h-screen bg-slate-50 py-8 px-4">
+      <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow p-8 text-center">
-            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-8 h-8 text-emerald-600" />
+          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 sm:p-10 text-center">
+            <div className="w-20 h-20 bg-emerald-100/80 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+              <CheckCircle className="w-10 h-10 text-emerald-600" />
             </div>
             
-            <h1 className="text-2xl font-bold text-slate-900 mb-4">Appointment Confirmed!</h1>
+            <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Appointment Confirmed!</h1>
+            <p className="text-slate-600 mb-6">Your laboratory schedule has been recorded successfully.</p>
             
-            <div className="bg-emerald-50 border border-emerald-200 rounded p-6 mb-6">
-              <p className="text-lg text-emerald-900 font-medium mb-2">
+            <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-6 mb-8 text-left">
+              <p className="text-lg text-emerald-950 font-semibold mb-2">
                 Please proceed to CHO Lab on your date of choice at 8:00 AM
               </p>
-              <p className="text-sm text-emerald-700">
-                Appointment ID: <span className="font-mono font-bold">{appointmentId}</span>
+              <p className="text-sm text-emerald-800">
+                Appointment ID: <span className="font-mono font-bold text-emerald-950">{appointmentId}</span>
               </p>
             </div>
 
             <div className="flex justify-center mb-6">
-              <div className="bg-white p-4 rounded border border-slate-200">
+              <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
                 <QRCode 
                   value={appointmentId} 
                   size={200}
@@ -168,13 +213,13 @@ export default function AppointmentForm() {
               </div>
             </div>
 
-            <p className="text-sm text-slate-600 mb-6">
-              Show this QR code to the staff when you arrive at the health office
+            <p className="text-sm text-slate-600 mb-8">
+              Show this QR code to the staff when you arrive at the health office.
             </p>
 
             <button
               onClick={resetForm}
-              className="px-6 py-3 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium"
+              className="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg"
             >
               Book Another Appointment
             </button>
@@ -188,30 +233,36 @@ export default function AppointmentForm() {
     <div className="min-h-screen bg-slate-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 mb-2">CHO Laboratory Appointment System</h1>
-          <p className="text-slate-600">City Health Office · Bacolod City</p>
+        <div className="text-center mb-10">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2 tracking-tight">
+            CHO Laboratory Appointment System
+          </h1>
+          <p className="text-base text-slate-600 font-medium">City Health Office · Bacolod City</p>
         </div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-8">
-          {[1, 2].map((stepNumber) => (
-            <div key={stepNumber} className="flex items-center">
-              <div className={`
-                w-8 h-8 rounded-full flex items-center justify-center font-semibold text-sm
-                ${step >= stepNumber ? 'bg-emerald-600 text-white' : 'bg-slate-200 text-slate-600'}
-              `}>
-                {stepNumber}
+        <div className="flex items-center justify-center mb-10">
+          <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm border border-slate-200/80">
+            <div className="flex items-center gap-2">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step >= 1 ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-200 text-slate-600'}`}>
+                1
               </div>
-              {stepNumber < 2 && (
-                <div className={`w-12 h-0.5 mx-2 ${step > stepNumber ? 'bg-emerald-600' : 'bg-slate-200'}`} />
-              )}
+              <span className={`text-sm font-semibold ${step >= 1 ? 'text-slate-900' : 'text-slate-500'}`}>Date & Service</span>
             </div>
-          ))}
+
+            <div className={`w-12 h-1 rounded-full transition-all ${step >= 2 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
+
+            <div className="flex items-center gap-2">
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step >= 2 ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-200 text-slate-600'}`}>
+                2
+              </div>
+              <span className={`text-sm font-semibold ${step >= 2 ? 'text-slate-900' : 'text-slate-500'}`}>Patient Record</span>
+            </div>
+          </div>
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white rounded-lg shadow p-6 sm:p-8">
+        <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-6 sm:p-8">
           {/* Error Message */}
           {error && (
             <div className="mb-6 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded">
@@ -250,68 +301,15 @@ export default function AppointmentForm() {
           {/* Step 2: Patient Enrollment */}
           {step === 2 && (
             <div className="space-y-6">
-              <div className="flex items-center gap-2 mb-4">
-                <FileText className="w-5 h-5 text-emerald-600" />
-                <h2 className="text-xl font-semibold text-slate-800">Patient Information</h2>
-              </div>
-
-              {/* Enrollment Status */}
-              <div className="flex flex-col items-center justify-center py-8">
-                {enrollmentData ? (
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <CheckCircle className="w-8 h-8 text-green-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-800 mb-2">Enrollment Record Completed</h3>
-                    <p className="text-slate-600 mb-4">Your patient information has been saved.</p>
-                    <button
-                      type="button"
-                      onClick={() => setEnrollmentModalOpen(true)}
-                      className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded hover:bg-emerald-100 transition-colors font-medium"
-                    >
-                      <FileText className="w-4 h-4" />
-                      Edit Patient Enrollment Record
-                    </button>
-                  </div>
-                ) : (
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <FileText className="w-8 h-8 text-emerald-600" />
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-800 mb-2">Patient Enrollment Record</h3>
-                    <p className="text-slate-600 mb-4">Please complete your patient information to proceed.</p>
-                    <p className="text-sm text-emerald-600">The enrollment form will open automatically</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex justify-between pt-4">
-                <button
-                  onClick={handleBack}
-                  className="px-6 py-3 bg-slate-100 text-slate-700 rounded hover:bg-slate-200 transition-colors font-medium"
-                >
-                  Back
-                </button>
-                <button
-                  onClick={handleSubmit}
-                  disabled={loading || !enrollmentData}
-                  className="px-6 py-3 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? 'Submitting...' : 'Submit Appointment'}
-                </button>
-              </div>
+              <EnrollmentModal
+                inline={true}
+                onClose={handleEnrollmentClose}
+                onSave={handleEnrollmentSave}
+                initialData={enrollmentData}
+              />
             </div>
           )}
         </div>
-
-        {/* Enrollment Modal */}
-        <EnrollmentModal
-          isOpen={enrollmentModalOpen}
-          onClose={handleEnrollmentClose}
-          onSave={handleEnrollmentSave}
-          initialData={enrollmentData}
-          requireSave={step === 2 && !enrollmentData}
-        />
       </div>
     </div>
   )
