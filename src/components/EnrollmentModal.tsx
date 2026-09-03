@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, FileText, User, Shield, AlertCircle, MapPin, Printer, Save } from 'lucide-react'
 import { BACOLOD_HEALTH_FACILITIES, BACOLOD_YAKAP_FACILITIES } from '@/constants/facilities'
+import PrintHeader from '@/components/PrintHeader'
 
 interface EnrollmentData {
   // Demographics
@@ -259,13 +260,7 @@ export default function EnrollmentModal({
       {/* Printable Form */}
       <div id="enrollment-form" className="p-4 sm:p-6">
         {/* Print Header - Only visible when printing */}
-        <div className="print-only hidden">
-          <div className="text-center mb-3">
-            <h1 className="text-xl font-bold text-slate-900">City Health Office</h1>
-            <h2 className="text-sm font-semibold text-slate-700">Patient Enrollment Record / Individual Treatment Record</h2>
-            <p className="text-xs text-slate-600 mt-1">Date Printed: {printTimestamp}</p>
-          </div>
-        </div>
+        <PrintHeader />
 
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           {/* Section 1: Patient Demographics */}
