@@ -1,9 +1,32 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, FileText, User, Shield, AlertCircle, MapPin, Printer, Save } from 'lucide-react'
+import { X, FileText, User, Shield, AlertCircle, MapPin, Stethoscope, Printer, Save } from 'lucide-react'
 import { BACOLOD_HEALTH_FACILITIES, BACOLOD_YAKAP_FACILITIES } from '@/constants/facilities'
 import PrintHeader from '@/components/PrintHeader'
+
+const SERVICE_OPTIONS = [
+  { id: 'animal-bite', name: 'Animal Bite Treatment' },
+  { id: 'consultation', name: 'Medical Consultation' },
+  { id: 'surgical-minor', name: 'Minor Surgery' },
+  { id: 'immunization', name: 'Immunization' },
+  { id: 'prenatal', name: 'Pre-Natal Checkup' },
+  { id: 'health-certificate', name: 'Health Certificate' },
+  { id: 'tb-consultation', name: 'TB Consultation' },
+  { id: 'dental', name: 'Dental Services' },
+  { id: 'family-planning', name: 'Family Planning' },
+  { id: 'social-hygiene', name: 'Social Hygiene Clinic' },
+  { id: 'drug-testing', name: 'Drug Testing' },
+  { id: 'medical-certificate', name: 'Medical Certificate' }
+]
+
+const getServiceName = (serviceKey?: string | null): string => {
+  if (!serviceKey) return ''
+  const found = SERVICE_OPTIONS.find(
+    s => s.id === serviceKey || s.name.toLowerCase() === serviceKey.toLowerCase()
+  )
+  return found ? found.name : serviceKey
+}
 
 interface EnrollmentData {
   // Demographics
@@ -33,6 +56,7 @@ interface EnrollmentData {
 
   // Health Facility
   consultingFacility: string
+  selectedService?: string
 
   // Consent
   dataPrivacyConsent: boolean
@@ -45,6 +69,7 @@ interface EnrollmentModalProps {
   initialData?: Partial<EnrollmentData>
   requireSave?: boolean
   inline?: boolean
+  selectedService?: string | null
 }
 
 const ClinicalInformationSection = () => (
@@ -142,7 +167,8 @@ export default function EnrollmentModal({
   onSave,
   initialData,
   requireSave = false,
-  inline = false
+  inline = false,
+  selectedService
 }: EnrollmentModalProps) {
   const [formData, setFormData] = useState<EnrollmentData>({
     lastName: '',
@@ -559,26 +585,78 @@ export default function EnrollmentModal({
             )}
           </div>
 
-          {/* Section 3: Health Facility Information */}
-          <div className="space-y-2">
+          {/* Section 3: Health Facility & Service Requested */}
+          <div className="space-y-3">
             <div className="flex items-center gap-2 pb-1 border-b border-slate-200">
               <MapPin className="w-4 h-4 text-emerald-600" />
-              <h3 className="text-xs font-semibold text-slate-800">Health Facility</h3>
+              <h3 className="text-xs font-semibold text-slate-800">Health Facility & Service Requested</h3>
             </div>
-            <select
-              name="consultingFacility"
-              value={formData.consultingFacility}
-              onChange={handleInputChange}
-              required
-              className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
-            >
-              <option value="">Select Facility</option>
-              {BACOLOD_HEALTH_FACILITIES.map(facility => (
-                <option key={facility} value={facility}>
-                  {facility}
-                </option>
-              ))}
-            </select>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Health Facility *</label>
+                <select
+                  name="consultingFacility"
+                  value={formData.consultingFacility}
+                  onChange={handleInputChange}
+                  required
+                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                >
+                  <option value="">Select Facility</option>
+                  {BACOLOD_HEALTH_FACILITIES.map(facility => (
+                    <option key={facility} value={facility}>
+                      {facility}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Requested Service / Type of Service *</label>
+                <input
+                  type="text"
+                  readOnly
+                  value={getServiceName(formData.selectedService || selectedService) || 'No Service Selected'}
+                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-slate-50 font-semibold text-slate-800"
+                />
+              </div>
+            </div>
+
+            {/* Service Selection Checklist */}
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Service Requested Checklist</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-xs">
+                {SERVICE_OPTIONS.map(service => {
+                  const activeKey = formData.selectedService || selectedService || ''
+                  const activeName = getServiceName(activeKey)
+                  const isSelected =
+                    activeKey === service.id ||
+                    activeName.toLowerCase() === service.name.toLowerCase()
+
+                  return (
+                    <div
+                      key={service.id}
+                      className={`flex items-center gap-1.5 p-1.5 rounded border ${
+                        isSelected
+                          ? 'border-emerald-600 bg-emerald-50 text-emerald-950 font-bold'
+                          : 'border-slate-200 bg-white text-slate-700'
+                      }`}
+                    >
+                      <span
+                        className={`print-service-checkbox inline-flex items-center justify-center w-3.5 h-3.5 border rounded-2xs text-[10px] leading-none ${
+                          isSelected
+                            ? 'border-emerald-700 bg-emerald-600 text-white font-bold'
+                            : 'border-slate-400 bg-white'
+                        }`}
+                      >
+                        {isSelected ? '✓' : ''}
+                      </span>
+                      <span className="text-xs leading-tight">{service.name}</span>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
           </div>
 
           {/* Section 4: Data Privacy Consent */}
@@ -748,6 +826,13 @@ export default function EnrollmentModal({
           
           input[type="checkbox"] {
             display: none !important;
+          }
+
+          .print-service-checkbox {
+            border: 1px solid #000 !important;
+            color: #000 !important;
+            background: transparent !important;
+            display: inline-flex !important;
           }
           
           .border-slate-200, .border-slate-300 {
