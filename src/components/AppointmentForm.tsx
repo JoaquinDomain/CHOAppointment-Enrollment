@@ -307,6 +307,7 @@ export default function AppointmentForm() {
                 onClose={handleEnrollmentClose}
                 onSave={handleEnrollmentSave}
                 initialData={enrollmentData}
+                selectedService={selectedService}
               />
             </div>
           )}
