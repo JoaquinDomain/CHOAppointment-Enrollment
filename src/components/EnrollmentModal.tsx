@@ -46,83 +46,89 @@ interface EnrollmentModalProps {
 }
 
 const ClinicalInformationSection = () => (
-  <div className="space-y-2 sm:space-y-3">
+  <div className="space-y-3 sm:space-y-4">
     {/* Chief Complaint */}
-    <div>
-      <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Chief Complaint</label>
-      <div className="h-12 sm:h-14 border-b border-slate-300"></div>
+    <div className="w-full flex flex-col gap-1">
+      <label className="block text-xs sm:text-sm font-medium text-slate-700">Chief Complaint</label>
+      <div className="w-full min-h-12 sm:min-h-14 border-b border-slate-300"></div>
     </div>
 
     {/* Vital Signs */}
-    <div>
-      <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Vital Signs</label>
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-1 sm:gap-2">
+    <div className="w-full flex flex-col gap-2">
+      <label className="block text-xs sm:text-sm font-medium text-slate-700">Vital Signs</label>
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
         <div>
           <label className="block text-xs text-slate-600 mb-1">PR</label>
-          <div className="h-7 border-b border-slate-300"></div>
+          <div className="h-8 border-b border-slate-300"></div>
         </div>
         <div>
           <label className="block text-xs text-slate-600 mb-1">CR</label>
-          <div className="h-7 border-b border-slate-300"></div>
+          <div className="h-8 border-b border-slate-300"></div>
         </div>
         <div>
           <label className="block text-xs text-slate-600 mb-1">BP</label>
-          <div className="h-7 border-b border-slate-300"></div>
+          <div className="h-8 border-b border-slate-300"></div>
         </div>
         <div>
           <label className="block text-xs text-slate-600 mb-1">RR</label>
-          <div className="h-7 border-b border-slate-300"></div>
+          <div className="h-8 border-b border-slate-300"></div>
         </div>
         <div>
           <label className="block text-xs text-slate-600 mb-1">O₂ Sat</label>
-          <div className="h-7 border-b border-slate-300"></div>
+          <div className="h-8 border-b border-slate-300"></div>
         </div>
       </div>
     </div>
 
     {/* Height, Weight, Waist */}
-    <div className="grid grid-cols-3 gap-1 sm:gap-2">
-      <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Ht</label>
-        <div className="h-7 border-b border-slate-300"></div>
-      </div>
-      <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Wt</label>
-        <div className="h-7 border-b border-slate-300"></div>
-      </div>
-      <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Waist</label>
-        <div className="h-7 border-b border-slate-300"></div>
+    <div className="w-full flex flex-col gap-2">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-1">Ht</label>
+          <div className="h-8 border-b border-slate-300"></div>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-1">Wt</label>
+          <div className="h-8 border-b border-slate-300"></div>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-1">Waist</label>
+          <div className="h-8 border-b border-slate-300"></div>
+        </div>
       </div>
     </div>
 
     {/* SOAP Notes */}
-    <div>
-      <label className="block text-xs font-medium text-slate-700 mb-1">SOAP Notes</label>
-      <div className="h-14 sm:h-16 border-b border-slate-300"></div>
+    <div className="w-full flex flex-col gap-2">
+      <label className="block text-xs font-medium text-slate-700">SOAP Notes</label>
+      <div className="w-full min-h-16 sm:min-h-20 border-b border-slate-300"></div>
     </div>
 
     {/* Labs & Prescriptions */}
-    <div className="grid grid-cols-2 gap-1 sm:gap-2">
-      <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Labs</label>
-        <div className="h-12 sm:h-14 border-b border-slate-300"></div>
-      </div>
-      <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Prescriptions</label>
-        <div className="h-12 sm:h-14 border-b border-slate-300"></div>
+    <div className="w-full flex flex-col gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-1">Labs</label>
+          <div className="h-12 sm:h-14 border-b border-slate-300"></div>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-1">Prescriptions</label>
+          <div className="h-12 sm:h-14 border-b border-slate-300"></div>
+        </div>
       </div>
     </div>
 
     {/* Physician Signature & Date */}
-    <div className="grid grid-cols-2 gap-1 sm:gap-2">
-      <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Physician Sig</label>
-        <div className="h-10 border-b border-slate-300"></div>
-      </div>
-      <div>
-        <label className="block text-xs font-medium text-slate-700 mb-1">Date</label>
-        <div className="h-7 border-b border-slate-300"></div>
+    <div className="w-full flex flex-col gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-1">Physician Sig</label>
+          <div className="h-10 border-b border-slate-300"></div>
+        </div>
+        <div>
+          <label className="block text-xs font-medium text-slate-700 mb-1">Date</label>
+          <div className="h-8 border-b border-slate-300"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -476,17 +482,17 @@ export default function EnrollmentModal({
           </div>
 
           {/* Section 5: Clinical Information - Instance 1 */}
-          <div className="space-y-2 pt-2 border-t border-slate-300">
-            <h3 className="text-xs font-semibold text-slate-800">Clinical Information (Instance 1)</h3>
+          <div className="pt-4 border-t-2 border-slate-300">
+            <h3 className="text-xs font-semibold text-slate-800 mb-3">Clinical Information (Instance 1)</h3>
             <ClinicalInformationSection />
           </div>
 
           {/* Divider Line */}
-          <div className="border-t-2 border-dashed border-slate-400 my-2"></div>
+          <div className="border-t-2 border-dashed border-slate-400 my-4"></div>
 
           {/* Section 6: Clinical Information - Instance 2 */}
-          <div className="space-y-2">
-            <h3 className="text-xs font-semibold text-slate-800">Clinical Information (Instance 2)</h3>
+          <div className="pt-4">
+            <h3 className="text-xs font-semibold text-slate-800 mb-3">Clinical Information (Instance 2)</h3>
             <ClinicalInformationSection />
           </div>
 
@@ -607,8 +613,16 @@ export default function EnrollmentModal({
             background: transparent !important;
           }
           
-          .space-y-2, .space-y-3, .space-y-4, .space-y-6 {
-            gap: 0.25rem !important;
+          .space-y-2 {
+            gap: 0.35rem !important;
+          }
+          
+          .space-y-3 {
+            gap: 0.5rem !important;
+          }
+          
+          .space-y-4 {
+            gap: 0.75rem !important;
           }
         }
         
