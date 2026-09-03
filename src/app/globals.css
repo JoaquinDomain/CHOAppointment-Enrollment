@@ -52,38 +52,63 @@ input, select, textarea {
 @media print {
   .print-header {
     display: flex !important;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 10px;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
     margin-bottom: 1rem;
   }
 
+  .print-header-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
   .print-header-logo {
-    width: 45px;
-    height: 45px;
+    width: 65px;
+    height: 65px;
     border-radius: 50%;
     object-fit: cover;
     flex-shrink: 0;
   }
 
+  .print-header-left-text,
   .print-header-text {
-    font-family: Arial, Inter, sans-serif, system-ui;
     text-align: left;
-    line-height: 1.25;
+    line-height: 1.35;
+    font-family: sans-serif;
   }
 
   .print-header-line1 {
     font-weight: normal;
-    font-size: 11px;
+    font-size: 15px;
   }
 
   .print-header-line2 {
     font-weight: bold;
-    font-size: 12px;
+    font-size: 17px;
   }
 
   .print-header-line3 {
     font-weight: normal;
-    font-size: 11px;
+    font-size: 15px;
+  }
+
+  .print-header-middle {
+    text-align: center;
+    margin: 0 auto;
+    line-height: 1.3;
+    font-family: sans-serif;
+    text-transform: uppercase;
+  }
+
+  .print-header-middle-line1 {
+    font-weight: bold;
+    font-size: 19px;
+  }
+
+  .print-header-middle-line2 {
+    font-weight: bold;
+    font-size: 16px;
   }
 }
