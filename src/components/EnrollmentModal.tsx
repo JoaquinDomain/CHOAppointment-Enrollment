@@ -537,7 +537,7 @@ export default function EnrollmentModal({
             </div>
           </div>
 
-          {/* Section 4: Data Privacy Consent */}
+          {/* Section 4: Data Privacy Consent & Signature Lines */}
           <div className="space-y-3 sm:space-y-4">
             <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
               <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
@@ -581,6 +581,95 @@ export default function EnrollmentModal({
                 <div className="signature-line"></div>
                 <div className="signature-label-main">Name and Signature of CHO/BHS Representative</div>
                 <div className="signature-label-sub">(Pangalan at Lagda ng Kinatawan ng CHO/BHS)</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Section 5: Clinical Information */}
+          <div className="space-y-3 sm:space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-emerald-600" />
+              <h3 className="text-base sm:text-lg font-semibold text-slate-800">Clinical Information</h3>
+            </div>
+
+            <div className="space-y-3">
+              {/* Chief Complaint */}
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Chief Complaint</label>
+                <div className="h-16 sm:h-20 border-b border-slate-300"></div>
+              </div>
+
+              {/* Vital Signs */}
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Vital Signs</label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">PR</label>
+                    <div className="h-8 border-b border-slate-300"></div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">CR</label>
+                    <div className="h-8 border-b border-slate-300"></div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">BP</label>
+                    <div className="h-8 border-b border-slate-300"></div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">RR</label>
+                    <div className="h-8 border-b border-slate-300"></div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-slate-600 mb-1">O₂ Sat</label>
+                    <div className="h-8 border-b border-slate-300"></div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Height, Weight, Waist */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Height</label>
+                  <div className="h-8 border-b border-slate-300"></div>
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Weight</label>
+                  <div className="h-8 border-b border-slate-300"></div>
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Waist</label>
+                  <div className="h-8 border-b border-slate-300"></div>
+                </div>
+              </div>
+
+              {/* SOAP Notes */}
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">SOAP Notes</label>
+                <div className="h-24 sm:h-32 border-b border-slate-300"></div>
+              </div>
+
+              {/* Labs */}
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Labs</label>
+                <div className="h-16 sm:h-20 border-b border-slate-300"></div>
+              </div>
+
+              {/* Prescriptions */}
+              <div>
+                <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Prescriptions</label>
+                <div className="h-16 sm:h-20 border-b border-slate-300"></div>
+              </div>
+
+              {/* Physician Signature & Date */}
+              <div className="grid grid-cols-2 gap-2 sm:gap-4">
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Physician Signature</label>
+                  <div className="h-16 border-b border-slate-300"></div>
+                </div>
+                <div>
+                  <label className="block text-xs sm:text-sm font-medium text-slate-700 mb-1">Date</label>
+                  <div className="h-8 border-b border-slate-300"></div>
+                </div>
               </div>
             </div>
           </div>
