@@ -163,10 +163,10 @@ input, select, textarea {
     color: #000 !important;
   }
 
-  /* Strict 1-page A4 compression */
+  /* Strict 1-page A4 with safe printable margins */
   @page {
     size: A4 portrait;
-    margin: 0;
+    margin: 10mm 8mm;
   }
 
   html, body {
@@ -179,7 +179,8 @@ input, select, textarea {
     max-height: 100vh;
     overflow: hidden;
     page-break-inside: avoid;
-    padding: 4mm 5mm;
+    margin: 0 2mm;
+    padding: 3mm 4mm;
     line-height: 1.1;
     font-size: 9px;
   }

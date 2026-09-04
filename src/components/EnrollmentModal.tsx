@@ -837,7 +837,7 @@ export default function EnrollmentModal({
         @media print {
           @page {
             size: A4 portrait;
-            margin: 0;
+            margin: 10mm 8mm;
           }
           
           body {
@@ -873,11 +873,11 @@ export default function EnrollmentModal({
             max-height: 100vh;
             overflow: hidden;
             page-break-inside: avoid;
-            margin: 0;
-            padding: 2mm 0;
+            margin: 0 2mm;
+            padding: 3mm 4mm;
             line-height: 1.15;
             font-size: 9px;
-            zoom: 0.9;
+            zoom: 0.85;
           }
 
           #enrollment-form form {
