@@ -776,14 +776,18 @@ export default function EnrollmentModal({
           body {
             background: #fff !important;
             color: #000 !important;
-            font-size: 10px;
-            line-height: 1.15;
+            font-size: 9px;
+            line-height: 1.1;
           }
 
           .consent-text {
-            font-size: 8.5pt !important;
-            line-height: 1.15 !important;
-            margin-bottom: 4px !important;
+            font-size: 7pt !important;
+            line-height: 1.1 !important;
+            margin-bottom: 2px !important;
+          }
+
+          .consent-text p {
+            margin: 0 0 2px !important;
           }
           
           body * {
@@ -803,21 +807,37 @@ export default function EnrollmentModal({
             overflow: hidden;
             page-break-inside: avoid;
             margin: 0;
-            padding: 6mm 8mm;
-            line-height: 1.15;
-            font-size: 10px;
+            padding: 4mm 5mm;
+            line-height: 1.1;
+            font-size: 9px;
+            zoom: 0.9;
           }
 
           #enrollment-form form {
-            line-height: 1.15;
+            line-height: 1.1;
           }
 
           #enrollment-form .space-y-2 > *,
           #enrollment-form .space-y-3 > *,
           #enrollment-form .space-y-4 > * {
-            margin-bottom: 4px !important;
-            font-size: 10px;
-            line-height: 1.15;
+            margin-bottom: 3px !important;
+            font-size: 9px;
+            line-height: 1.1;
+          }
+
+          /* Compact signature block — must stay on page 1 */
+          .signature-row-compact {
+            margin-top: 4px !important;
+            gap: 10px !important;
+          }
+
+          .signature-line-compact {
+            height: 14px !important;
+            margin-bottom: 1px !important;
+          }
+
+          .signature-label-compact {
+            font-size: 6.5pt !important;
           }
 
           .signature-terminator {
@@ -840,7 +860,9 @@ export default function EnrollmentModal({
             border-bottom: 1px solid #000 !important;
             border-radius: 0 !important;
             background: transparent !important;
-            padding: 1px 0 !important;
+            padding: 0 !important;
+            font-size: 9px !important;
+            line-height: 1.1 !important;
             box-shadow: none !important;
             outline: none !important;
             -webkit-appearance: none !important;
@@ -876,24 +898,62 @@ export default function EnrollmentModal({
           }
           
           .space-y-2 {
-            gap: 0.25rem !important;
+            gap: 0.2rem !important;
           }
           
           .space-y-3 {
-            gap: 0.35rem !important;
+            gap: 0.25rem !important;
           }
           
           .space-y-4 {
-            gap: 0.5rem !important;
+            gap: 0.3rem !important;
+          }
+
+          #enrollment-form .grid {
+            gap: 0.25rem !important;
           }
 
           #enrollment-form h3 {
-            margin-bottom: 4px !important;
-            line-height: 1.15 !important;
+            margin-bottom: 2px !important;
+            padding-bottom: 2px !important;
+            line-height: 1.1 !important;
+            font-size: 9px !important;
           }
 
           #enrollment-form label {
-            line-height: 1.15 !important;
+            line-height: 1.1 !important;
+            font-size: 8.5px !important;
+            margin-bottom: 0 !important;
+          }
+
+          /* Compact service checklist boxes for print */
+          #enrollment-form .grid > div[class*="rounded"] {
+            padding: 2px 4px !important;
+          }
+
+          #enrollment-form .grid span:last-child {
+            font-size: 8.5px !important;
+            line-height: 1.1 !important;
+          }
+
+          #enrollment-form .mb-1,
+          #enrollment-form .mb-1\.5 {
+            margin-bottom: 1px !important;
+          }
+
+          #enrollment-form .pb-1,
+          #enrollment-form .pb-2 {
+            padding-bottom: 2px !important;
+          }
+
+          #enrollment-form .pt-1,
+          #enrollment-form .pt-2 {
+            padding-top: 1px !important;
+          }
+
+          #enrollment-form .p-2,
+          #enrollment-form .p-2\.5 {
+            padding: 4px !important;
           }
         }
         
