@@ -70,6 +70,7 @@ input, select, textarea {
     height: 55px;
     flex-shrink: 0;
     object-fit: contain;
+    border-radius: 50%;
   }
 
   .print-header-left-text,
@@ -111,10 +112,12 @@ input, select, textarea {
   .print-header-middle-line1 {
     font-weight: bold;
     font-size: 19px;
+    white-space: nowrap;
   }
 
   .print-header-middle-line2 {
     font-weight: bold;
     font-size: 16px;
+    white-space: nowrap;
   }
 }
