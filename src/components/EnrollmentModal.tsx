@@ -1155,6 +1155,7 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-write-line {
             font-size: 9px !important;
             line-height: 1.6 !important;
+            font-weight: 700 !important;
             padding: 0 !important;
             margin: 0 0 3mm !important;
             border-bottom: 1px solid #000 !important;
@@ -1232,13 +1233,21 @@ export default function EnrollmentModal({
             background: transparent !important;
             padding: 0 0 1mm !important;
             font-size: 12px !important;
+            font-weight: 700 !important;
             line-height: 1.5 !important;
             min-height: 7mm !important;
+            color: #000 !important;
             box-shadow: none !important;
             outline: none !important;
             -webkit-appearance: none !important;
             -moz-appearance: none !important;
             appearance: none !important;
+          }
+
+          input::placeholder, textarea::placeholder {
+            font-weight: 700 !important;
+            color: #000 !important;
+            opacity: 1 !important;
           }
           
           select {
