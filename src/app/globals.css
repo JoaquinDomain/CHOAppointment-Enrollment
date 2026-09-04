@@ -49,6 +49,12 @@ input, select, textarea {
   display: none !important;
 }
 
+/* Print-Only Clinical Info (dual Chief Complaint) — hidden on web UI, rendered only during print/PDF export.
+   Strictly non-destructive: zero changes to screen layout, margins, fonts, or positioning. */
+.print-only-clinical-info {
+  display: none !important;
+}
+
 @media print {
   .print-header {
     display: grid !important;
@@ -130,6 +136,31 @@ input, select, textarea {
     white-space: nowrap;
     text-align: center;
     text-transform: uppercase;
+  }
+
+  /* Dual Chief Complaint print-only section — print rendering only (1-page A4 compression) */
+  .print-only-clinical-info {
+    display: block !important;
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+    margin-bottom: 2px !important;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .print-only-clinical-info .print-clinical-title,
+  .print-only-clinical-info .print-cc-block,
+  .print-only-clinical-info .print-cc-label,
+  .print-only-clinical-info .print-cc-line {
+    font-size: 9px !important;
+    line-height: 1.1 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .print-only-clinical-info .print-cc-line {
+    border-bottom: 1px solid #000 !important;
+    min-height: 14px !important;
+    color: #000 !important;
   }
 
   /* Strict 1-page A4 compression */
