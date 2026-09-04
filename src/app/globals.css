@@ -138,7 +138,7 @@ input, select, textarea {
     text-transform: uppercase;
   }
 
-  /* Dual Chief Complaint print-only section — print rendering only (1-page A4 compression) */
+  /* Clinical Information print-only section — PAGE 2 ONLY, all fields together */
   .print-only-clinical-info {
     display: block !important;
     font-size: 9px !important;
@@ -146,6 +146,13 @@ input, select, textarea {
     margin-bottom: 2px !important;
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+
+  .print-only-clinical-info.print-page-2 {
+    break-before: page !important;
+    page-break-before: always !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
   }
 
   .print-only-clinical-info .print-clinical-title,
@@ -176,9 +183,9 @@ input, select, textarea {
   }
 
   #enrollment-form {
-    max-height: 100vh;
-    overflow: hidden;
-    page-break-inside: avoid;
+    max-height: none;
+    overflow: visible;
+    page-break-inside: auto;
     margin: 0 2mm;
     padding: 3mm 4mm;
     line-height: 1.1;
@@ -193,9 +200,14 @@ input, select, textarea {
     page-break-inside: avoid;
   }
 
-  /* Document terminates at signature block — nothing may follow it */
+  /* Page 1 ends at Patient / CHO-BHS signatures — Page 2 holds all Clinical Information */
   .signature-row-compact {
-    break-after: avoid;
-    page-break-after: avoid;
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .signature-page1-end {
+    break-after: page !important;
+    page-break-after: always !important;
   }
 }

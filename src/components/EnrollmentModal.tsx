@@ -710,9 +710,9 @@ export default function EnrollmentModal({
                 I accept the Data Privacy Consent *
               </label>
             </div>
-            {/* Print-order: Signatures Block directly below Section II consent.
+            {/* Print-order: Signatures Block terminates Page 1 directly below Section II consent.
                 Web UI unchanged: .print-only-clinical-info stays display:none on screen. */}
-            <div className="signature-row-compact">
+            <div className="signature-row-compact signature-page1-end">
               <div className="signature-col-compact">
                 <div className="signature-line-compact"></div>
                 <div className="signature-label-compact">Patient Sig / Date</div>
@@ -723,9 +723,10 @@ export default function EnrollmentModal({
               </div>
             </div>
             {/* Print-only Clinical Information — hidden on screen, rendered only in print.
-                Full section rendered below Patient & CHO/BHS Rep Signatures block.
+                PAGE 2: entire section forced onto second printed page via
+                break-before: page. Page 1 ends at signatures above.
                 Web UI layout, styles, and components above remain 100% untouched. */}
-            <div className="print-only-clinical-info signature-terminator" aria-hidden="true">
+            <div className="print-only-clinical-info print-page-2" aria-hidden="true">
               <div className="print-clinical-title">Clinical Information</div>
               <div className="print-cc-block">
                 <div className="print-cc-label">Chief Complaint</div>
@@ -778,9 +779,8 @@ export default function EnrollmentModal({
 
           {/* NOTE: Full ClinicalInformationSection web component is intentionally not
               rendered on screen here to preserve the web UI layout 100%.
-              Only the compact dual Chief Complaint print-only block above
-              (.print-only-clinical-info) is emitted in print to guarantee a
-              strict 1-page A4 layout. */}
+              Only the print-only block above (.print-only-clinical-info.print-page-2)
+              is emitted in print, forced onto PAGE 2 for a 2-page A4 layout. */}
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-2 border-t border-slate-200 no-print">
@@ -866,18 +866,18 @@ export default function EnrollmentModal({
           }
           
           #enrollment-form {
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            max-height: 100vh;
-            overflow: hidden;
-            page-break-inside: avoid;
+            position: static;
+            left: auto;
+            top: auto;
+            width: auto;
+            max-height: none;
+            overflow: visible;
+            page-break-inside: auto;
             margin: 0 2mm;
             padding: 3mm 4mm;
             line-height: 1.15;
             font-size: 9px;
-            zoom: 0.85;
+            zoom: 1;
           }
 
           #enrollment-form form {
@@ -893,10 +893,15 @@ export default function EnrollmentModal({
             padding: 2mm 0;
           }
 
-          /* Compact signature block — must stay on page 1 */
+          /* Page 1 ends at Patient / CHO-BHS signatures */
           .signature-row-compact {
             margin-top: 4px !important;
             gap: 10px !important;
+          }
+
+          .signature-page1-end {
+            break-after: page !important;
+            page-break-after: always !important;
           }
 
           .signature-line-compact {
@@ -923,10 +928,9 @@ export default function EnrollmentModal({
             display: block !important;
           }
 
-          /* Full Clinical Information print-only section — print rendering only.
-             Order: below Patient & CHO/BHS signatures. Tight compression
-             targets strict 1-page A4; web classes untouched.
-             Spec: font-size 9px; line-height 1.15; padding 2mm 0. */
+          /* Full Clinical Information — PAGE 2 ONLY.
+             Entire section forced onto second printed page, kept together.
+             Web classes untouched. Spec: font-size 9px; line-height 1.15; padding 2mm 0. */
           .print-only-clinical-info {
             display: block !important;
             font-size: 9px !important;
@@ -935,6 +939,13 @@ export default function EnrollmentModal({
             margin-bottom: 2px !important;
             break-inside: avoid;
             page-break-inside: avoid;
+          }
+
+          .print-only-clinical-info.print-page-2 {
+            break-before: page !important;
+            page-break-before: always !important;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
           }
 
           .print-only-clinical-info .print-clinical-title {
