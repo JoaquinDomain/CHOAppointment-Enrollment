@@ -1,8 +1,7 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
-import { Home, Shield } from 'lucide-react'
+import { Home, Shield, Stethoscope } from 'lucide-react'
 
 export default function Navigation() {
   return (
@@ -10,14 +9,7 @@ export default function Navigation() {
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image
-              src="/cho-logo.png"
-              alt="CHO Bacolod logo"
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-full object-cover"
-              priority
-            />
+            <Stethoscope className="w-6 h-6" />
             <span className="font-bold text-lg">CHO Bacolod</span>
           </div>
           <div className="flex gap-4">
