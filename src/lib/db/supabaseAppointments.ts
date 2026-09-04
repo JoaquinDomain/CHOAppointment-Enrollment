@@ -1,24 +1,24 @@
-import { createClient } from '@supabase/supabase-js'
-import type { Appointment } from '@/lib/db/types'
+import { createClient, type SupabaseClient } from '@supabase/supabase-js'
+import type {
+  Appointment,
+  AppointmentInput,
+  AppointmentRepository,
+} from './types'
 
-export type { Appointment } from '@/lib/db/types'
+// Server-only Supabase implementation of the appointment repository.
+// Lazy client creation avoids build-time failures when env is missing.
 
-// Lazy initialization to avoid build-time errors
-const getSupabaseClient = () => {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'placeholder-key'
-  
+function getSupabaseClient(): SupabaseClient {
+  const supabaseUrl =
+    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
+  const supabaseKey =
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'placeholder-key'
+
   return createClient(supabaseUrl, supabaseKey)
 }
 
-/**
- * Service for managing appointment data access
- */
-export class AppointmentService {
-  /**
-   * Create a new appointment
-   */
-  async createAppointment(appointment: Appointment): Promise<Appointment> {
+export class SupabaseAppointmentRepository implements AppointmentRepository {
+  async createAppointment(appointment: AppointmentInput): Promise<Appointment> {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
@@ -29,13 +29,9 @@ export class AppointmentService {
     if (error) {
       throw new Error(`Failed to create appointment: ${error.message}`)
     }
-
-    return data
+    return data as Appointment
   }
 
-  /**
-   * Get all appointments (admin only)
-   */
   async getAllAppointments(): Promise<Appointment[]> {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -46,13 +42,9 @@ export class AppointmentService {
     if (error) {
       throw new Error(`Failed to fetch appointments: ${error.message}`)
     }
-
-    return data || []
+    return (data ?? []) as Appointment[]
   }
 
-  /**
-   * Get appointment by ID
-   */
   async getAppointmentById(id: string): Promise<Appointment | null> {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -63,17 +55,13 @@ export class AppointmentService {
 
     if (error) {
       if (error.code === 'PGRST116') {
-        return null // Not found
+        return null
       }
       throw new Error(`Failed to fetch appointment: ${error.message}`)
     }
-
-    return data
+    return data as Appointment
   }
 
-  /**
-   * Get appointments by date
-   */
   async getAppointmentsByDate(date: string): Promise<Appointment[]> {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -85,13 +73,9 @@ export class AppointmentService {
     if (error) {
       throw new Error(`Failed to fetch appointments by date: ${error.message}`)
     }
-
-    return data || []
+    return (data ?? []) as Appointment[]
   }
 
-  /**
-   * Get appointments by facility
-   */
   async getAppointmentsByFacility(facility: string): Promise<Appointment[]> {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -101,15 +85,13 @@ export class AppointmentService {
       .order('created_at', { ascending: false })
 
     if (error) {
-      throw new Error(`Failed to fetch appointments by facility: ${error.message}`)
+      throw new Error(
+        `Failed to fetch appointments by facility: ${error.message}`
+      )
     }
-
-    return data || []
+    return (data ?? []) as Appointment[]
   }
 
-  /**
-   * Search appointments by patient name
-   */
   async searchAppointmentsByName(name: string): Promise<Appointment[]> {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
@@ -121,14 +103,13 @@ export class AppointmentService {
     if (error) {
       throw new Error(`Failed to search appointments: ${error.message}`)
     }
-
-    return data || []
+    return (data ?? []) as Appointment[]
   }
 
-  /**
-   * Update appointment
-   */
-  async updateAppointment(id: string, updates: Partial<Appointment>): Promise<Appointment> {
+  async updateAppointment(
+    id: string,
+    updates: Partial<AppointmentInput>
+  ): Promise<Appointment> {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
@@ -140,29 +121,22 @@ export class AppointmentService {
     if (error) {
       throw new Error(`Failed to update appointment: ${error.message}`)
     }
-
-    return data
+    return data as Appointment
   }
 
-  /**
-   * Delete appointment
-   */
   async deleteAppointment(id: string): Promise<void> {
     const supabase = getSupabaseClient()
-    const { error } = await supabase
-      .from('appointments')
-      .delete()
-      .eq('id', id)
+    const { error } = await supabase.from('appointments').delete().eq('id', id)
 
     if (error) {
       throw new Error(`Failed to delete appointment: ${error.message}`)
     }
   }
 
-  /**
-   * Get count of appointments for a specific date and service
-   */
-  async getAppointmentsCount(date: string, serviceType: string): Promise<number> {
+  async getAppointmentsCount(
+    date: string,
+    serviceType: string
+  ): Promise<number> {
     const supabase = getSupabaseClient()
     const { count, error } = await supabase
       .from('appointments')
@@ -173,10 +147,6 @@ export class AppointmentService {
     if (error) {
       throw new Error(`Failed to count appointments: ${error.message}`)
     }
-
     return count || 0
   }
 }
-
-// Singleton instance
-export const appointmentService = new AppointmentService()

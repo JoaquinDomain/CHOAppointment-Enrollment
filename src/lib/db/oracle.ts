@@ -1,104 +1,147 @@
 import oracledb from 'oracledb'
 
-// Oracle DB configuration with mock fallback
-const oracleConfig = {
-  user: process.env.ORACLE_USER,
-  password: process.env.ORACLE_PASSWORD,
-  connectString: process.env.ORACLE_CONNECT_STRING,
+// Server-only module: manages a pooled Oracle connection using thin mode
+// by default. Thick mode is only enabled when ORACLE_CLIENT_LIB_DIR is set.
+
+export interface OraclePoolConfig {
+  user: string
+  password: string
+  connectString: string
+  poolMin?: number
+  poolMax?: number
 }
 
-let isOracleAvailable = false
+export function getOracleConfig(): OraclePoolConfig | null {
+  const user = process.env.ORACLE_USER
+  const password = process.env.ORACLE_PASSWORD
+  const connectString = process.env.ORACLE_CONNECT_STRING
 
-// Check if Oracle credentials are available
-if (oracleConfig.user && oracleConfig.password && oracleConfig.connectString) {
-  isOracleAvailable = true
-  // Configure Oracle in thin mode
-  oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_LIB_DIR })
+  if (!user || !password || !connectString) {
+    return null
+  }
+
+  return {
+    user,
+    password,
+    connectString,
+    poolMin: Number(process.env.ORACLE_POOL_MIN || 1),
+    poolMax: Number(process.env.ORACLE_POOL_MAX || 4),
+  }
 }
+
+export function isOracleConfigured(): boolean {
+  return getOracleConfig() !== null
+}
+
+let poolPromise: Promise<oracledb.Pool> | null = null
 
 /**
- * Oracle database connection manager with mock fallback
+ * Lazily create (and cache) a single Oracle connection pool.
+ * Safe to call from Next.js server code; returns null when unconfigured.
  */
-export class OracleDB {
-  private connection: oracledb.Connection | null = null
-
-  /**
-   * Connect to Oracle database
-   */
-  async connect(): Promise<void> {
-    if (!isOracleAvailable) {
-      console.log('Oracle credentials not configured, using mock data')
-      return
-    }
-
-    try {
-      this.connection = await oracledb.getConnection(oracleConfig)
-      console.log('Connected to Oracle database')
-    } catch (error) {
-      console.error('Oracle connection failed, falling back to mock data:', error)
-      isOracleAvailable = false
-    }
+export async function getOraclePool(): Promise<oracledb.Pool | null> {
+  const config = getOracleConfig()
+  if (!config) {
+    return null
   }
 
-  /**
-   * Execute a query
-   */
-  async execute(sql: string, params: any[] = []): Promise<any> {
-    if (!isOracleAvailable || !this.connection) {
-      return this.mockQuery(sql, params)
-    }
-
-    try {
-      const result = await this.connection.execute(sql, params, {
-        outFormat: oracledb.OUT_FORMAT_OBJECT
-      })
-      return result.rows
-    } catch (error) {
-      console.error('Oracle query failed, falling back to mock data:', error)
-      return this.mockQuery(sql, params)
-    }
-  }
-
-  /**
-   * Mock query fallback for when Oracle is not available
-   */
-  private mockQuery(sql: string, params: any[]): any {
-    // Simple mock implementation - return empty array for now
-    // This can be expanded with actual mock data based on the query
-    console.log('Using mock data for query:', sql.substring(0, 50) + '...')
-    return []
-  }
-
-  /**
-   * Close the database connection
-   */
-  async close(): Promise<void> {
-    if (this.connection) {
+  if (!poolPromise) {
+    // Thick mode requires Oracle Client libraries; only opt in when a
+    // lib directory is explicitly provided. Otherwise thin mode is used.
+    if (process.env.ORACLE_CLIENT_LIB_DIR) {
       try {
-        await this.connection.close()
-        console.log('Oracle connection closed')
-      } catch (error) {
-        console.error('Error closing Oracle connection:', error)
+        oracledb.initOracleClient({ libDir: process.env.ORACLE_CLIENT_LIB_DIR })
+      } catch (err) {
+        console.error('Failed to initialize Oracle thick-mode client:', err)
+        throw err
       }
-      this.connection = null
     }
+
+    poolPromise = oracledb.createPool({
+      user: config.user,
+      password: config.password,
+      connectString: config.connectString,
+      poolMin: config.poolMin,
+      poolMax: config.poolMax,
+    }).catch(err => {
+      // Allow a later retry instead of caching a rejected pool forever.
+      poolPromise = null
+      throw err
+    })
   }
 
-  /**
-   * Check if Oracle is available
-   */
-  static isAvailable(): boolean {
-    return isOracleAvailable
+  return poolPromise
+}
+
+/** Oracle has no native boolean column type; flags are stored as NUMBER(1). */
+export function toNumber01(value: boolean | undefined | null): number {
+  return value ? 1 : 0
+}
+
+export function fromNumber01(value: number | null | undefined): boolean {
+  return value === 1
+}
+
+/** Normalize an Oracle DATE/TIMESTAMP select value to an ISO string. */
+export function toISOString(value: unknown): string | undefined {
+  if (value === null || value === undefined) {
+    return undefined
+  }
+  if (value instanceof Date) {
+    return value.toISOString()
+  }
+  return String(value)
+}
+
+/** Out-bind values returned by DML ... RETURNING ... INTO. */
+export type OracleOutBinds = Record<string, unknown>
+
+/**
+ * Run a statement against the pool with automatic connection handling.
+ * SELECT-style calls resolve with rows; DML auto-commits by default.
+ */
+export async function executeOracle<T = Record<string, unknown>>(
+  sql: string,
+  binds: oracledb.BindParameters = {},
+  options: oracledb.ExecuteOptions = {}
+): Promise<{ rows: T[]; outBinds?: OracleOutBinds }> {
+  const pool = await getOraclePool()
+  if (!pool) {
+    throw new Error(
+      'Oracle is not configured. Set ORACLE_USER, ORACLE_PASSWORD and ORACLE_CONNECT_STRING.'
+    )
+  }
+
+  const connection = await pool.getConnection()
+  try {
+    const result = await connection.execute<T>(sql, binds, {
+      outFormat: oracledb.OUT_FORMAT_OBJECT,
+      autoCommit: true,
+      ...options,
+    })
+    return {
+      rows: (result.rows ?? []) as T[],
+      outBinds: result.outBinds as OracleOutBinds | undefined,
+    }
+  } finally {
+    try {
+      await connection.close()
+    } catch {
+      // Connection will be reclaimed by the pool; nothing to do.
+    }
   }
 }
 
-// Singleton instance
-let oracleInstance: OracleDB | null = null
-
-export async function getOracleDB(): Promise<OracleDB> {
-  if (!oracleInstance) {
-    oracleInstance = new OracleDB()
-    await oracleInstance.connect()
+/** Gracefully drain the pool (used in tests / shutdown hooks). */
+export async function closeOraclePool(): Promise<void> {
+  if (poolPromise) {
+    try {
+      const pool = await poolPromise
+      await pool.close(10)
+    } catch {
+      // Already closed or never created.
+    } finally {
+      poolPromise = null
+    }
   }
-  return oracleInstance
 }
