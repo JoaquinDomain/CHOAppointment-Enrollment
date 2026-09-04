@@ -1254,8 +1254,37 @@ export default function EnrollmentModal({
             background-image: none !important;
           }
           
+          /* Program & Coverage checkboxes — printable box, ✓ only when selected */
           input[type="checkbox"] {
-            display: none !important;
+            display: inline-block !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            appearance: none !important;
+            width: 4.5mm !important;
+            height: 4.5mm !important;
+            min-height: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: 1.5px solid #000 !important;
+            border-radius: 0.5mm !important;
+            background: transparent !important;
+            position: relative !important;
+            flex-shrink: 0 !important;
+            box-shadow: none !important;
+            outline: none !important;
+          }
+
+          input[type="checkbox"]:checked::after {
+            content: '✓' !important;
+            position: absolute !important;
+            inset: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 13px !important;
+            font-weight: 800 !important;
+            line-height: 1 !important;
+            color: #000 !important;
           }
 
           .print-service-checkbox {
