@@ -896,18 +896,18 @@ export default function EnrollmentModal({
           body {
             background: #fff !important;
             color: #000 !important;
-            font-size: 9px;
-            line-height: 1.15;
+            font-size: 12px;
+            line-height: 1.5;
           }
 
           .consent-text {
-            font-size: 7pt !important;
-            line-height: 1.15 !important;
-            margin-bottom: 2px !important;
+            font-size: 10.5pt !important;
+            line-height: 1.5 !important;
+            margin-bottom: 3mm !important;
           }
 
           .consent-text p {
-            margin: 0 0 2px !important;
+            margin: 0 0 3mm !important;
           }
           
           body * {
@@ -930,28 +930,28 @@ export default function EnrollmentModal({
             margin: 0 !important;
             padding: 0 2mm !important;
             box-sizing: border-box !important;
-            line-height: 1.15;
-            font-size: 9px;
+            line-height: 1.5;
+            font-size: 12px;
             zoom: 1;
           }
 
           #enrollment-form form {
-            line-height: 1.15;
+            line-height: 1.5;
           }
 
           #enrollment-form .space-y-2 > *,
           #enrollment-form .space-y-3 > *,
           #enrollment-form .space-y-4 > * {
-            margin-bottom: 2px !important;
-            font-size: 9px;
-            line-height: 1.15;
-            padding: 1mm 0;
+            margin-bottom: 3mm !important;
+            font-size: 12px;
+            line-height: 1.5;
+            padding: 2mm 0;
           }
 
           /* Page 1 ends at Patient / CHO-BHS signatures.
              Single break only (on Page-2 section) to avoid blank middle page. */
           .signature-row-compact {
-            margin-top: 4px !important;
+            margin-top: 6mm !important;
             gap: 10px !important;
           }
 
@@ -961,12 +961,12 @@ export default function EnrollmentModal({
           }
 
           .signature-line-compact {
-            height: 14px !important;
-            margin-bottom: 1px !important;
+            height: 24px !important;
+            margin-bottom: 2mm !important;
           }
 
           .signature-label-compact {
-            font-size: 6.5pt !important;
+            font-size: 10pt !important;
           }
 
           .signature-terminator {
@@ -1129,9 +1129,10 @@ export default function EnrollmentModal({
             border-bottom: 1px solid #000 !important;
             border-radius: 0 !important;
             background: transparent !important;
-            padding: 0 !important;
-            font-size: 9px !important;
-            line-height: 1.15 !important;
+            padding: 0 0 1mm !important;
+            font-size: 12px !important;
+            line-height: 1.5 !important;
+            min-height: 7mm !important;
             box-shadow: none !important;
             outline: none !important;
             -webkit-appearance: none !important;
@@ -1167,62 +1168,62 @@ export default function EnrollmentModal({
           }
           
           .space-y-2 {
-            gap: 0.2rem !important;
+            gap: 4mm !important;
           }
           
           .space-y-3 {
-            gap: 0.25rem !important;
+            gap: 5mm !important;
           }
           
           .space-y-4 {
-            gap: 0.3rem !important;
+            gap: 5mm !important;
           }
 
           #enrollment-form .grid {
-            gap: 0.25rem !important;
+            gap: 3mm !important;
           }
 
           #enrollment-form h3 {
-            margin-bottom: 2px !important;
-            padding-bottom: 2px !important;
-            line-height: 1.15 !important;
-            font-size: 9px !important;
+            margin-bottom: 2mm !important;
+            padding-bottom: 1.5mm !important;
+            line-height: 1.5 !important;
+            font-size: 14px !important;
           }
 
           #enrollment-form label {
-            line-height: 1.15 !important;
-            font-size: 8.5px !important;
-            margin-bottom: 0 !important;
+            line-height: 1.5 !important;
+            font-size: 11.5px !important;
+            margin-bottom: 1mm !important;
           }
 
           /* Compact service checklist boxes for print */
           #enrollment-form .grid > div[class*="rounded"] {
-            padding: 2px 4px !important;
+            padding: 2.5mm 3mm !important;
           }
 
           #enrollment-form .grid span:last-child {
-            font-size: 8.5px !important;
-            line-height: 1.15 !important;
+            font-size: 11.5px !important;
+            line-height: 1.5 !important;
           }
 
           #enrollment-form .mb-1,
           #enrollment-form .mb-1\.5 {
-            margin-bottom: 1px !important;
+            margin-bottom: 2mm !important;
           }
 
           #enrollment-form .pb-1,
           #enrollment-form .pb-2 {
-            padding-bottom: 2px !important;
+            padding-bottom: 2mm !important;
           }
 
           #enrollment-form .pt-1,
           #enrollment-form .pt-2 {
-            padding-top: 1px !important;
+            padding-top: 2mm !important;
           }
 
           #enrollment-form .p-2,
           #enrollment-form .p-2\.5 {
-            padding: 4px !important;
+            padding: 3mm !important;
           }
         }
         
