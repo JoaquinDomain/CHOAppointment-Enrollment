@@ -985,13 +985,13 @@ export default function EnrollmentModal({
           }
 
           /* Full Clinical Information — PAGE 2 ONLY.
-             Entire section forced onto second printed page, kept together.
-             Slim inner spacing so Page 2 breathes without crowding. */
+             Two copies share Page 2 evenly: relaxed spacing fills the page
+             so there is no big blank gap below and lines don't feel tight. */
           .print-only-clinical-info {
             display: block !important;
             font-size: 9px !important;
-            line-height: 1.15 !important;
-            padding: 1mm 0 !important;
+            line-height: 1.6 !important;
+            padding: 2mm 0 !important;
             margin: 0 !important;
             break-inside: avoid;
             page-break-inside: avoid;
@@ -1010,21 +1010,21 @@ export default function EnrollmentModal({
             page-break-before: auto !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
-            margin-top: 3mm !important;
+            margin-top: 4mm !important;
           }
 
           .print-clinical-divider {
             display: block !important;
             border-top: 1px dashed #000 !important;
-            margin: 3mm 0 !important;
+            margin: 5mm 0 !important;
             padding: 0 !important;
           }
 
           .print-only-clinical-info .print-clinical-title {
             font-size: 10px !important;
-            line-height: 1.15 !important;
-            margin: 0 0 2mm !important;
-            padding: 0 0 1mm !important;
+            line-height: 1.6 !important;
+            margin: 0 0 3mm !important;
+            padding: 0 0 1.5mm !important;
             font-weight: 700 !important;
             color: #000 !important;
             border-bottom: 1px solid #000 !important;
@@ -1036,16 +1036,16 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-labs-block,
           .print-only-clinical-info .print-rx-block {
             font-size: 9px !important;
-            line-height: 1.15 !important;
+            line-height: 1.6 !important;
             padding: 0 !important;
-            margin: 0 0 2mm !important;
+            margin: 0 0 3.5mm !important;
           }
 
           .print-only-clinical-info .print-cc-label {
             font-size: 9px !important;
-            line-height: 1.15 !important;
+            line-height: 1.6 !important;
             padding: 0 !important;
-            margin: 0 0 1mm !important;
+            margin: 0 0 2mm !important;
             font-weight: 600 !important;
             color: #000 !important;
           }
@@ -1053,20 +1053,20 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-cc-line,
           .print-only-clinical-info .print-write-line {
             font-size: 9px !important;
-            line-height: 1.15 !important;
+            line-height: 1.6 !important;
             padding: 0 !important;
-            margin: 0 0 1.5mm !important;
+            margin: 0 0 3mm !important;
             border-bottom: 1px solid #000 !important;
-            min-height: 12px !important;
+            min-height: 7mm !important;
             color: #000 !important;
           }
 
           .print-only-clinical-info .print-vs-row {
             display: flex !important;
             gap: 8px !important;
-            margin: 0 0 1.5mm !important;
+            margin: 0 0 3mm !important;
             font-size: 9px !important;
-            line-height: 1.15 !important;
+            line-height: 1.6 !important;
             padding: 0 !important;
           }
 
@@ -1079,7 +1079,7 @@ export default function EnrollmentModal({
 
           .print-only-clinical-info .print-vs-label {
             font-size: 9px !important;
-            line-height: 1.15 !important;
+            line-height: 1.6 !important;
             font-weight: 600 !important;
             color: #000 !important;
             white-space: nowrap !important;
@@ -1088,16 +1088,16 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-vs-line {
             flex: 1 !important;
             border-bottom: 1px solid #000 !important;
-            min-height: 12px !important;
+            min-height: 7mm !important;
           }
 
           .print-only-clinical-info .print-physician-row {
             display: flex !important;
             justify-content: space-between !important;
             gap: 10px !important;
-            margin-top: 3px !important;
+            margin-top: 5mm !important;
             font-size: 9px !important;
-            line-height: 1.15 !important;
+            line-height: 1.6 !important;
             padding: 2mm 0 !important;
           }
 
@@ -1113,13 +1113,13 @@ export default function EnrollmentModal({
 
           .print-only-clinical-info .print-physician-line {
             border-bottom: 1px solid #000 !important;
-            margin-bottom: 1px !important;
-            height: 14px !important;
+            margin-bottom: 2mm !important;
+            height: 18px !important;
           }
 
           .print-only-clinical-info .print-physician-label {
             font-size: 6.5pt !important;
-            line-height: 1.15 !important;
+            line-height: 1.6 !important;
             font-weight: 600 !important;
             color: #000 !important;
           }
