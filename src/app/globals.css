@@ -141,6 +141,24 @@ input, select, textarea {
     text-transform: uppercase;
   }
 
+  .print-header-right {
+    grid-column: 3;
+    justify-self: end;
+    align-self: start;
+    text-align: right;
+    white-space: nowrap;
+    font-family: sans-serif;
+  }
+
+  .print-header-date {
+    font-weight: bold;
+    font-size: 12px;
+    white-space: nowrap;
+    text-align: right;
+    border-bottom: 1px solid #000;
+    padding-bottom: 1mm;
+  }
+
   /* Clinical Information print-only section — PAGE 2 ONLY, all fields together */
   .print-only-clinical-info {
     display: block !important;

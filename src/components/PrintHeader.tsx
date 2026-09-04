@@ -22,6 +22,11 @@ export default function PrintHeader() {
         <div className="print-header-middle-line1">BACOLOD CITY HEALTH OFFICE</div>
         <div className="print-header-middle-line2">BACOLOD CITY</div>
       </div>
+
+      {/* Top-Right Block */}
+      <div className="print-header-right">
+        <div className="print-header-date">Date: ____________</div>
+      </div>
     </div>
   )
 }
