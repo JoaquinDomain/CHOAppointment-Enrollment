@@ -55,19 +55,19 @@ input, select, textarea {
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     width: 100%;
-    margin-bottom: 12px;
+    margin-bottom: 5px;
   }
 
   .print-header-left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     grid-column: 1;
   }
 
   .print-header-logo {
-    width: 45px;
-    height: 45px;
+    width: 34px;
+    height: 34px;
     flex-shrink: 0;
     object-fit: contain;
     border-radius: 50%;
@@ -79,28 +79,28 @@ input, select, textarea {
     flex-direction: column;
     white-space: nowrap;
     text-align: left;
-    line-height: 1.15;
+    line-height: 1.1;
     font-family: sans-serif;
-    font-size: 11px;
+    font-size: 8.5px;
   }
 
   .print-header-line1 {
     font-weight: normal;
-    font-size: 11px;
+    font-size: 8.5px;
     white-space: nowrap;
     text-align: left;
   }
 
   .print-header-line2 {
     font-weight: normal;
-    font-size: 11px;
+    font-size: 8.5px;
     white-space: nowrap;
     text-align: left;
   }
 
   .print-header-line3 {
     font-weight: normal;
-    font-size: 11px;
+    font-size: 8.5px;
     white-space: nowrap;
     text-align: left;
   }
@@ -110,7 +110,7 @@ input, select, textarea {
     text-align: center;
     justify-self: center;
     transform: translateX(-15px);
-    line-height: 1.15;
+    line-height: 1.1;
     font-family: sans-serif;
     text-transform: uppercase;
     white-space: nowrap;
@@ -118,7 +118,7 @@ input, select, textarea {
 
   .print-header-middle-line1 {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 11px;
     white-space: nowrap;
     text-align: center;
     text-transform: uppercase;
@@ -126,7 +126,7 @@ input, select, textarea {
 
   .print-header-middle-line2 {
     font-weight: bold;
-    font-size: 14px;
+    font-size: 11px;
     white-space: nowrap;
     text-align: center;
     text-transform: uppercase;
@@ -138,20 +138,26 @@ input, select, textarea {
     margin: 0;
   }
 
+  html, body {
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
   #enrollment-form {
     max-height: 100vh;
     overflow: hidden;
     page-break-inside: avoid;
-    padding: 6mm 8mm;
-    line-height: 1.15;
-    font-size: 10px;
+    padding: 4mm 5mm;
+    line-height: 1.1;
+    font-size: 9px;
   }
 
   #enrollment-form section,
   #enrollment-form .print-section {
-    margin-bottom: 4px;
-    font-size: 10px;
-    line-height: 1.15;
+    margin-bottom: 3px;
+    font-size: 9px;
+    line-height: 1.1;
     page-break-inside: avoid;
   }
 
