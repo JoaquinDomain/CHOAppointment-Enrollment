@@ -62,7 +62,9 @@ input, select, textarea {
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     width: 100%;
-    margin-bottom: 5mm;
+    margin-bottom: 0;
+    padding-bottom: 3mm;
+    border-bottom: 2.5px solid #000;
   }
 
   .print-header-left {
@@ -186,10 +188,10 @@ input, select, textarea {
     color: #000 !important;
   }
 
-  /* Strict 1-page A4 with safe printable margins */
+  /* Strict A4 with safe printable margins (extra bottom room for fixed footer) */
   @page {
     size: A4 portrait;
-    margin: 10mm 8mm;
+    margin: 10mm 8mm 13mm 8mm;
   }
 
   html, body {

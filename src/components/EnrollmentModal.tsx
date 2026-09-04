@@ -307,6 +307,15 @@ export default function EnrollmentModal({
       <div id="enrollment-form" className="p-4 sm:p-6">
         {/* Print Header - Only visible when printing */}
         <PrintHeader />
+        {/* Print-only document banner — hidden on screen */}
+        <div className="print-form-banner" aria-hidden="true">
+          <div className="print-form-banner-title">Patient Enrollment Record&nbsp;&nbsp;/&nbsp;&nbsp;Individual Treatment Record (ITR)</div>
+          <div className="print-form-banner-meta">
+            <span>Date: {printTimestamp || '___________'}</span>
+            <span>Record No.: ___________</span>
+            <span>Facility: {formData.consultingFacility || '___________'}</span>
+          </div>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           {/* Section 1: Patient Demographics */}
@@ -827,6 +836,11 @@ export default function EnrollmentModal({
                 </div>
               </div>
             </div>
+            {/* Print-only document footer — hidden on screen, fixed at page bottom in print */}
+            <div className="print-doc-footer" aria-hidden="true">
+              <span>City Health Office &bull; Bacolod City &bull; Patient Enrollment Record / ITR</span>
+              <span className="print-doc-pageno">Page&nbsp;<span className="pgnum"></span></span>
+            </div>
           </div>
 
           {/* NOTE: Full ClinicalInformationSection web component is intentionally not
@@ -881,16 +895,18 @@ export default function EnrollmentModal({
           font-weight: 600;
           color: #0f172a;
         }
-        /* Print-only Clinical Information — strictly hidden on screen/web.
+        /* Print-only elements — strictly hidden on screen/web.
            Zero impact on web UI layout, margins, fonts, or positioning. */
         .print-only-clinical-info,
-        .print-clinical-divider {
+        .print-clinical-divider,
+        .print-form-banner,
+        .print-doc-footer {
           display: none !important;
         }
         @media print {
           @page {
             size: A4 portrait;
-            margin: 10mm 8mm;
+            margin: 10mm 8mm 13mm 8mm;
           }
           
           body {
@@ -904,10 +920,17 @@ export default function EnrollmentModal({
             font-size: 10.5pt !important;
             line-height: 1.5 !important;
             margin-bottom: 3mm !important;
+            border: 1px solid #000 !important;
+            padding: 3mm !important;
+            text-align: justify !important;
           }
 
           .consent-text p {
             margin: 0 0 3mm !important;
+          }
+
+          .consent-text p:last-child {
+            margin-bottom: 0 !important;
           }
           
           body * {
@@ -916,6 +939,62 @@ export default function EnrollmentModal({
           
           #enrollment-form, #enrollment-form * {
             visibility: visible;
+          }
+
+          /* Document banner — official record title + meta strip */
+          .print-form-banner {
+            display: block !important;
+            text-align: center !important;
+            border-top: 2.5px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            padding: 2.5mm 0 !important;
+            margin: 0 0 4mm !important;
+          }
+
+          .print-form-banner-title {
+            font-size: 14px !important;
+            font-weight: 800 !important;
+            letter-spacing: 0.06em !important;
+            text-transform: uppercase !important;
+            color: #000 !important;
+            line-height: 1.4 !important;
+          }
+
+          .print-form-banner-meta {
+            display: flex !important;
+            justify-content: space-between !important;
+            gap: 6mm !important;
+            margin-top: 2mm !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            color: #000 !important;
+          }
+
+          /* Fixed footer on every printed page */
+          .print-doc-footer {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            border-top: 1px solid #000 !important;
+            padding: 1.5mm 8mm !important;
+            font-size: 8.5px !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.04em !important;
+            color: #000 !important;
+            background: #fff !important;
+          }
+
+          .print-doc-footer .pgnum::after {
+            content: counter(page) !important;
+          }
+
+          /* Hide decorative web icons in print for a clean official look */
+          #enrollment-form svg {
+            display: none !important;
           }
           
           #enrollment-form {
@@ -1021,32 +1100,54 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-clinical-title {
-            font-size: 10px !important;
-            line-height: 1.6 !important;
+            font-size: 13px !important;
+            line-height: 1.4 !important;
             margin: 0 0 3mm !important;
-            padding: 0 0 1.5mm !important;
-            font-weight: 700 !important;
+            padding: 2mm 3mm !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.08em !important;
             color: #000 !important;
+            background: #e8e8e8 !important;
+            border-top: 2px solid #000 !important;
             border-bottom: 1px solid #000 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
 
-          .print-only-clinical-info .print-cc-block,
-          .print-only-clinical-info .print-vs-block,
-          .print-only-clinical-info .print-soap-block,
-          .print-only-clinical-info .print-labs-block,
-          .print-only-clinical-info .print-rx-block {
-            font-size: 9px !important;
-            line-height: 1.6 !important;
+          .print-only-clinical-info .print-cc-block {
+            margin: 0 0 3.5mm !important;
             padding: 0 !important;
+          }
+
+          .print-only-clinical-info .print-vs-block {
+            border: 1px solid #000 !important;
+            padding: 2.5mm 3mm !important;
             margin: 0 0 3.5mm !important;
           }
 
+          .print-only-clinical-info .print-soap-block,
+          .print-only-clinical-info .print-labs-block,
+          .print-only-clinical-info .print-rx-block {
+            border: 1px solid #000 !important;
+            padding: 2.5mm 3mm !important;
+            margin: 0 0 3.5mm !important;
+          }
+
+          .print-only-clinical-info .print-soap-block .print-write-line:last-child,
+          .print-only-clinical-info .print-labs-block .print-write-line:last-child,
+          .print-only-clinical-info .print-rx-block .print-write-line:last-child {
+            margin-bottom: 0 !important;
+          }
+
           .print-only-clinical-info .print-cc-label {
-            font-size: 9px !important;
-            line-height: 1.6 !important;
+            font-size: 9.5px !important;
+            line-height: 1.4 !important;
             padding: 0 !important;
             margin: 0 0 2mm !important;
-            font-weight: 600 !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.06em !important;
             color: #000 !important;
           }
 
@@ -1184,26 +1285,48 @@ export default function EnrollmentModal({
           }
 
           #enrollment-form h3 {
-            margin-bottom: 2mm !important;
-            padding-bottom: 1.5mm !important;
-            line-height: 1.5 !important;
-            font-size: 14px !important;
+            margin-bottom: 3mm !important;
+            padding: 2mm 3mm !important;
+            line-height: 1.4 !important;
+            font-size: 13px !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.08em !important;
+            color: #000 !important;
+            background: #e8e8e8 !important;
+            border-top: 2px solid #000 !important;
+            border-bottom: 1px solid #000 !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
           }
 
           #enrollment-form label {
-            line-height: 1.5 !important;
-            font-size: 11.5px !important;
+            line-height: 1.4 !important;
+            font-size: 9.5px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
             margin-bottom: 1mm !important;
+            color: #000 !important;
           }
 
-          /* Compact service checklist boxes for print */
+          /* Service checklist — clean official boxes */
           #enrollment-form .grid > div[class*="rounded"] {
             padding: 2.5mm 3mm !important;
+            border: 1px solid #000 !important;
+            border-radius: 1mm !important;
+          }
+
+          #enrollment-form .grid > div[class*="rounded"] span:first-child {
+            border: 1.2px solid #000 !important;
           }
 
           #enrollment-form .grid span:last-child {
-            font-size: 11.5px !important;
-            line-height: 1.5 !important;
+            font-size: 11px !important;
+            font-weight: 600 !important;
+            text-transform: none !important;
+            letter-spacing: normal !important;
+            line-height: 1.4 !important;
           }
 
           #enrollment-form .mb-1,
