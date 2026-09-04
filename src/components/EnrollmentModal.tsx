@@ -207,6 +207,19 @@ export default function EnrollmentModal({
     }
   }, [initialData])
 
+  // Dynamic service binding: whatever the patient selects in the UI
+  // (radio buttons, checkboxes, or interactive ServiceSelector cards)
+  // is mapped to the printable checklist on the PATIENT ENROLLMENT RECORD / ITR.
+  useEffect(() => {
+    if (selectedService) {
+      setFormData(prev =>
+        prev.selectedService === selectedService
+          ? prev
+          : { ...prev, selectedService }
+      )
+    }
+  }, [selectedService])
+
   useEffect(() => {
     const handleBeforePrint = () => {
       setPrintTimestamp(new Date().toLocaleString())
@@ -690,8 +703,8 @@ export default function EnrollmentModal({
                 I accept the Data Privacy Consent *
               </label>
             </div>
-            {/* Signature Section */}
-            <div className="signature-row-compact">
+            {/* Signature Section — final element of Page 1; document terminates here */}
+            <div className="signature-row-compact signature-terminator">
               <div className="signature-col-compact">
                 <div className="signature-line-compact"></div>
                 <div className="signature-label-compact">Patient Sig / Date</div>
@@ -703,20 +716,9 @@ export default function EnrollmentModal({
             </div>
           </div>
 
-          {/* Section 5: Clinical Information - Instance 1 (PRINT ONLY) */}
-          <div className="hidden print:block pt-4 border-t-2 border-slate-300">
-            <h3 className="text-xs font-semibold text-slate-800 mb-3">Clinical Information (Instance 1)</h3>
-            <ClinicalInformationSection />
-          </div>
-
-          {/* Divider Line (PRINT ONLY) */}
-          <div className="hidden print:block border-t-2 border-dashed border-slate-400 my-4"></div>
-
-          {/* Section 6: Clinical Information - Instance 2 (PRINT ONLY) */}
-          <div className="hidden print:block pt-4">
-            <h3 className="text-xs font-semibold text-slate-800 mb-3">Clinical Information (Instance 2)</h3>
-            <ClinicalInformationSection />
-          </div>
+          {/* NOTE: Clinical Information instances intentionally omitted from print.
+              The PATIENT ENROLLMENT RECORD / ITR terminates cleanly at the
+              signature block above to guarantee a strict 1-page A4 layout. */}
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-2 border-t border-slate-200 no-print">
@@ -768,18 +770,20 @@ export default function EnrollmentModal({
         @media print {
           @page {
             size: A4 portrait;
-            margin: 6mm 8mm;
+            margin: 0;
           }
           
           body {
             background: #fff !important;
             color: #000 !important;
-            font-size: 9pt;
+            font-size: 10px;
+            line-height: 1.15;
           }
 
           .consent-text {
             font-size: 8.5pt !important;
-            line-height: 1.2 !important;
+            line-height: 1.15 !important;
+            margin-bottom: 4px !important;
           }
           
           body * {
@@ -795,8 +799,32 @@ export default function EnrollmentModal({
             left: 0;
             top: 0;
             width: 100%;
+            max-height: 100vh;
+            overflow: hidden;
+            page-break-inside: avoid;
             margin: 0;
-            padding: 12px;
+            padding: 6mm 8mm;
+            line-height: 1.15;
+            font-size: 10px;
+          }
+
+          #enrollment-form form {
+            line-height: 1.15;
+          }
+
+          #enrollment-form .space-y-2 > *,
+          #enrollment-form .space-y-3 > *,
+          #enrollment-form .space-y-4 > * {
+            margin-bottom: 4px !important;
+            font-size: 10px;
+            line-height: 1.15;
+          }
+
+          .signature-terminator {
+            break-after: avoid;
+            page-break-after: avoid;
+            break-inside: avoid;
+            page-break-inside: avoid;
           }
           
           .no-print {
@@ -848,15 +876,24 @@ export default function EnrollmentModal({
           }
           
           .space-y-2 {
-            gap: 0.35rem !important;
+            gap: 0.25rem !important;
           }
           
           .space-y-3 {
-            gap: 0.5rem !important;
+            gap: 0.35rem !important;
           }
           
           .space-y-4 {
-            gap: 0.75rem !important;
+            gap: 0.5rem !important;
+          }
+
+          #enrollment-form h3 {
+            margin-bottom: 4px !important;
+            line-height: 1.15 !important;
+          }
+
+          #enrollment-form label {
+            line-height: 1.15 !important;
           }
         }
         
