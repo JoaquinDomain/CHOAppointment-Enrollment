@@ -723,10 +723,62 @@ export default function EnrollmentModal({
               </div>
             </div>
             {/* Print-only Clinical Information — hidden on screen, rendered only in print.
-                PAGE 2: entire section forced onto second printed page via
-                break-before: page. Page 1 ends at signatures above.
+                PAGE 2: first copy forced onto second printed page via
+                break-before: page; exact duplicate rendered directly below it.
+                Page 1 ends at signatures above.
                 Web UI layout, styles, and components above remain 100% untouched. */}
             <div className="print-only-clinical-info print-page-2" aria-hidden="true">
+              <div className="print-clinical-title">Clinical Information</div>
+              <div className="print-cc-block">
+                <div className="print-cc-label">Chief Complaint</div>
+                <div className="print-cc-line">{[formData.chiefComplaint1, formData.chiefComplaint2].filter(Boolean).join(' / ') || ''}&nbsp;</div>
+                <div className="print-cc-line">&nbsp;</div>
+              </div>
+              <div className="print-vs-block">
+                <div className="print-vs-row print-vs-row-4">
+                  <div className="print-vs-cell"><span className="print-vs-label">PR</span><span className="print-vs-line">&nbsp;</span></div>
+                  <div className="print-vs-cell"><span className="print-vs-label">CR</span><span className="print-vs-line">&nbsp;</span></div>
+                  <div className="print-vs-cell"><span className="print-vs-label">BP</span><span className="print-vs-line">&nbsp;</span></div>
+                  <div className="print-vs-cell"><span className="print-vs-label">RR</span><span className="print-vs-line">&nbsp;</span></div>
+                </div>
+                <div className="print-vs-row print-vs-row-1">
+                  <div className="print-vs-cell"><span className="print-vs-label">O2 Sat</span><span className="print-vs-line">&nbsp;</span></div>
+                </div>
+                <div className="print-vs-row print-vs-row-3">
+                  <div className="print-vs-cell"><span className="print-vs-label">Height</span><span className="print-vs-line">&nbsp;</span></div>
+                  <div className="print-vs-cell"><span className="print-vs-label">Weight</span><span className="print-vs-line">&nbsp;</span></div>
+                  <div className="print-vs-cell"><span className="print-vs-label">Waist</span><span className="print-vs-line">&nbsp;</span></div>
+                </div>
+              </div>
+              <div className="print-soap-block">
+                <div className="print-cc-label">SOAP Notes</div>
+                <div className="print-write-line">&nbsp;</div>
+                <div className="print-write-line">&nbsp;</div>
+              </div>
+              <div className="print-labs-block">
+                <div className="print-cc-label">Labs</div>
+                <div className="print-write-line">&nbsp;</div>
+                <div className="print-write-line">&nbsp;</div>
+              </div>
+              <div className="print-rx-block">
+                <div className="print-cc-label">Prescriptions</div>
+                <div className="print-write-line">&nbsp;</div>
+                <div className="print-write-line">&nbsp;</div>
+              </div>
+              <div className="print-physician-row">
+                <div className="print-physician-col">
+                  <div className="print-physician-line"></div>
+                  <div className="print-physician-label">Physician Signature</div>
+                </div>
+                <div className="print-physician-col print-physician-date">
+                  <div className="print-physician-line"></div>
+                  <div className="print-physician-label">Date</div>
+                </div>
+              </div>
+            </div>
+            <div className="print-clinical-divider" aria-hidden="true"></div>
+            {/* Duplicate copy — same fields, directly below the first on Page 2 */}
+            <div className="print-only-clinical-info print-duplicate" aria-hidden="true">
               <div className="print-clinical-title">Clinical Information</div>
               <div className="print-cc-block">
                 <div className="print-cc-label">Chief Complaint</div>
@@ -831,7 +883,8 @@ export default function EnrollmentModal({
         }
         /* Print-only Clinical Information — strictly hidden on screen/web.
            Zero impact on web UI layout, margins, fonts, or positioning. */
-        .print-only-clinical-info {
+        .print-only-clinical-info,
+        .print-clinical-divider {
           display: none !important;
         }
         @media print {
@@ -949,6 +1002,22 @@ export default function EnrollmentModal({
             page-break-before: always !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
+          }
+
+          /* Duplicate copy sits directly below the first on the same Page 2 */
+          .print-only-clinical-info.print-duplicate {
+            break-before: auto !important;
+            page-break-before: auto !important;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+            margin-top: 3mm !important;
+          }
+
+          .print-clinical-divider {
+            display: block !important;
+            border-top: 1px dashed #000 !important;
+            margin: 3mm 0 !important;
+            padding: 0 !important;
           }
 
           .print-only-clinical-info .print-clinical-title {

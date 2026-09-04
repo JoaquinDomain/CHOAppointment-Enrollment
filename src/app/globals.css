@@ -51,7 +51,8 @@ input, select, textarea {
 
 /* Print-Only Clinical Info (dual Chief Complaint) — hidden on web UI, rendered only during print/PDF export.
    Strictly non-destructive: zero changes to screen layout, margins, fonts, or positioning. */
-.print-only-clinical-info {
+.print-only-clinical-info,
+.print-clinical-divider {
   display: none !important;
 }
 
@@ -153,6 +154,21 @@ input, select, textarea {
     page-break-before: always !important;
     break-inside: avoid !important;
     page-break-inside: avoid !important;
+  }
+
+  .print-only-clinical-info.print-duplicate {
+    break-before: auto !important;
+    page-break-before: auto !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-top: 3mm !important;
+  }
+
+  .print-clinical-divider {
+    display: block !important;
+    border-top: 1px dashed #000 !important;
+    margin: 3mm 0 !important;
+    padding: 0 !important;
   }
 
   .print-only-clinical-info .print-clinical-title,
