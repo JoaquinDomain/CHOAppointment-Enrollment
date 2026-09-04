@@ -58,6 +58,10 @@ interface EnrollmentData {
   consultingFacility: string
   selectedService?: string
 
+  // Clinical Information (print-only, dynamically populated)
+  chiefComplaint1?: string
+  chiefComplaint2?: string
+
   // Consent
   dataPrivacyConsent: boolean
 }
@@ -195,6 +199,9 @@ export default function EnrollmentModal({
     yakapFacility: '',
 
     consultingFacility: '',
+
+    chiefComplaint1: '',
+    chiefComplaint2: '',
 
     dataPrivacyConsent: false
   })
@@ -703,6 +710,19 @@ export default function EnrollmentModal({
                 I accept the Data Privacy Consent *
               </label>
             </div>
+            {/* Print-only Clinical Information — hidden on screen, rendered only in print.
+                Web UI layout, styles, and components above remain 100% untouched. */}
+            <div className="print-only-clinical-info" aria-hidden="true">
+              <div className="print-clinical-title">Clinical Information</div>
+              <div className="print-cc-block">
+                <div className="print-cc-label">Chief Complaint 1</div>
+                <div className="print-cc-line">{formData.chiefComplaint1 || ''}&nbsp;</div>
+              </div>
+              <div className="print-cc-block">
+                <div className="print-cc-label">Chief Complaint 2</div>
+                <div className="print-cc-line">{formData.chiefComplaint2 || ''}&nbsp;</div>
+              </div>
+            </div>
             {/* Signature Section — final element of Page 1; document terminates here */}
             <div className="signature-row-compact signature-terminator">
               <div className="signature-col-compact">
@@ -716,9 +736,11 @@ export default function EnrollmentModal({
             </div>
           </div>
 
-          {/* NOTE: Clinical Information instances intentionally omitted from print.
-              The PATIENT ENROLLMENT RECORD / ITR terminates cleanly at the
-              signature block above to guarantee a strict 1-page A4 layout. */}
+          {/* NOTE: Full ClinicalInformationSection web component is intentionally not
+              rendered on screen here to preserve the web UI layout 100%.
+              Only the compact dual Chief Complaint print-only block above
+              (.print-only-clinical-info) is emitted in print to guarantee a
+              strict 1-page A4 layout. */}
 
           {/* Action Buttons */}
           <div className="flex gap-2 pt-2 border-t border-slate-200 no-print">
@@ -766,6 +788,11 @@ export default function EnrollmentModal({
           font-size: 7pt;
           font-weight: 600;
           color: #0f172a;
+        }
+        /* Print-only Clinical Information — strictly hidden on screen/web.
+           Zero impact on web UI layout, margins, fonts, or positioning. */
+        .print-only-clinical-info {
+          display: none !important;
         }
         @media print {
           @page {
@@ -853,6 +880,50 @@ export default function EnrollmentModal({
           
           .print-only {
             display: block !important;
+          }
+
+          /* Dual Chief Complaint print-only section — print rendering only.
+             Tight compression targets 1-page A4; web classes untouched. */
+          .print-only-clinical-info {
+            display: block !important;
+            font-size: 9px !important;
+            line-height: 1.1 !important;
+            margin-bottom: 2px !important;
+            break-inside: avoid;
+            page-break-inside: avoid;
+          }
+
+          .print-only-clinical-info .print-clinical-title {
+            font-size: 9px !important;
+            line-height: 1.1 !important;
+            margin-bottom: 2px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+            border-bottom: 1px solid #000 !important;
+            padding-bottom: 2px !important;
+          }
+
+          .print-only-clinical-info .print-cc-block {
+            font-size: 9px !important;
+            line-height: 1.1 !important;
+            margin-bottom: 2px !important;
+          }
+
+          .print-only-clinical-info .print-cc-label {
+            font-size: 9px !important;
+            line-height: 1.1 !important;
+            margin-bottom: 2px !important;
+            font-weight: 600 !important;
+            color: #000 !important;
+          }
+
+          .print-only-clinical-info .print-cc-line {
+            font-size: 9px !important;
+            line-height: 1.1 !important;
+            margin-bottom: 2px !important;
+            border-bottom: 1px solid #000 !important;
+            min-height: 14px !important;
+            color: #000 !important;
           }
           
           input, select, textarea {
