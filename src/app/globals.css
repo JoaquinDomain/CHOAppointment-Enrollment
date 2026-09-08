@@ -160,25 +160,30 @@ input, select, textarea {
     padding-bottom: 1mm;
   }
 
-  /* Clinical Information print-only section — PAGE 2 ONLY, side by side layout */
+  /* Clinical Information print-only section — PAGE 2 ONLY, side by side layout,
+     vertically expanded to fill the full available page height */
   .print-clinical-container {
     display: flex !important;
-    gap: 10mm !important;
+    gap: 8mm !important;
     break-before: page !important;
     page-break-before: always !important;
     break-inside: avoid !important;
     page-break-inside: avoid !important;
+    min-height: 248mm !important;
+    align-items: stretch !important;
   }
 
   .print-only-clinical-info {
-    display: block !important;
+    display: flex !important;
+    flex-direction: column !important;
     font-size: 13px !important;
     line-height: 1.1 !important;
-    margin-bottom: 2px !important;
+    margin-bottom: 1.5px !important;
     break-inside: avoid;
     page-break-inside: avoid;
     flex: 1 !important;
     min-width: 0 !important;
+    min-height: 248mm !important;
   }
 
   .print-only-clinical-info.print-left {
@@ -201,7 +206,7 @@ input, select, textarea {
   .print-only-clinical-info .print-cc-line {
     font-size: 13px !important;
     line-height: 1.1 !important;
-    margin-bottom: 1px !important;
+    margin-bottom: 0.8px !important;
   }
 
   .print-only-clinical-info .print-cc-line {

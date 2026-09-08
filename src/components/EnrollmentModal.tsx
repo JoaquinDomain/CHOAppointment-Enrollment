@@ -744,6 +744,8 @@ export default function EnrollmentModal({
                   <div className="print-cc-line">&nbsp;</div>
                   <div className="print-cc-line">&nbsp;</div>
                   <div className="print-cc-line">&nbsp;</div>
+                  <div className="print-cc-line">&nbsp;</div>
+                  <div className="print-cc-line">&nbsp;</div>
                 </div>
                 <div className="print-vs-block">
                   <div className="print-vs-row print-vs-row-4">
@@ -764,9 +766,15 @@ export default function EnrollmentModal({
                     <div className="print-vs-cell"><span className="print-vs-label">Temp</span><span className="print-vs-line">&nbsp;</span></div>
                     <div className="print-vs-cell"><span className="print-vs-label">BMI</span><span className="print-vs-line">&nbsp;</span></div>
                   </div>
+                  <div className="print-vs-row print-vs-row-2">
+                    <div className="print-vs-cell"><span className="print-vs-label">Pain Scale</span><span className="print-vs-line">&nbsp;</span></div>
+                    <div className="print-vs-cell"><span className="print-vs-label">GCS</span><span className="print-vs-line">&nbsp;</span></div>
+                  </div>
                 </div>
                 <div className="print-soap-block">
                   <div className="print-cc-label">SOAP Notes</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
@@ -779,6 +787,8 @@ export default function EnrollmentModal({
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
                 </div>
                 <div className="print-rx-block">
                   <div className="print-cc-label">Prescriptions</div>
@@ -786,9 +796,20 @@ export default function EnrollmentModal({
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
                 </div>
                 <div className="print-diagnosis-block">
                   <div className="print-cc-label">Diagnosis</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                </div>
+                <div className="print-plan-block">
+                  <div className="print-cc-label">Plan/Management</div>
+                  <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
@@ -813,6 +834,8 @@ export default function EnrollmentModal({
                   <div className="print-cc-line">&nbsp;</div>
                   <div className="print-cc-line">&nbsp;</div>
                   <div className="print-cc-line">&nbsp;</div>
+                  <div className="print-cc-line">&nbsp;</div>
+                  <div className="print-cc-line">&nbsp;</div>
                 </div>
                 <div className="print-vs-block">
                   <div className="print-vs-row print-vs-row-4">
@@ -833,9 +856,15 @@ export default function EnrollmentModal({
                     <div className="print-vs-cell"><span className="print-vs-label">Temp</span><span className="print-vs-line">&nbsp;</span></div>
                     <div className="print-vs-cell"><span className="print-vs-label">BMI</span><span className="print-vs-line">&nbsp;</span></div>
                   </div>
+                  <div className="print-vs-row print-vs-row-2">
+                    <div className="print-vs-cell"><span className="print-vs-label">Pain Scale</span><span className="print-vs-line">&nbsp;</span></div>
+                    <div className="print-vs-cell"><span className="print-vs-label">GCS</span><span className="print-vs-line">&nbsp;</span></div>
+                  </div>
                 </div>
                 <div className="print-soap-block">
                   <div className="print-cc-label">SOAP Notes</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
@@ -848,6 +877,8 @@ export default function EnrollmentModal({
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
                 </div>
                 <div className="print-rx-block">
                   <div className="print-cc-label">Prescriptions</div>
@@ -855,9 +886,20 @@ export default function EnrollmentModal({
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
                 </div>
                 <div className="print-diagnosis-block">
                   <div className="print-cc-label">Diagnosis</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-write-line">&nbsp;</div>
+                </div>
+                <div className="print-plan-block">
+                  <div className="print-cc-label">Plan/Management</div>
+                  <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
                   <div className="print-write-line">&nbsp;</div>
@@ -1103,26 +1145,31 @@ export default function EnrollmentModal({
           }
 
           /* Full Clinical Information — PAGE 2 ONLY.
-             Two copies displayed side by side (left/right) on Page 2. */
+             Two copies displayed side by side (left/right) on Page 2.
+             Vertically expanded to fill the full available page height. */
           .print-clinical-container {
             display: flex !important;
-            gap: 10mm !important;
+            gap: 8mm !important;
             break-before: page !important;
             page-break-before: always !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
+            min-height: 248mm !important;
+            align-items: stretch !important;
           }
 
           .print-only-clinical-info {
-            display: block !important;
+            display: flex !important;
+            flex-direction: column !important;
             font-size: 13px !important;
-            line-height: 1.5 !important;
-            padding: 2mm 0 !important;
+            line-height: 1.4 !important;
+            padding: 1.5mm 0 !important;
             margin: 0 !important;
             break-inside: avoid;
             page-break-inside: avoid;
             flex: 1 !important;
             min-width: 0 !important;
+            min-height: 248mm !important;
           }
 
           .print-only-clinical-info.print-left {
@@ -1142,8 +1189,8 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-clinical-title {
             font-size: 16px !important;
             line-height: 1.3 !important;
-            margin: 0 0 2.5mm !important;
-            padding: 1.5mm 2.5mm !important;
+            margin: 0 0 1.5mm !important;
+            padding: 1mm 2mm !important;
             font-weight: 800 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.08em !important;
@@ -1156,40 +1203,39 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-cc-block {
-            margin: 0 0 2mm !important;
+            margin: 0 0 1.5mm !important;
             padding: 0 !important;
           }
 
           .print-only-clinical-info .print-vs-block {
             border: 1px solid #000 !important;
             padding: 1.5mm 2mm !important;
-            margin: 0 0 2mm !important;
+            margin: 0 0 1.5mm !important;
           }
 
           .print-only-clinical-info .print-soap-block,
           .print-only-clinical-info .print-labs-block,
           .print-only-clinical-info .print-rx-block,
-          .print-only-clinical-info .print-diagnosis-block {
+          .print-only-clinical-info .print-diagnosis-block,
+          .print-only-clinical-info .print-plan-block {
             border: 1px solid #000 !important;
             padding: 1.5mm 2mm !important;
-            margin: 0 0 2mm !important;
+            margin: 0 0 1.5mm !important;
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            justify-content: space-evenly !important;
           }
 
           .print-only-clinical-info .print-soap-block .print-write-line:last-child,
           .print-only-clinical-info .print-labs-block .print-write-line:last-child,
-          .print-only-clinical-info .print-rx-block .print-write-line:last-child {
+          .print-only-clinical-info .print-rx-block .print-write-line:last-child,
+          .print-only-clinical-info .print-diagnosis-block .print-write-line:last-child,
+          .print-only-clinical-info .print-plan-block .print-write-line:last-child {
             margin-bottom: 0 !important;
           }
 
-          .print-only-clinical-info .print-diagnosis-block {
-            border: 1px solid #000 !important;
-            padding: 1.5mm 2mm !important;
-            margin: 0 0 2mm !important;
-          }
 
-          .print-only-clinical-info .print-diagnosis-block .print-write-line:last-child {
-            margin-bottom: 0 !important;
-          }
 
           .print-only-clinical-info .print-cc-label {
             font-size: 13.5px !important;
@@ -1205,30 +1251,31 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-cc-line,
           .print-only-clinical-info .print-write-line {
             font-size: 13px !important;
-            line-height: 1.5 !important;
+            line-height: 1.4 !important;
             font-weight: 700 !important;
             padding: 0 !important;
-            margin: 0 0 1.5mm !important;
+            margin: 0 0 1mm !important;
             border-bottom: 1px solid #000 !important;
-            min-height: 6mm !important;
+            min-height: 5mm !important;
+            flex: 1 !important;
             color: #000 !important;
           }
 
           .print-only-clinical-info .print-vs-row {
             display: flex !important;
             gap: 4px !important;
-            margin: 0 0 1.5mm !important;
+            margin: 0 0 1mm !important;
             font-size: 13px !important;
-            line-height: 1.5 !important;
+            line-height: 1.4 !important;
             padding: 0 !important;
           }
 
           .print-only-clinical-info .print-vs-row-2 {
             display: flex !important;
             gap: 4px !important;
-            margin: 0 0 1.5mm !important;
+            margin: 0 0 1mm !important;
             font-size: 13px !important;
-            line-height: 1.5 !important;
+            line-height: 1.4 !important;
             padding: 0 !important;
           }
 
@@ -1257,10 +1304,11 @@ export default function EnrollmentModal({
             display: flex !important;
             justify-content: space-between !important;
             gap: 6px !important;
-            margin-top: 5mm !important;
+            margin-top: auto !important;
+            padding-top: 5mm !important;
             font-size: 13px !important;
             line-height: 1.5 !important;
-            padding: 1.5mm 0 !important;
+            padding-bottom: 1.5mm !important;
           }
 
           .print-only-clinical-info .print-physician-col {
