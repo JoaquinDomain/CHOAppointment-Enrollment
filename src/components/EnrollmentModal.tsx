@@ -906,27 +906,27 @@ export default function EnrollmentModal({
         @media print {
           @page {
             size: A4 portrait;
-            margin: 10mm 8mm 13mm 8mm;
+            margin: 8mm 6mm 10mm 6mm;
           }
           
           body {
             background: #fff !important;
             color: #000 !important;
-            font-size: 14px;
-            line-height: 1.5;
+            font-size: 16px;
+            line-height: 1.4;
           }
 
           .consent-text {
-            font-size: 10.5pt !important;
-            line-height: 1.5 !important;
-            margin-bottom: 3mm !important;
+            font-size: 11pt !important;
+            line-height: 1.4 !important;
+            margin-bottom: 2mm !important;
             border: 1px solid #000 !important;
-            padding: 3mm !important;
+            padding: 2mm !important;
             text-align: justify !important;
           }
 
           .consent-text p {
-            margin: 0 0 3mm !important;
+            margin: 0 0 2mm !important;
           }
 
           .consent-text p:last-child {
@@ -1009,8 +1009,8 @@ export default function EnrollmentModal({
             margin: 0 !important;
             padding: 0 2mm !important;
             box-sizing: border-box !important;
-            line-height: 1.5;
-            font-size: 14px;
+            line-height: 1.4;
+            font-size: 16px;
             zoom: 1;
           }
 
@@ -1021,17 +1021,17 @@ export default function EnrollmentModal({
           #enrollment-form .space-y-2 > *,
           #enrollment-form .space-y-3 > *,
           #enrollment-form .space-y-4 > * {
-            margin-bottom: 3mm !important;
-            font-size: 14px;
-            line-height: 1.5;
-            padding: 2mm 0;
+            margin-bottom: 2mm !important;
+            font-size: 16px;
+            line-height: 1.4;
+            padding: 1.5mm 0;
           }
 
           /* Page 1 ends at Patient / CHO-BHS signatures.
              Single break only (on Page-2 section) to avoid blank middle page. */
           .signature-row-compact {
-            margin-top: 6mm !important;
-            gap: 10px !important;
+            margin-top: 4mm !important;
+            gap: 8px !important;
           }
 
           .signature-page1-end {
@@ -1068,9 +1068,9 @@ export default function EnrollmentModal({
              so there is no big blank gap below and lines don't feel tight. */
           .print-only-clinical-info {
             display: block !important;
-            font-size: 11px !important;
-            line-height: 1.6 !important;
-            padding: 2mm 0 !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+            padding: 1.5mm 0 !important;
             margin: 0 !important;
             break-inside: avoid;
             page-break-inside: avoid;
@@ -1089,7 +1089,7 @@ export default function EnrollmentModal({
             page-break-before: auto !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
-            margin-top: 4mm !important;
+            margin-top: 2mm !important;
           }
 
           .print-clinical-divider {
@@ -1100,10 +1100,10 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-clinical-title {
-            font-size: 15px !important;
-            line-height: 1.4 !important;
-            margin: 0 0 3mm !important;
-            padding: 2mm 3mm !important;
+            font-size: 17px !important;
+            line-height: 1.3 !important;
+            margin: 0 0 2mm !important;
+            padding: 1.5mm 2.5mm !important;
             font-weight: 800 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.08em !important;
@@ -1116,22 +1116,22 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-cc-block {
-            margin: 0 0 3.5mm !important;
+            margin: 0 0 2mm !important;
             padding: 0 !important;
           }
 
           .print-only-clinical-info .print-vs-block {
             border: 1px solid #000 !important;
-            padding: 2.5mm 3mm !important;
-            margin: 0 0 3.5mm !important;
+            padding: 1.5mm 2mm !important;
+            margin: 0 0 2mm !important;
           }
 
           .print-only-clinical-info .print-soap-block,
           .print-only-clinical-info .print-labs-block,
           .print-only-clinical-info .print-rx-block {
             border: 1px solid #000 !important;
-            padding: 2.5mm 3mm !important;
-            margin: 0 0 3.5mm !important;
+            padding: 1.5mm 2mm !important;
+            margin: 0 0 2mm !important;
           }
 
           .print-only-clinical-info .print-soap-block .print-write-line:last-child,
@@ -1141,10 +1141,10 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-cc-label {
-            font-size: 11.5px !important;
-            line-height: 1.4 !important;
+            font-size: 13.5px !important;
+            line-height: 1.3 !important;
             padding: 0 !important;
-            margin: 0 0 2mm !important;
+            margin: 0 0 1.5mm !important;
             font-weight: 800 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.06em !important;
@@ -1153,22 +1153,22 @@ export default function EnrollmentModal({
 
           .print-only-clinical-info .print-cc-line,
           .print-only-clinical-info .print-write-line {
-            font-size: 11px !important;
-            line-height: 1.6 !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
             font-weight: 700 !important;
             padding: 0 !important;
-            margin: 0 0 3mm !important;
+            margin: 0 0 2mm !important;
             border-bottom: 1px solid #000 !important;
-            min-height: 7mm !important;
+            min-height: 6mm !important;
             color: #000 !important;
           }
 
           .print-only-clinical-info .print-vs-row {
             display: flex !important;
-            gap: 8px !important;
-            margin: 0 0 3mm !important;
-            font-size: 11px !important;
-            line-height: 1.6 !important;
+            gap: 6px !important;
+            margin: 0 0 2mm !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
             padding: 0 !important;
           }
 
@@ -1180,8 +1180,8 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-vs-label {
-            font-size: 11px !important;
-            line-height: 1.6 !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
             font-weight: 600 !important;
             color: #000 !important;
             white-space: nowrap !important;
@@ -1196,11 +1196,11 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-physician-row {
             display: flex !important;
             justify-content: space-between !important;
-            gap: 10px !important;
-            margin-top: 5mm !important;
-            font-size: 11px !important;
-            line-height: 1.6 !important;
-            padding: 2mm 0 !important;
+            gap: 8px !important;
+            margin-top: 3mm !important;
+            font-size: 13px !important;
+            line-height: 1.5 !important;
+            padding: 1.5mm 0 !important;
           }
 
           .print-only-clinical-info .print-physician-col {
@@ -1231,11 +1231,11 @@ export default function EnrollmentModal({
             border-bottom: 1px solid #000 !important;
             border-radius: 0 !important;
             background: transparent !important;
-            padding: 0 0 1mm !important;
-            font-size: 14px !important;
+            padding: 0 0 0.5mm !important;
+            font-size: 16px !important;
             font-weight: 700 !important;
-            line-height: 1.5 !important;
-            min-height: 7mm !important;
+            line-height: 1.4 !important;
+            min-height: 6mm !important;
             color: #000 !important;
             box-shadow: none !important;
             outline: none !important;
@@ -1307,26 +1307,26 @@ export default function EnrollmentModal({
           }
           
           .space-y-2 {
-            gap: 4mm !important;
+            gap: 2.5mm !important;
           }
           
           .space-y-3 {
-            gap: 5mm !important;
+            gap: 3mm !important;
           }
           
           .space-y-4 {
-            gap: 5mm !important;
-          }
-
-          #enrollment-form .grid {
             gap: 3mm !important;
           }
 
+          #enrollment-form .grid {
+            gap: 2mm !important;
+          }
+
           #enrollment-form h3 {
-            margin-bottom: 3mm !important;
-            padding: 2mm 3mm !important;
-            line-height: 1.4 !important;
-            font-size: 15px !important;
+            margin-bottom: 2mm !important;
+            padding: 1.5mm 2.5mm !important;
+            line-height: 1.3 !important;
+            font-size: 17px !important;
             font-weight: 800 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.08em !important;
@@ -1339,12 +1339,12 @@ export default function EnrollmentModal({
           }
 
           #enrollment-form label {
-            line-height: 1.4 !important;
-            font-size: 11.5px !important;
+            line-height: 1.3 !important;
+            font-size: 13.5px !important;
             font-weight: 700 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.05em !important;
-            margin-bottom: 1mm !important;
+            margin-bottom: 0.8mm !important;
             color: #000 !important;
           }
 
