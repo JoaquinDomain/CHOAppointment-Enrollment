@@ -162,7 +162,7 @@ input, select, textarea {
   /* Clinical Information print-only section — PAGE 2 ONLY, all fields together */
   .print-only-clinical-info {
     display: block !important;
-    font-size: 9px !important;
+    font-size: 11px !important;
     line-height: 1.1 !important;
     margin-bottom: 2px !important;
     break-inside: avoid;
@@ -195,7 +195,7 @@ input, select, textarea {
   .print-only-clinical-info .print-cc-block,
   .print-only-clinical-info .print-cc-label,
   .print-only-clinical-info .print-cc-line {
-    font-size: 9px !important;
+    font-size: 11px !important;
     line-height: 1.1 !important;
     margin-bottom: 2px !important;
   }
@@ -231,13 +231,13 @@ input, select, textarea {
     padding: 0 2mm !important;
     box-sizing: border-box !important;
     line-height: 1.1;
-    font-size: 9px;
+    font-size: 11px;
   }
 
   #enrollment-form section,
   #enrollment-form .print-section {
     margin-bottom: 3px;
-    font-size: 9px;
+    font-size: 11px;
     line-height: 1.1;
     page-break-inside: avoid;
   }

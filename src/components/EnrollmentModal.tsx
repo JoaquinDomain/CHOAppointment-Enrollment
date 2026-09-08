@@ -912,7 +912,7 @@ export default function EnrollmentModal({
           body {
             background: #fff !important;
             color: #000 !important;
-            font-size: 12px;
+            font-size: 14px;
             line-height: 1.5;
           }
 
@@ -1010,7 +1010,7 @@ export default function EnrollmentModal({
             padding: 0 2mm !important;
             box-sizing: border-box !important;
             line-height: 1.5;
-            font-size: 12px;
+            font-size: 14px;
             zoom: 1;
           }
 
@@ -1022,7 +1022,7 @@ export default function EnrollmentModal({
           #enrollment-form .space-y-3 > *,
           #enrollment-form .space-y-4 > * {
             margin-bottom: 3mm !important;
-            font-size: 12px;
+            font-size: 14px;
             line-height: 1.5;
             padding: 2mm 0;
           }
@@ -1068,7 +1068,7 @@ export default function EnrollmentModal({
              so there is no big blank gap below and lines don't feel tight. */
           .print-only-clinical-info {
             display: block !important;
-            font-size: 9px !important;
+            font-size: 11px !important;
             line-height: 1.6 !important;
             padding: 2mm 0 !important;
             margin: 0 !important;
@@ -1100,7 +1100,7 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-clinical-title {
-            font-size: 13px !important;
+            font-size: 15px !important;
             line-height: 1.4 !important;
             margin: 0 0 3mm !important;
             padding: 2mm 3mm !important;
@@ -1141,7 +1141,7 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-cc-label {
-            font-size: 9.5px !important;
+            font-size: 11.5px !important;
             line-height: 1.4 !important;
             padding: 0 !important;
             margin: 0 0 2mm !important;
@@ -1153,7 +1153,7 @@ export default function EnrollmentModal({
 
           .print-only-clinical-info .print-cc-line,
           .print-only-clinical-info .print-write-line {
-            font-size: 9px !important;
+            font-size: 11px !important;
             line-height: 1.6 !important;
             font-weight: 700 !important;
             padding: 0 !important;
@@ -1167,7 +1167,7 @@ export default function EnrollmentModal({
             display: flex !important;
             gap: 8px !important;
             margin: 0 0 3mm !important;
-            font-size: 9px !important;
+            font-size: 11px !important;
             line-height: 1.6 !important;
             padding: 0 !important;
           }
@@ -1180,7 +1180,7 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-vs-label {
-            font-size: 9px !important;
+            font-size: 11px !important;
             line-height: 1.6 !important;
             font-weight: 600 !important;
             color: #000 !important;
@@ -1198,7 +1198,7 @@ export default function EnrollmentModal({
             justify-content: space-between !important;
             gap: 10px !important;
             margin-top: 5mm !important;
-            font-size: 9px !important;
+            font-size: 11px !important;
             line-height: 1.6 !important;
             padding: 2mm 0 !important;
           }
@@ -1232,7 +1232,7 @@ export default function EnrollmentModal({
             border-radius: 0 !important;
             background: transparent !important;
             padding: 0 0 1mm !important;
-            font-size: 12px !important;
+            font-size: 14px !important;
             font-weight: 700 !important;
             line-height: 1.5 !important;
             min-height: 7mm !important;
@@ -1326,7 +1326,7 @@ export default function EnrollmentModal({
             margin-bottom: 3mm !important;
             padding: 2mm 3mm !important;
             line-height: 1.4 !important;
-            font-size: 13px !important;
+            font-size: 15px !important;
             font-weight: 800 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.08em !important;
@@ -1340,7 +1340,7 @@ export default function EnrollmentModal({
 
           #enrollment-form label {
             line-height: 1.4 !important;
-            font-size: 9.5px !important;
+            font-size: 11.5px !important;
             font-weight: 700 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.05em !important;
