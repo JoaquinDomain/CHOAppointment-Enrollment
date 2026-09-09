@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, AlertTriangle, CheckCircle, FileText, QrCode } from 'lucide-react'
+import { AlertTriangle, CheckCircle, Clock } from 'lucide-react'
 import DatePicker from './DatePicker'
 import ServiceSelector from './ServiceSelector'
 import EnrollmentModal from './EnrollmentModal'
@@ -238,6 +238,12 @@ export default function AppointmentForm() {
             CHO Laboratory Appointment System
           </h1>
           <p className="text-base text-slate-600 font-medium">City Health Office · Bacolod City</p>
+          <div className="flex justify-center items-center mt-4">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-600 shadow-sm">
+              <Clock className="h-4 w-4 text-emerald-600" />
+              Lab opens 8:00 AM
+            </span>
+          </div>
         </div>
 
         {/* Progress Steps */}
