@@ -257,12 +257,9 @@ export default function AppointmentForm() {
               <Clock className="h-3.5 w-3.5" />
               City Health Office · Bacolod City
             </p>
-            <h1 className="max-w-xl text-3xl font-extrabold leading-[1.08] tracking-tight sm:text-[2.6rem]">
-              Book your lab visit in under two minutes.
+            <h1 className="max-w-2xl text-[1.65rem] font-extrabold leading-[1.12] tracking-tight sm:text-4xl">
+              BACOLOD CITY HEALTH LABORATORY APPOINTMENT SYSTEM
             </h1>
-            <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-emerald-50/95 sm:text-[15px]">
-              Choose a weekday date and service, complete your patient record once, and get a QR confirmation to show on arrival.
-            </p>
             <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-emerald-900 shadow-sm">
                 <Clock className="h-3.5 w-3.5 text-emerald-600" />
