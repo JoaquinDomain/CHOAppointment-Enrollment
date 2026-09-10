@@ -183,46 +183,56 @@ export default function AppointmentForm() {
 
   if (showConfirmation && appointmentId) {
     return (
-      <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-100 p-8 sm:p-10 text-center">
-            <div className="w-20 h-20 bg-emerald-100/80 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-              <CheckCircle className="w-10 h-10 text-emerald-600" />
-            </div>
-            
-            <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Appointment Confirmed!</h1>
-            <p className="text-slate-600 mb-6">Your laboratory schedule has been recorded successfully.</p>
-            
-            <div className="bg-emerald-50/80 border border-emerald-200 rounded-xl p-6 mb-8 text-left">
-              <p className="text-lg text-emerald-950 font-semibold mb-2">
-                Please proceed to CHO Lab on your date of choice at 8:00 AM
-              </p>
-              <p className="text-sm text-emerald-800">
-                Appointment ID: <span className="font-mono font-bold text-emerald-950">{appointmentId}</span>
-              </p>
-            </div>
-
-            <div className="flex justify-center mb-6">
-              <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                <QRCode 
-                  value={appointmentId} 
-                  size={200}
-                  level="H"
-                  includeMargin={true}
-                />
+      <div className="min-h-screen px-4 py-10 sm:px-6 lg:px-8">
+        <div className="cho-animate-in mx-auto max-w-2xl">
+          <div className="overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-2xl shadow-emerald-900/10">
+            <div className="bg-gradient-to-r from-emerald-700 via-emerald-600 to-teal-600 px-8 pb-6 pt-8 text-center text-white">
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/30 backdrop-blur">
+                <CheckCircle className="h-8 w-8" />
               </div>
+              <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">Appointment confirmed</h1>
+              <p className="mt-1 text-sm font-medium text-emerald-50">
+                Your laboratory schedule has been recorded successfully.
+              </p>
             </div>
+            <div className="p-6 sm:p-8">
+              <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5 text-left">
+                <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-700">
+                  What&apos;s next
+                </p>
+                <p className="mt-1 text-[15px] font-semibold leading-relaxed text-emerald-950">
+                  Please proceed to the CHO Lab on your chosen date at 8:00 AM.
+                </p>
+                <p className="mt-2 text-sm text-emerald-800">
+                  Appointment ID:{' '}
+                  <span className="rounded-md bg-white px-2 py-0.5 font-mono font-bold text-emerald-950 ring-1 ring-emerald-200">
+                    {appointmentId}
+                  </span>
+                </p>
+              </div>
 
-            <p className="text-sm text-slate-600 mb-8">
-              Show this QR code to the staff when you arrive at the health office.
-            </p>
+              <div className="mb-4 flex justify-center">
+                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <QRCode
+                    value={appointmentId}
+                    size={200}
+                    level="H"
+                    includeMargin={true}
+                  />
+                </div>
+              </div>
 
-            <button
-              onClick={resetForm}
-              className="w-full sm:w-auto px-8 py-3.5 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg"
-            >
-              Book Another Appointment
-            </button>
+              <p className="mb-7 text-center text-sm text-slate-500">
+                Show this QR code to the staff when you arrive at the health office.
+              </p>
+
+              <button
+                onClick={resetForm}
+                className="w-full rounded-xl bg-emerald-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:-translate-y-px hover:bg-emerald-700 hover:shadow-xl active:translate-y-0"
+              >
+                Book another appointment
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -230,50 +240,70 @@ export default function AppointmentForm() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2 tracking-tight">
-            CHO Laboratory Appointment System
-          </h1>
-          <p className="text-base text-slate-600 font-medium">City Health Office · Bacolod City</p>
-          <div className="flex justify-center items-center mt-4">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-sm font-medium text-slate-600 shadow-sm">
-              <Clock className="h-4 w-4 text-emerald-600" />
-              Lab opens 8:00 AM
-            </span>
+    <div className="min-h-screen px-4 py-8 sm:px-6 sm:py-12">
+      <div className="mx-auto max-w-4xl">
+        {/* Hero */}
+        <div className="cho-animate-in relative mb-6 overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-700 p-6 text-white shadow-xl shadow-emerald-900/20 sm:p-9">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-white/10 blur-2xl"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -bottom-28 -left-16 h-72 w-72 rounded-full bg-teal-300/20 blur-2xl"
+          />
+          <div className="relative">
+            <p className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-50 ring-1 ring-white/25">
+              <Clock className="h-3.5 w-3.5" />
+              City Health Office · Bacolod City
+            </p>
+            <h1 className="max-w-xl text-3xl font-extrabold leading-[1.08] tracking-tight sm:text-[2.6rem]">
+              Book your lab visit in under two minutes.
+            </h1>
+            <p className="mt-2 max-w-xl text-sm font-medium leading-relaxed text-emerald-50/95 sm:text-[15px]">
+              Choose a weekday date and service, complete your patient record once, and get a QR confirmation to show on arrival.
+            </p>
+            <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-emerald-900 shadow-sm">
+                <Clock className="h-3.5 w-3.5 text-emerald-600" />
+                Lab opens 8:00 AM
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-950/30 px-3 py-1.5 text-white ring-1 ring-white/25">
+                Mon – Fri only
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-950/30 px-3 py-1.5 text-white ring-1 ring-white/25">
+                QR check-in
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Progress Steps */}
-        <div className="flex items-center justify-center mb-10">
-          <div className="flex items-center gap-3 bg-white px-6 py-3 rounded-full shadow-sm border border-slate-200/80">
-            <div className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step >= 1 ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-200 text-slate-600'}`}>
+        <div className="cho-animate-in cho-animate-in-1 mb-6 flex justify-center">
+          <ol className="flex w-full max-w-xl items-center gap-2 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-sm sm:gap-3 sm:px-6">
+            <li className="flex items-center gap-2">
+              <span className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all ${step >= 1 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30' : 'bg-slate-200 text-slate-600'}`}>
                 1
-              </div>
+              </span>
               <span className={`text-sm font-semibold ${step >= 1 ? 'text-slate-900' : 'text-slate-500'}`}>Date & Service</span>
-            </div>
-
-            <div className={`w-12 h-1 rounded-full transition-all ${step >= 2 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
-
-            <div className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm transition-all ${step >= 2 ? 'bg-emerald-600 text-white shadow-sm' : 'bg-slate-200 text-slate-600'}`}>
+            </li>
+            <li aria-hidden className={`h-1 min-w-8 flex-1 rounded-full transition-all sm:min-w-12 ${step >= 2 ? 'bg-emerald-500' : 'bg-slate-200'}`} />
+            <li className="flex items-center gap-2">
+              <span className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all ${step >= 2 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30' : 'bg-slate-200 text-slate-600'}`}>
                 2
-              </div>
+              </span>
               <span className={`text-sm font-semibold ${step >= 2 ? 'text-slate-900' : 'text-slate-500'}`}>Patient Record</span>
-            </div>
-          </div>
+            </li>
+          </ol>
         </div>
 
         {/* Main Form Card */}
-        <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-6 sm:p-8">
+        <div className="cho-animate-in cho-animate-in-2 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xl shadow-slate-900/5 sm:p-8">
           {/* Error Message */}
           {error && (
-            <div className="mb-6 flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded">
-              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">
+              <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+              <p className="text-sm font-medium text-red-800">{error}</p>
             </div>
           )}
 
@@ -292,13 +322,17 @@ export default function AppointmentForm() {
                 currentBookings={currentBookings}
               />
 
-              <div className="flex justify-end">
+              <div className="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs font-medium text-slate-500">
+                  Slots refresh per date · weekends closed · bring a valid ID.
+                </p>
                 <button
                   onClick={handleNext}
                   disabled={!selectedDate || !selectedService}
-                  className="px-6 py-3 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-7 py-3 font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:-translate-y-px hover:bg-emerald-700 hover:shadow-xl active:translate-y-0 disabled:translate-y-0 disabled:opacity-40 disabled:shadow-none"
                 >
-                  Next Step
+                  Continue
+                  <span aria-hidden>→</span>
                 </button>
               </div>
             </div>
@@ -306,7 +340,15 @@ export default function AppointmentForm() {
 
           {/* Step 2: Patient Enrollment */}
           {step === 2 && (
-            <div className="space-y-6">
+            <div className="space-y-5">
+              <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-4 sm:p-5">
+                <h3 className="text-sm font-extrabold tracking-tight text-emerald-950">
+                  Step 2 — Patient enrollment record
+                </h3>
+                <p className="mt-0.5 text-xs font-medium leading-relaxed text-emerald-900/80 sm:text-[13px]">
+                  Complete the record below. Saving submits your {selectedService ?? 'selected service'} booking for {selectedDate ?? 'your chosen date'}.
+                </p>
+              </div>
               <EnrollmentModal
                 isOpen={true}
                 inline={true}

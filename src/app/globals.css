@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f1f5f9;
+  --foreground: #0f172a;
+  --cho-50: #ecfdf5;
+  --cho-100: #d1fae5;
+  --cho-600: #059669;
+  --cho-700: #047857;
+  --cho-900: #064e3b;
+  --cho-ink: #0f172a;
+  --cho-muted: #64748b;
+  --cho-card: #ffffff;
+  --cho-ring: rgba(5, 150, 105, 0.18);
 }
 
 @theme inline {
@@ -11,17 +20,116 @@
   --font-sans: var(--font-inter);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
+  background:
+    radial-gradient(1200px 400px at 50% -120px, rgba(5, 150, 105, 0.1), transparent 70%),
+    var(--background);
   color: var(--foreground);
-  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(5, 150, 105, 0.22);
+}
+
+/* Refined scrollbar */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+  border: 2px solid #f1f5f9;
+}
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Accessible focus */
+:focus-visible {
+  outline: 2px solid var(--cho-600);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Entrance motion */
+@keyframes cho-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.cho-animate-in { animation: cho-fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.cho-animate-in-1 { animation-delay: 0.05s; }
+.cho-animate-in-2 { animation-delay: 0.12s; }
+.cho-animate-in-3 { animation-delay: 0.19s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cho-animate-in { animation: none; }
+  html { scroll-behavior: auto; }
+}
+
+/* Shared form controls (upgrades EnrollmentModal + admin filters without logic changes) */
+.cho-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #334155;
+  margin-bottom: 0.375rem;
+}
+.cho-input,
+.cho-select,
+.cho-textarea {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  padding: 0.65rem 0.9rem;
+  font-size: 0.925rem;
+  font-weight: 500;
+  color: #0f172a;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.cho-input:hover,
+.cho-select:hover,
+.cho-textarea:hover { border-color: #94a3b8; }
+.cho-input:focus,
+.cho-select:focus,
+.cho-textarea:focus {
+  outline: none;
+  border-color: var(--cho-600);
+  box-shadow: 0 0 0 4px var(--cho-ring);
+}
+.cho-input::placeholder,
+.cho-textarea::placeholder { color: #94a3b8; }
+
+.cho-section-card {
+  background: #fff;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 1rem;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+}
+.cho-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.01em;
+}
+.cho-section-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.65rem;
+  background: var(--cho-50);
+  color: var(--cho-700);
+  border: 1px solid var(--cho-100);
 }
 
 /* Improve placeholder visibility */

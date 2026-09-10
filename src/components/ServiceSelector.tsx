@@ -141,9 +141,21 @@ export default function ServiceSelector({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <Calendar className="w-5 h-5 text-emerald-600" />
-        <h2 className="text-xl font-semibold text-slate-800">Select Service</h2>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className="cho-section-icon">
+            <Calendar className="h-4 w-4" />
+          </span>
+          <div>
+            <h2 className="text-lg font-bold tracking-tight text-slate-900">Select service</h2>
+            <p className="text-xs font-medium text-slate-500">Availability updates with your chosen date.</p>
+          </div>
+        </div>
+        {selectedDate && (
+          <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200 sm:inline-block">
+            {Object.values(currentBookings).reduce((a, b) => a + b, 0)} booked
+          </span>
+        )}
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -159,12 +171,12 @@ export default function ServiceSelector({
               onMouseEnter={() => setHoveredService(service.id)}
               onMouseLeave={() => setHoveredService(null)}
               className={`
-                relative p-4 rounded-xl border cursor-pointer transition-all duration-200
-                ${isSelected 
-                  ? 'border-emerald-600 bg-emerald-50/70 shadow-md ring-2 ring-emerald-500/20'
+                group relative rounded-2xl border p-4 transition-all duration-200
+                ${isSelected
+                  ? 'border-emerald-500 bg-emerald-50/70 shadow-lg shadow-emerald-600/10 ring-2 ring-emerald-500/25'
                   : isAvailable
-                    ? 'border-slate-200 bg-white hover:border-emerald-400 hover:shadow-md'
-                    : 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
+                    ? 'cursor-pointer border-slate-200/90 bg-white shadow-sm hover:-translate-y-0.5 hover:border-emerald-300 hover:shadow-lg hover:shadow-emerald-900/5'
+                    : 'cursor-not-allowed border-slate-200 bg-slate-50 opacity-60'
                 }
               `}
             >

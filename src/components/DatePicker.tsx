@@ -85,14 +85,19 @@ export default function DatePicker({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2 mb-4">
-        <Calendar className="w-5 h-5 text-emerald-600" />
-        <h2 className="text-xl font-semibold text-slate-800">Appointment Date</h2>
+      <div className="flex items-center gap-2.5">
+        <span className="cho-section-icon">
+          <Calendar className="h-4 w-4" />
+        </span>
+        <div>
+          <h2 className="text-lg font-bold tracking-tight text-slate-900">Appointment date</h2>
+          <p className="text-xs font-medium text-slate-500">Weekdays only · from 8:00 AM.</p>
+        </div>
       </div>
 
       <div className="space-y-3">
         <div>
-          <label htmlFor="appointment-date" className="block text-sm font-medium text-slate-700 mb-2">
+          <label htmlFor="appointment-date" className="cho-label">
             Choose your preferred date
           </label>
           <input
@@ -103,36 +108,32 @@ export default function DatePicker({
             min={getMinDateString()}
             max={getMaxDateString()}
             className={`
-              w-full px-4 py-3 rounded-xl border transition-all text-base font-medium
-              ${error 
-                ? 'border-red-300 focus:border-red-500 focus:ring-2 focus:ring-red-200'
-                : 'border-slate-300 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200'
-              }
-              focus:outline-none text-slate-800 bg-white shadow-sm
+              cho-input text-base font-semibold
+              ${error ? '!border-red-300 !shadow-[0_0_0_4px_rgba(239,68,68,0.12)]' : ''}
             `}
-            style={{ color: '#1e293b' }}
+            style={{ color: '#0f172a' }}
           />
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded">
-            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
-            <p className="text-sm text-red-800">{error}</p>
+          <div className="flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 p-3 shadow-sm">
+            <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
+            <p className="text-sm font-medium text-red-800">{error}</p>
           </div>
         )}
 
         {/* Selected Date Display */}
         {selectedDate && !error && (
-          <div className="p-4 bg-emerald-50/80 border border-emerald-200 rounded-xl shadow-xs">
-            <p className="text-xs font-bold uppercase tracking-wider text-emerald-700 mb-0.5">Selected Date</p>
-            <p className="text-lg font-bold text-emerald-950">{formatDateDisplay(selectedDate)}</p>
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50/80 p-4 shadow-sm">
+            <p className="mb-0.5 text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-700">Selected date</p>
+            <p className="text-lg font-bold tracking-tight text-emerald-950">{formatDateDisplay(selectedDate)}</p>
           </div>
         )}
 
         {/* Info Notice */}
-        <div className="p-3.5 bg-amber-50/80 border border-amber-200/80 rounded-xl">
-          <p className="text-xs sm:text-sm text-amber-900 leading-relaxed">
+        <div className="rounded-2xl border border-amber-200/80 bg-amber-50/80 p-3.5">
+          <p className="text-xs leading-relaxed text-amber-900 sm:text-sm">
             <strong className="font-semibold text-amber-950">Note:</strong> Laboratory appointments are available Monday through Friday only (8:00 AM onwards).
           </p>
         </div>

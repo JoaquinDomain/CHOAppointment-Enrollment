@@ -174,28 +174,35 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       {/* Admin Header */}
-      <div className="bg-emerald-600 text-white shadow">
-        <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+      <div className="relative overflow-hidden bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-700 text-white shadow-lg shadow-emerald-900/20">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full bg-white/10 blur-2xl"
+        />
+        <div className="relative mx-auto max-w-[1800px] px-4 py-6 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-              <p className="text-emerald-200">City Health Office Bacolod</p>
+              <p className="mb-1 inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-emerald-50 ring-1 ring-white/25">
+                CHO Bacolod · Operations
+              </p>
+              <h1 className="text-2xl font-extrabold tracking-tight">Admin dashboard</h1>
+              <p className="text-sm font-medium text-emerald-100">Monitor bookings, verify patients, and manage daily flow.</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-wrap gap-2.5">
               <button
                 onClick={() => setShowQRPoster(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 rounded transition-colors"
+                className="flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 shadow-md transition-all hover:-translate-y-px hover:shadow-lg"
               >
-                <QrCode className="w-4 h-4" />
-                Site QR Poster
+                <QrCode className="h-4 w-4" />
+                Site QR poster
               </button>
-              <button 
+              <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 rounded transition-colors"
+                className="flex items-center gap-2 rounded-xl bg-emerald-950/30 px-4 py-2.5 text-sm font-semibold text-white ring-1 ring-white/25 transition-all hover:bg-emerald-950/45"
               >
-                <LogOut className="w-4 h-4" />
+                <LogOut className="h-4 w-4" />
                 Logout
               </button>
             </div>
@@ -203,27 +210,30 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto max-w-[1800px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
         {/* QR Scanner Section */}
         {showQRScanner && (
-          <div className="mb-6 bg-white rounded-lg shadow p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                <Scan className="w-5 h-5 text-emerald-600" />
-                Scan Patient QR Code
+          <div className="cho-animate-in mb-6 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-base font-extrabold tracking-tight text-slate-900">
+                <span className="cho-section-icon">
+                  <Scan className="h-4 w-4" />
+                </span>
+                Scan patient QR code
               </h2>
               <button
                 onClick={stopQRScanner}
-                className="p-2 hover:bg-slate-100 rounded transition-colors"
+                className="rounded-xl p-2 transition-colors hover:bg-slate-100"
+                aria-label="Close scanner"
               >
-                <XCircle className="w-5 h-5 text-slate-600" />
+                <XCircle className="h-5 w-5 text-slate-500" />
               </button>
             </div>
-            
-            <div id="qr-reader" className="mb-4" />
-            
+
+            <div id="qr-reader" className="overflow-hidden rounded-xl" />
+
             {scannerError && (
-              <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
+              <div className="mt-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-800">
                 {scannerError}
               </div>
             )}
@@ -232,17 +242,18 @@ export default function AdminDashboard() {
 
         {/* Selected Appointment Detail */}
         {selectedAppointment && (
-          <div className="mb-6 bg-white rounded-lg shadow p-6 border-l-4 border-emerald-500">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-green-600" />
-                Patient Found
+          <div className="cho-animate-in mb-6 rounded-2xl border border-emerald-200 bg-white p-5 shadow-md shadow-emerald-900/5 ring-1 ring-emerald-100 sm:p-6">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="flex items-center gap-2 text-base font-extrabold tracking-tight text-slate-900">
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
+                Patient found
               </h2>
               <button
                 onClick={() => setSelectedAppointment(null)}
-                className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+                className="rounded-xl p-2 transition-colors hover:bg-slate-100"
+                aria-label="Dismiss patient details"
               >
-                <XCircle className="w-5 h-5 text-slate-600" />
+                <XCircle className="h-5 w-5 text-slate-500" />
               </button>
             </div>
             
@@ -290,30 +301,30 @@ export default function AdminDashboard() {
         )}
 
         {/* Controls */}
-        <div className="bg-white rounded-lg shadow p-6 mb-6">
-          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-            <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+        <div className="cho-animate-in mb-6 rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm sm:p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               {/* Search */}
-              <div className="relative w-full md:w-64">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <div className="relative w-full sm:w-72">
+                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Search by name or ID..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                  className="cho-input !pl-10"
                 />
               </div>
 
               {/* Facility Filter */}
-              <div className="relative w-full md:w-48">
-                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <div className="relative w-full sm:w-60">
+                <Filter className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <select
                   value={facilityFilter}
                   onChange={(e) => setFacilityFilter(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 appearance-none"
+                  className="cho-select !pl-10 appearance-none pr-9"
                 >
-                  <option value="">All Facilities</option>
+                  <option value="">All facilities</option>
                   {healthFacilities.map(facility => (
                     <option key={facility} value={facility}>{facility}</option>
                   ))}
@@ -321,19 +332,19 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            <div className="flex gap-3 w-full md:w-auto">
+            <div className="flex gap-2.5">
               <button
                 onClick={startQRScanner}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-600/25 transition-all hover:-translate-y-px hover:bg-emerald-700 sm:flex-none"
               >
-                <Scan className="w-4 h-4" />
+                <Scan className="h-4 w-4" />
                 Scan QR
               </button>
               <button
                 onClick={exportToCSV}
-                className="flex items-center gap-2 px-4 py-2 bg-slate-600 text-white rounded hover:bg-slate-700 transition-colors"
+                className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:-translate-y-px hover:border-slate-300 hover:bg-slate-50 sm:flex-none"
               >
-                <Download className="w-4 h-4" />
+                <Download className="h-4 w-4" />
                 Export CSV
               </button>
             </div>
@@ -341,26 +352,26 @@ export default function AdminDashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow p-6">
+        <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4 sm:gap-4">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-emerald-100 rounded">
-                <User className="w-6 h-6 text-emerald-600" />
+              <div className="rounded-xl bg-emerald-100 p-3 ring-1 ring-emerald-200/60">
+                <User className="h-6 w-6 text-emerald-700" />
               </div>
               <div>
-                <p className="text-sm text-slate-600">Total Appointments</p>
-                <p className="text-2xl font-bold text-slate-900">{appointments.length}</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Total appointments</p>
+                <p className="text-2xl font-extrabold tracking-tight text-slate-900">{appointments.length}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-blue-100 rounded">
-                <Calendar className="w-6 h-6 text-blue-600" />
+              <div className="rounded-xl bg-blue-100 p-3 ring-1 ring-blue-200/60">
+                <Calendar className="h-6 w-6 text-blue-700" />
               </div>
               <div>
-                <p className="text-sm text-slate-600">Today's Appointments</p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Today&apos;s appointments</p>
+                <p className="text-2xl font-extrabold tracking-tight text-slate-900">
                   {appointments.filter(apt => {
                     const today = new Date().toISOString().split('T')[0]
                     return apt.appointment_date === today
@@ -369,27 +380,27 @@ export default function AdminDashboard() {
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-green-100 rounded">
-                <CheckCircle className="w-6 h-6 text-green-600" />
+              <div className="rounded-xl bg-green-100 p-3 ring-1 ring-green-200/60">
+                <CheckCircle className="h-6 w-6 text-green-700" />
               </div>
               <div>
-                <p className="text-sm text-slate-600">YAKAP Registered</p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">YAKAP registered</p>
+                <p className="text-2xl font-extrabold tracking-tight text-slate-900">
                   {appointments.filter(apt => apt.yakap_registered).length}
                 </p>
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-center gap-3">
-              <div className="p-3 bg-purple-100 rounded">
-                <MapPin className="w-6 h-6 text-purple-600" />
+              <div className="rounded-xl bg-purple-100 p-3 ring-1 ring-purple-200/60">
+                <MapPin className="h-6 w-6 text-purple-700" />
               </div>
               <div>
-                <p className="text-sm text-slate-600">Active Facilities</p>
-                <p className="text-2xl font-bold text-slate-900">
+                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">Active facilities</p>
+                <p className="text-2xl font-extrabold tracking-tight text-slate-900">
                   {new Set(appointments.map(apt => apt.consulting_facility)).size}
                 </p>
               </div>
@@ -398,62 +409,67 @@ export default function AdminDashboard() {
         </div>
 
         {/* Appointments Table */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="p-6 border-b border-slate-200">
-            <h2 className="text-lg font-semibold text-slate-800">Patient Records</h2>
+        <div className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm">
+          <div className="flex flex-col gap-1 border-b border-slate-200/80 bg-slate-50/60 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <h2 className="text-base font-extrabold tracking-tight text-slate-900">Patient records</h2>
+            <p className="text-xs font-semibold text-slate-500">{filteredAppointments.length} shown</p>
           </div>
           
           {loading ? (
-            <div className="p-12 text-center text-slate-600">Loading appointments...</div>
+            <div className="flex flex-col items-center gap-2 p-12 text-center">
+              <span className="h-8 w-8 animate-spin rounded-full border-2 border-emerald-200 border-t-emerald-600" aria-hidden />
+              <p className="text-sm font-semibold text-slate-600">Loading appointments…</p>
+            </div>
           ) : filteredAppointments.length === 0 ? (
-            <div className="p-12 text-center text-slate-600">
-              No appointments found matching your criteria
+            <div className="p-12 text-center">
+              <p className="text-sm font-bold text-slate-800">No appointments found</p>
+              <p className="mt-1 text-xs font-medium text-slate-500">Try a different name, ID, or facility filter.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200">
-                <thead className="bg-slate-50">
+              <table className="min-w-full divide-y divide-slate-200/80">
+                <thead className="bg-slate-50/80">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                      Patient Name
+                    <th className="whitespace-nowrap px-6 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
+                      Patient
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                    <th className="whitespace-nowrap px-6 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
                       Age
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                      Appointment Date
+                    <th className="whitespace-nowrap px-6 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
+                      Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[180px]">
+                    <th className="min-w-[180px] px-6 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
                       Facility
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                      YAKAP Status
+                    <th className="whitespace-nowrap px-6 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
+                      YAKAP
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider min-w-[200px]">
+                    <th className="min-w-[200px] px-6 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
                       Service
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
-                      Booked / Created
+                    <th className="whitespace-nowrap px-6 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
+                      Booked
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                    <th className="whitespace-nowrap px-6 py-3.5 text-right text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-slate-200">
+                <tbody className="divide-y divide-slate-100 bg-white">
                   {filteredAppointments.map((appointment) => (
-                    <tr key={appointment.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
+                    <tr key={appointment.id} className="transition-colors hover:bg-emerald-50/50">
+                      <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center">
-                            <User className="h-5 w-5 text-emerald-600" />
+                          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 ring-1 ring-emerald-200/60">
+                            <User className="h-5 w-5 text-emerald-700" />
                           </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-slate-900">
+                          <div className="ml-3.5">
+                            <div className="text-sm font-bold tracking-tight text-slate-900">
                               {appointment.full_name}
                             </div>
-                            <div className="text-xs text-slate-500">
-                              ID: {appointment.id?.slice(0, 8)}...
+                            <div className="font-mono text-[11px] font-medium text-slate-400">
+                              {appointment.id?.slice(0, 8)}…
                             </div>
                           </div>
                         </div>
@@ -467,13 +483,14 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4 text-sm text-slate-900 min-w-[180px] break-words">
                         {appointment.consulting_facility}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="whitespace-nowrap px-6 py-4">
                         {appointment.yakap_registered ? (
-                          <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded-full">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200">
+                            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
                             Yes
                           </span>
                         ) : (
-                          <span className="px-2 py-1 text-xs font-medium bg-slate-100 text-slate-800 rounded-full">
+                          <span className="inline-flex items-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold text-slate-600 ring-1 ring-slate-200">
                             No
                           </span>
                         )}
