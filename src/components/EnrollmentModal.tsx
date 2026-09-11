@@ -773,39 +773,19 @@ export default function EnrollmentModal({
                 </div>
                 <div className="print-soap-block">
                   <div className="print-cc-label">SOAP Notes</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-soap">&nbsp;</div>
                 </div>
                 <div className="print-labs-block">
                   <div className="print-cc-label">Labs</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-labs">&nbsp;</div>
                 </div>
                 <div className="print-rx-block">
                   <div className="print-cc-label">Prescriptions</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-rx">&nbsp;</div>
                 </div>
                 <div className="print-diagnosis-block">
                   <div className="print-cc-label">Diagnosis</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-diagnosis">&nbsp;</div>
                 </div>
                 <div className="print-plan-block">
                   <div className="print-cc-label">Plan/Management</div>
@@ -863,39 +843,19 @@ export default function EnrollmentModal({
                 </div>
                 <div className="print-soap-block">
                   <div className="print-cc-label">SOAP Notes</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-soap">&nbsp;</div>
                 </div>
                 <div className="print-labs-block">
                   <div className="print-cc-label">Labs</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-labs">&nbsp;</div>
                 </div>
                 <div className="print-rx-block">
                   <div className="print-cc-label">Prescriptions</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-rx">&nbsp;</div>
                 </div>
                 <div className="print-diagnosis-block">
                   <div className="print-cc-label">Diagnosis</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-diagnosis">&nbsp;</div>
                 </div>
                 <div className="print-plan-block">
                   <div className="print-cc-label">Plan/Management</div>
@@ -987,7 +947,7 @@ export default function EnrollmentModal({
         @media print {
           @page {
             size: A4 portrait;
-            margin: 8mm 6mm 10mm 6mm;
+            margin: 10mm 8mm 12mm 8mm;
           }
           
           body {
@@ -1109,15 +1069,20 @@ export default function EnrollmentModal({
           }
 
           /* Page 1 ends at Patient / CHO-BHS signatures.
-             Single break only (on Page-2 section) to avoid blank middle page. */
+             Single forced break on signatures only — clinical container
+             uses auto to avoid a blank middle page. */
           .signature-row-compact {
-            margin-top: 4mm !important;
+            margin-top: 5mm !important;
             gap: 8px !important;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
           }
 
           .signature-page1-end {
-            break-after: auto !important;
-            page-break-after: auto !important;
+            break-after: page !important;
+            page-break-after: always !important;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
           }
 
           .signature-line-compact {
@@ -1146,12 +1111,14 @@ export default function EnrollmentModal({
 
           /* Full Clinical Information — PAGE 2 ONLY.
              Two copies displayed side by side (left/right) on Page 2.
-             Vertically expanded to fill the full available page height. */
+             Vertically expanded to fill the full available page height.
+             break-before is auto because .signature-page1-end already
+             forces the page break — avoids a blank middle page. */
           .print-clinical-container {
             display: flex !important;
             gap: 8mm !important;
-            break-before: page !important;
-            page-break-before: always !important;
+            break-before: auto !important;
+            page-break-before: auto !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
             min-height: 248mm !important;
@@ -1233,6 +1200,27 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-diagnosis-block .print-write-line:last-child,
           .print-only-clinical-info .print-plan-block .print-write-line:last-child {
             margin-bottom: 0 !important;
+          }
+
+          /* Blank clinical boxes (no ruled lines) — spacers preserve the
+             original box heights so layout is unchanged. */
+          .print-only-clinical-info .print-blank-area {
+            border: none !important;
+            flex: 1 !important;
+            color: #000 !important;
+          }
+
+          .print-only-clinical-info .print-blank-soap {
+            min-height: 41mm !important;
+          }
+
+          .print-only-clinical-info .print-blank-labs,
+          .print-only-clinical-info .print-blank-rx {
+            min-height: 35mm !important;
+          }
+
+          .print-only-clinical-info .print-blank-diagnosis {
+            min-height: 29mm !important;
           }
 
 

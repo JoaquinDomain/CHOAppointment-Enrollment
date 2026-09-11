@@ -323,10 +323,11 @@ input, select, textarea {
     color: #000 !important;
   }
 
-  /* Strict A4 with safe printable margins (extra bottom room for fixed footer) */
+  /* Strict A4 with safe printable margins (extra bottom room for fixed footer).
+     Single source of truth: 10mm top / 8mm sides / 12mm bottom. */
   @page {
     size: A4 portrait;
-    margin: 10mm 8mm 13mm 8mm;
+    margin: 10mm 8mm 12mm 8mm;
   }
 
   html, body {
@@ -359,14 +360,24 @@ input, select, textarea {
     page-break-inside: avoid;
   }
 
-  /* Page 1 ends at Patient / CHO-BHS signatures — single break on Page-2 section only */
+  /* Page 1 ends at Patient / CHO-BHS signatures — signatures close page 1,
+     clinical container starts page 2 (single forced break on signatures
+     to avoid a blank middle page). */
   .signature-row-compact {
-    break-after: auto;
-    page-break-after: auto;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    margin-top: 5mm !important;
   }
 
   .signature-page1-end {
-    break-after: auto !important;
-    page-break-after: auto !important;
+    break-after: page !important;
+    page-break-after: always !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-clinical-container {
+    break-before: auto !important;
+    page-break-before: auto !important;
   }
 }
