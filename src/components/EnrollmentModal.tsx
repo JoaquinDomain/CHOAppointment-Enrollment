@@ -1153,7 +1153,7 @@ export default function EnrollmentModal({
             page-break-before: auto !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
-            min-height: 248mm !important;
+            min-height: 225mm !important;
             align-items: stretch !important;
           }
 
@@ -1168,7 +1168,7 @@ export default function EnrollmentModal({
             page-break-inside: avoid;
             flex: 1 !important;
             min-width: 0 !important;
-            min-height: 248mm !important;
+            min-height: 225mm !important;
           }
 
           .print-only-clinical-info.print-left {
@@ -1208,8 +1208,8 @@ export default function EnrollmentModal({
 
           .print-only-clinical-info .print-vs-block {
             border: 1px solid #000 !important;
-            padding: 1.5mm 2mm !important;
-            margin: 0 0 1.5mm !important;
+            padding: 1mm 2mm !important;
+            margin: 0 0 1mm !important;
           }
 
           .print-only-clinical-info .print-soap-block,
@@ -1218,8 +1218,8 @@ export default function EnrollmentModal({
           .print-only-clinical-info .print-diagnosis-block,
           .print-only-clinical-info .print-plan-block {
             border: 1px solid #000 !important;
-            padding: 1.5mm 2mm !important;
-            margin: 0 0 1.5mm !important;
+            padding: 1mm 2mm !important;
+            margin: 0 0 1mm !important;
             flex: 1 !important;
             display: flex !important;
             flex-direction: column !important;
@@ -1243,16 +1243,16 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-blank-soap {
-            min-height: 41mm !important;
+            min-height: 28mm !important;
           }
 
           .print-only-clinical-info .print-blank-labs,
           .print-only-clinical-info .print-blank-rx {
-            min-height: 35mm !important;
+            min-height: 24mm !important;
           }
 
           .print-only-clinical-info .print-blank-diagnosis {
-            min-height: 29mm !important;
+            min-height: 20mm !important;
           }
 
 
@@ -1274,9 +1274,9 @@ export default function EnrollmentModal({
             line-height: 1.4 !important;
             font-weight: 700 !important;
             padding: 0 !important;
-            margin: 0 0 1mm !important;
+            margin: 0 0 0.8mm !important;
             border-bottom: 1px solid #000 !important;
-            min-height: 5mm !important;
+            min-height: 4mm !important;
             flex: 1 !important;
             color: #000 !important;
           }
@@ -1325,10 +1325,10 @@ export default function EnrollmentModal({
             justify-content: space-between !important;
             gap: 6px !important;
             margin-top: auto !important;
-            padding-top: 5mm !important;
+            padding-top: 2mm !important;
             font-size: 13px !important;
             line-height: 1.5 !important;
-            padding-bottom: 1.5mm !important;
+            padding-bottom: 1mm !important;
           }
 
           .print-only-clinical-info .print-physician-col {

@@ -277,7 +277,7 @@ input, select, textarea {
     page-break-before: always !important;
     break-inside: avoid !important;
     page-break-inside: avoid !important;
-    min-height: 248mm !important;
+    min-height: 225mm !important;
     align-items: stretch !important;
   }
 
@@ -291,7 +291,7 @@ input, select, textarea {
     page-break-inside: avoid;
     flex: 1 !important;
     min-width: 0 !important;
-    min-height: 248mm !important;
+    min-height: 225mm !important;
   }
 
   .print-only-clinical-info.print-left {
