@@ -789,10 +789,7 @@ export default function EnrollmentModal({
                 </div>
                 <div className="print-plan-block">
                   <div className="print-cc-label">Plan/Management</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-plan">&nbsp;</div>
                 </div>
                 <div className="print-physician-row">
                   <div className="print-physician-col">
@@ -859,10 +856,7 @@ export default function EnrollmentModal({
                 </div>
                 <div className="print-plan-block">
                   <div className="print-cc-label">Plan/Management</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
-                  <div className="print-write-line">&nbsp;</div>
+                  <div className="print-blank-area print-blank-plan">&nbsp;</div>
                 </div>
                 <div className="print-physician-row">
                   <div className="print-physician-col">
@@ -1253,6 +1247,10 @@ export default function EnrollmentModal({
 
           .print-only-clinical-info .print-blank-diagnosis {
             min-height: 20mm !important;
+          }
+
+          .print-only-clinical-info .print-blank-plan {
+            min-height: 18mm !important;
           }
 
 
