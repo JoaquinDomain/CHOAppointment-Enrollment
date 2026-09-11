@@ -977,6 +977,16 @@ export default function EnrollmentModal({
           body * {
             visibility: hidden;
           }
+
+          /* Entrance animations retain translateY(0) via fill-mode, which
+             turns ancestor cards into containing blocks for the
+             absolutely-positioned form — anchoring it mid-page and leaving
+             the top half of page 1 blank. Kill all transforms/animations
+             in print (screen UI unchanged). */
+          *, *::before, *::after {
+            animation: none !important;
+            transform: none !important;
+          }
           
           #enrollment-form, #enrollment-form * {
             visibility: visible;
