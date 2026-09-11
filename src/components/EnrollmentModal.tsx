@@ -1055,6 +1055,28 @@ export default function EnrollmentModal({
             zoom: 1;
           }
 
+          /* Kill modal overlay centering/clipping in print — this is what
+             leaves the big blank space above the form on page 1.
+             Screen UI unchanged (print-only overrides). */
+          .fixed.inset-0 {
+            position: static !important;
+            display: block !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: transparent !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+          }
+
+          div[class*="max-h-"] {
+            max-height: none !important;
+          }
+
+          div[class*="overflow-y-auto"],
+          div[class*="overflow-hidden"] {
+            overflow: visible !important;
+          }
+
           #enrollment-form form {
             line-height: 1.3;
           }
