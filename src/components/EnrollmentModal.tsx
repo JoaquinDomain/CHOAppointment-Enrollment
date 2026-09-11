@@ -953,21 +953,21 @@ export default function EnrollmentModal({
           body {
             background: #fff !important;
             color: #000 !important;
-            font-size: 16px;
-            line-height: 1.4;
+            font-size: 12px;
+            line-height: 1.3;
           }
 
           .consent-text {
-            font-size: 11pt !important;
-            line-height: 1.4 !important;
-            margin-bottom: 2mm !important;
+            font-size: 8.5pt !important;
+            line-height: 1.35 !important;
+            margin-bottom: 1.5mm !important;
             border: 1px solid #000 !important;
-            padding: 2mm !important;
+            padding: 1.2mm 1.5mm !important;
             text-align: justify !important;
           }
 
           .consent-text p {
-            margin: 0 0 2mm !important;
+            margin: 0 0 1mm !important;
           }
 
           .consent-text p:last-child {
@@ -988,12 +988,12 @@ export default function EnrollmentModal({
             text-align: center !important;
             border-top: 2.5px solid #000 !important;
             border-bottom: 1px solid #000 !important;
-            padding: 2.5mm 0 !important;
-            margin: 0 0 4mm !important;
+            padding: 1.5mm 0 !important;
+            margin: 0 0 2mm !important;
           }
 
           .print-form-banner-title {
-            font-size: 14px !important;
+            font-size: 12px !important;
             font-weight: 800 !important;
             letter-spacing: 0.06em !important;
             text-transform: uppercase !important;
@@ -1050,29 +1050,29 @@ export default function EnrollmentModal({
             margin: 0 !important;
             padding: 0 2mm !important;
             box-sizing: border-box !important;
-            line-height: 1.4;
-            font-size: 16px;
+            line-height: 1.25;
+            font-size: 12px;
             zoom: 1;
           }
 
           #enrollment-form form {
-            line-height: 1.5;
+            line-height: 1.3;
           }
 
           #enrollment-form .space-y-2 > *,
           #enrollment-form .space-y-3 > *,
           #enrollment-form .space-y-4 > * {
-            margin-bottom: 2mm !important;
-            font-size: 16px;
-            line-height: 1.4;
-            padding: 1.5mm 0;
+            margin-bottom: 1.2mm !important;
+            font-size: 12px;
+            line-height: 1.25;
+            padding: 1mm 0;
           }
 
           /* Page 1 ends at Patient / CHO-BHS signatures.
              Single forced break on signatures only — clinical container
              uses auto to avoid a blank middle page. */
           .signature-row-compact {
-            margin-top: 5mm !important;
+            margin-top: 3mm !important;
             gap: 8px !important;
             break-inside: avoid !important;
             page-break-inside: avoid !important;
@@ -1328,10 +1328,10 @@ export default function EnrollmentModal({
             border-radius: 0 !important;
             background: transparent !important;
             padding: 0 0 0.5mm !important;
-            font-size: 16px !important;
+            font-size: 12px !important;
             font-weight: 700 !important;
-            line-height: 1.4 !important;
-            min-height: 6mm !important;
+            line-height: 1.3 !important;
+            min-height: 5mm !important;
             color: #000 !important;
             box-shadow: none !important;
             outline: none !important;
@@ -1403,26 +1403,26 @@ export default function EnrollmentModal({
           }
           
           .space-y-2 {
-            gap: 2.5mm !important;
+            gap: 1.5mm !important;
           }
           
           .space-y-3 {
-            gap: 3mm !important;
+            gap: 1.8mm !important;
           }
           
           .space-y-4 {
-            gap: 3mm !important;
+            gap: 1.8mm !important;
           }
 
           #enrollment-form .grid {
-            gap: 2mm !important;
+            gap: 1.2mm !important;
           }
 
           #enrollment-form h3 {
-            margin-bottom: 2mm !important;
-            padding: 1.5mm 2.5mm !important;
-            line-height: 1.3 !important;
-            font-size: 17px !important;
+            margin-bottom: 1.2mm !important;
+            padding: 1mm 2mm !important;
+            line-height: 1.25 !important;
+            font-size: 12px !important;
             font-weight: 800 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.08em !important;
@@ -1435,18 +1435,18 @@ export default function EnrollmentModal({
           }
 
           #enrollment-form label {
-            line-height: 1.3 !important;
-            font-size: 13.5px !important;
+            line-height: 1.25 !important;
+            font-size: 10px !important;
             font-weight: 700 !important;
             text-transform: uppercase !important;
             letter-spacing: 0.05em !important;
-            margin-bottom: 0.8mm !important;
+            margin-bottom: 0.5mm !important;
             color: #000 !important;
           }
 
           /* Service checklist — clean official boxes */
           #enrollment-form .grid > div[class*="rounded"] {
-            padding: 2.5mm 3mm !important;
+            padding: 1.2mm 2mm !important;
             border: 1px solid #000 !important;
             border-radius: 1mm !important;
           }
@@ -1456,31 +1456,31 @@ export default function EnrollmentModal({
           }
 
           #enrollment-form .grid span:last-child {
-            font-size: 11px !important;
+            font-size: 10px !important;
             font-weight: 600 !important;
             text-transform: none !important;
             letter-spacing: normal !important;
-            line-height: 1.4 !important;
+            line-height: 1.3 !important;
           }
 
           #enrollment-form .mb-1,
           #enrollment-form .mb-1\.5 {
-            margin-bottom: 2mm !important;
+            margin-bottom: 1mm !important;
           }
 
           #enrollment-form .pb-1,
           #enrollment-form .pb-2 {
-            padding-bottom: 2mm !important;
+            padding-bottom: 1mm !important;
           }
 
           #enrollment-form .pt-1,
           #enrollment-form .pt-2 {
-            padding-top: 2mm !important;
+            padding-top: 1mm !important;
           }
 
           #enrollment-form .p-2,
           #enrollment-form .p-2\.5 {
-            padding: 3mm !important;
+            padding: 1.5mm !important;
           }
         }
         

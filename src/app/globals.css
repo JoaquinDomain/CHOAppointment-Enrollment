@@ -366,7 +366,7 @@ input, select, textarea {
   .signature-row-compact {
     break-inside: avoid !important;
     page-break-inside: avoid !important;
-    margin-top: 5mm !important;
+    margin-top: 3mm !important;
   }
 
   .signature-page1-end {
