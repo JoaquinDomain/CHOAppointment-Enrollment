@@ -787,10 +787,6 @@ export default function EnrollmentModal({
                   <div className="print-cc-label">Diagnosis</div>
                   <div className="print-blank-area print-blank-diagnosis">&nbsp;</div>
                 </div>
-                <div className="print-plan-block">
-                  <div className="print-cc-label">Plan/Management</div>
-                  <div className="print-blank-area print-blank-plan">&nbsp;</div>
-                </div>
                 <div className="print-physician-row">
                   <div className="print-physician-col">
                     <div className="print-physician-line"></div>
@@ -853,10 +849,6 @@ export default function EnrollmentModal({
                 <div className="print-diagnosis-block">
                   <div className="print-cc-label">Diagnosis</div>
                   <div className="print-blank-area print-blank-diagnosis">&nbsp;</div>
-                </div>
-                <div className="print-plan-block">
-                  <div className="print-cc-label">Plan/Management</div>
-                  <div className="print-blank-area print-blank-plan">&nbsp;</div>
                 </div>
                 <div className="print-physician-row">
                   <div className="print-physician-col">
