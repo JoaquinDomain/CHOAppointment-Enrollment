@@ -772,7 +772,6 @@ export default function EnrollmentModal({
                   </div>
                 </div>
                 <div className="print-soap-box">
-                  <div className="print-cc-label">SOAP</div>
                   <div className="print-cc-label">S</div>
                   <div className="print-blank-area print-blank-soap">&nbsp;</div>
                   <div className="print-cc-label">O</div>
@@ -830,7 +829,6 @@ export default function EnrollmentModal({
                   </div>
                 </div>
                 <div className="print-soap-box">
-                  <div className="print-cc-label">SOAP</div>
                   <div className="print-cc-label">S</div>
                   <div className="print-blank-area print-blank-soap">&nbsp;</div>
                   <div className="print-cc-label">O</div>
