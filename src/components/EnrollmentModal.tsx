@@ -780,15 +780,15 @@ export default function EnrollmentModal({
                   <div className="print-blank-area print-blank-rx">&nbsp;</div>
                   <div className="print-cc-label">DIAGNOSIS</div>
                   <div className="print-blank-area print-blank-diagnosis">&nbsp;</div>
-                </div>
-                <div className="print-physician-row">
-                  <div className="print-physician-col">
-                    <div className="print-physician-line"></div>
-                    <div className="print-physician-label">P</div>
-                  </div>
-                  <div className="print-physician-col print-physician-date">
-                    <div className="print-physician-line"></div>
-                    <div className="print-physician-label">Date</div>
+                  <div className="print-physician-row">
+                    <div className="print-physician-col">
+                      <div className="print-physician-line"></div>
+                      <div className="print-physician-label">P</div>
+                    </div>
+                    <div className="print-physician-col print-physician-date">
+                      <div className="print-physician-line"></div>
+                      <div className="print-physician-label">Date</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -837,15 +837,15 @@ export default function EnrollmentModal({
                   <div className="print-blank-area print-blank-rx">&nbsp;</div>
                   <div className="print-cc-label">DIAGNOSIS</div>
                   <div className="print-blank-area print-blank-diagnosis">&nbsp;</div>
-                </div>
-                <div className="print-physician-row">
-                  <div className="print-physician-col">
-                    <div className="print-physician-line"></div>
-                    <div className="print-physician-label">P</div>
-                  </div>
-                  <div className="print-physician-col print-physician-date">
-                    <div className="print-physician-line"></div>
-                    <div className="print-physician-label">Date</div>
+                  <div className="print-physician-row">
+                    <div className="print-physician-col">
+                      <div className="print-physician-line"></div>
+                      <div className="print-physician-label">P</div>
+                    </div>
+                    <div className="print-physician-col print-physician-date">
+                      <div className="print-physician-line"></div>
+                      <div className="print-physician-label">Date</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1323,10 +1323,10 @@ export default function EnrollmentModal({
             text-align: center !important;
           }
 
-          /* P label left-aligns with S / O / A / DIAGNOSIS labels */
+          /* P label left-aligns with S / O / A / DIAGNOSIS labels
+             (row now lives inside the box, so no extra inset needed) */
           .print-only-clinical-info .print-physician-col:not(.print-physician-date) {
             text-align: left !important;
-            padding-left: 2mm !important;
           }
 
           .print-only-clinical-info .print-physician-col.print-physician-date {
