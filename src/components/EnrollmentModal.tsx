@@ -1323,6 +1323,12 @@ export default function EnrollmentModal({
             text-align: center !important;
           }
 
+          /* P label left-aligns with S / O / A / DIAGNOSIS labels */
+          .print-only-clinical-info .print-physician-col:not(.print-physician-date) {
+            text-align: left !important;
+            padding-left: 2mm !important;
+          }
+
           .print-only-clinical-info .print-physician-col.print-physician-date {
             width: 30% !important;
             margin-left: auto !important;
