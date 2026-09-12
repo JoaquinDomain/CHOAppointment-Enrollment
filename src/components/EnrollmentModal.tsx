@@ -1226,16 +1226,16 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-blank-soap {
-            min-height: 38mm !important;
+            min-height: 42mm !important;
           }
 
           .print-only-clinical-info .print-blank-labs,
           .print-only-clinical-info .print-blank-rx {
-            min-height: 33mm !important;
+            min-height: 37mm !important;
           }
 
           .print-only-clinical-info .print-blank-diagnosis {
-            min-height: 27mm !important;
+            min-height: 31mm !important;
           }
 
           .print-only-clinical-info .print-blank-plan {
