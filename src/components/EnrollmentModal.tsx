@@ -771,26 +771,21 @@ export default function EnrollmentModal({
                     <div className="print-vs-cell"><span className="print-vs-label">GCS</span><span className="print-vs-line">&nbsp;</span></div>
                   </div>
                 </div>
-                <div className="print-soap-block">
-                  <div className="print-cc-label">SOAP Notes</div>
+                <div className="print-soap-box">
+                  <div className="print-cc-label">SOAP</div>
+                  <div className="print-cc-label">S</div>
                   <div className="print-blank-area print-blank-soap">&nbsp;</div>
-                </div>
-                <div className="print-labs-block">
-                  <div className="print-cc-label">Labs</div>
+                  <div className="print-cc-label">O</div>
                   <div className="print-blank-area print-blank-labs">&nbsp;</div>
-                </div>
-                <div className="print-rx-block">
-                  <div className="print-cc-label">Prescriptions</div>
+                  <div className="print-cc-label">A</div>
                   <div className="print-blank-area print-blank-rx">&nbsp;</div>
-                </div>
-                <div className="print-diagnosis-block">
-                  <div className="print-cc-label">Diagnosis</div>
+                  <div className="print-cc-label">DIAGNOSIS</div>
                   <div className="print-blank-area print-blank-diagnosis">&nbsp;</div>
                 </div>
                 <div className="print-physician-row">
                   <div className="print-physician-col">
                     <div className="print-physician-line"></div>
-                    <div className="print-physician-label">Physician Signature</div>
+                    <div className="print-physician-label">P</div>
                   </div>
                   <div className="print-physician-col print-physician-date">
                     <div className="print-physician-line"></div>
@@ -834,26 +829,21 @@ export default function EnrollmentModal({
                     <div className="print-vs-cell"><span className="print-vs-label">GCS</span><span className="print-vs-line">&nbsp;</span></div>
                   </div>
                 </div>
-                <div className="print-soap-block">
-                  <div className="print-cc-label">SOAP Notes</div>
+                <div className="print-soap-box">
+                  <div className="print-cc-label">SOAP</div>
+                  <div className="print-cc-label">S</div>
                   <div className="print-blank-area print-blank-soap">&nbsp;</div>
-                </div>
-                <div className="print-labs-block">
-                  <div className="print-cc-label">Labs</div>
+                  <div className="print-cc-label">O</div>
                   <div className="print-blank-area print-blank-labs">&nbsp;</div>
-                </div>
-                <div className="print-rx-block">
-                  <div className="print-cc-label">Prescriptions</div>
+                  <div className="print-cc-label">A</div>
                   <div className="print-blank-area print-blank-rx">&nbsp;</div>
-                </div>
-                <div className="print-diagnosis-block">
-                  <div className="print-cc-label">Diagnosis</div>
+                  <div className="print-cc-label">DIAGNOSIS</div>
                   <div className="print-blank-area print-blank-diagnosis">&nbsp;</div>
                 </div>
                 <div className="print-physician-row">
                   <div className="print-physician-col">
                     <div className="print-physician-line"></div>
-                    <div className="print-physician-label">Physician Signature</div>
+                    <div className="print-physician-label">P</div>
                   </div>
                   <div className="print-physician-col print-physician-date">
                     <div className="print-physician-line"></div>
@@ -1196,6 +1186,15 @@ export default function EnrollmentModal({
             border: 1px solid #000 !important;
             padding: 1mm 2mm !important;
             margin: 0 0 1mm !important;
+          }
+
+          .print-only-clinical-info .print-soap-box {
+            border: 1px solid #000 !important;
+            padding: 1mm 2mm !important;
+            margin: 0 0 1mm !important;
+            flex: 1 !important;
+            display: flex !important;
+            flex-direction: column !important;
           }
 
           .print-only-clinical-info .print-soap-block,
