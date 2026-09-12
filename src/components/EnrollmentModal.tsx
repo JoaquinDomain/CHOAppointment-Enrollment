@@ -1226,16 +1226,16 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-blank-soap {
-            min-height: 28mm !important;
+            min-height: 33mm !important;
           }
 
           .print-only-clinical-info .print-blank-labs,
           .print-only-clinical-info .print-blank-rx {
-            min-height: 24mm !important;
+            min-height: 28mm !important;
           }
 
           .print-only-clinical-info .print-blank-diagnosis {
-            min-height: 20mm !important;
+            min-height: 23mm !important;
           }
 
           .print-only-clinical-info .print-blank-plan {
@@ -1335,9 +1335,11 @@ export default function EnrollmentModal({
           }
 
           .print-only-clinical-info .print-physician-label {
-            font-size: 6.5pt !important;
-            line-height: 1.6 !important;
-            font-weight: 600 !important;
+            font-size: 13.5px !important;
+            line-height: 1.3 !important;
+            font-weight: 800 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.06em !important;
             color: #000 !important;
           }
           
