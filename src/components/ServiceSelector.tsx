@@ -165,13 +165,19 @@ export default function ServiceSelector({
           const remainingSlots = getRemainingSlots(service)
           
           return (
-            <div
+            <button
+              type="button"
               key={service.id}
               onClick={() => isAvailable && handleServiceClick(service)}
               onMouseEnter={() => setHoveredService(service.id)}
               onMouseLeave={() => setHoveredService(null)}
+              disabled={!isAvailable}
+              aria-pressed={isSelected}
+              aria-label={`${service.name}${remainingSlots !== null ? `, ${remainingSlots} slots left` : ''}`}
               className={`
-                group relative rounded-2xl border p-4 transition-all duration-200
+                group relative rounded-2xl border p-4 transition-all duration-200 text-left
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2
+                disabled:cursor-not-allowed
                 ${isSelected
                   ? 'border-emerald-500 bg-emerald-50/70 shadow-lg shadow-emerald-600/10 ring-2 ring-emerald-500/25'
                   : isAvailable
@@ -232,11 +238,11 @@ export default function ServiceSelector({
 
               {/* Unavailable Overlay */}
               {!isAvailable && (
-                <div className="absolute inset-0 bg-slate-100/80 rounded flex items-center justify-center">
+                <div aria-hidden className="absolute inset-0 rounded-2xl bg-slate-100/80 flex items-center justify-center">
                   <span className="text-slate-600 font-medium">Fully Booked</span>
                 </div>
               )}
-            </div>
+            </button>
           )
         })}
       </div>

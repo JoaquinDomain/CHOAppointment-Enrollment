@@ -115,15 +115,15 @@ const ClinicalInformationSection = () => (
     <div className="w-full flex flex-col gap-2">
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">Ht</label>
+          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Ht</label>
           <div className="h-8 border-b border-slate-300"></div>
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">Wt</label>
+          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Wt</label>
           <div className="h-8 border-b border-slate-300"></div>
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">Waist</label>
+          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Waist</label>
           <div className="h-8 border-b border-slate-300"></div>
         </div>
       </div>
@@ -139,11 +139,11 @@ const ClinicalInformationSection = () => (
     <div className="w-full flex flex-col gap-2">
       <div className="grid grid-cols-2 gap-2 sm:gap-3">
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">Labs</label>
+          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Labs</label>
           <div className="h-12 sm:h-14 border-b border-slate-300"></div>
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">Prescriptions</label>
+          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Prescriptions</label>
           <div className="h-12 sm:h-14 border-b border-slate-300"></div>
         </div>
       </div>
@@ -153,11 +153,11 @@ const ClinicalInformationSection = () => (
     <div className="w-full flex flex-col gap-2">
       <div className="grid grid-cols-2 gap-2 sm:gap-3">
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">Physician Sig</label>
+          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Physician Sig</label>
           <div className="h-10 border-b border-slate-300"></div>
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">Date</label>
+          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Date</label>
           <div className="h-8 border-b border-slate-300"></div>
         </div>
       </div>
@@ -327,47 +327,47 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Last Name *</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Last Name *</label>
                 <input
                   type="text"
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">First Name *</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">First Name *</label>
                 <input
                   type="text"
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Middle Name</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Middle Name</label>
                 <input
                   type="text"
                   name="middleName"
                   value={formData.middleName}
                   onChange={handleInputChange}
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Suffix</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Suffix</label>
                 <select
                   name="suffix"
                   value={formData.suffix}
                   onChange={handleInputChange}
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 >
                   <option value="">None</option>
                   <option value="Jr.">Jr.</option>
@@ -378,35 +378,35 @@ export default function EnrollmentModal({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Birthdate *</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Birthdate *</label>
                 <input
                   type="date"
                   name="birthdate"
                   value={formData.birthdate}
                   onChange={handleBirthdateChange}
                   required
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Age</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Age</label>
                 <input
                   type="number"
                   name="age"
                   value={formData.age}
                   onChange={handleInputChange}
                   readOnly
-                  className="w-full px-2 py-1 border border-slate-300 rounded bg-slate-100 text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-100 text-sm shadow-sm"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Gender *</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Gender *</label>
                 <select
                   name="gender"
                   value={formData.gender}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 >
                   <option value="">Select</option>
                   <option value="Male">Male</option>
@@ -417,12 +417,12 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Civil Status</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Civil Status</label>
                 <select
                   name="civilStatus"
                   value={formData.civilStatus}
                   onChange={handleInputChange}
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 >
                   <option value="">Select</option>
                   <option value="Single">Single</option>
@@ -432,12 +432,12 @@ export default function EnrollmentModal({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Employment Status</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Employment Status</label>
                 <select
                   name="employmentStatus"
                   value={formData.employmentStatus}
                   onChange={handleInputChange}
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 >
                   <option value="">Select</option>
                   <option value="Employed">Employed</option>
@@ -451,50 +451,50 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Spouse Name (if applicable)</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Spouse Name (if applicable)</label>
                 <input
                   type="text"
                   name="spouseName"
                   value={formData.spouseName}
                   onChange={handleInputChange}
                   placeholder="Enter spouse name"
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Mother&apos;s Maiden Name</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Mother&apos;s Maiden Name</label>
                 <input
                   type="text"
                   name="mothersMaidenName"
                   value={formData.mothersMaidenName}
                   onChange={handleInputChange}
                   placeholder="Enter mother's maiden name"
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-slate-700 mb-1">Residential Address *</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Residential Address *</label>
                 <input
                   type="text"
                   name="residentialAddress"
                   value={formData.residentialAddress}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Contact Number *</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Contact Number *</label>
                 <input
                   type="tel"
                   name="contactNumber"
                   value={formData.contactNumber}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 />
               </div>
             </div>
@@ -514,7 +514,7 @@ export default function EnrollmentModal({
                   name="primaryCareBenefitMember"
                   checked={formData.primaryCareBenefitMember}
                   onChange={handleInputChange}
-                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="w-4 h-4 rounded accent-emerald-600"
                 />
                 <span className="text-slate-700 font-medium">PCB Member</span>
               </label>
@@ -524,7 +524,7 @@ export default function EnrollmentModal({
                   name="philhealthMember"
                   checked={formData.philhealthMember}
                   onChange={handleInputChange}
-                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="w-4 h-4 rounded accent-emerald-600"
                 />
                 <span className="text-slate-700 font-medium">PhilHealth Member</span>
               </label>
@@ -534,7 +534,7 @@ export default function EnrollmentModal({
                   name="pwd"
                   checked={formData.pwd}
                   onChange={handleInputChange}
-                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="w-4 h-4 rounded accent-emerald-600"
                 />
                 <span className="text-slate-700 font-medium">PWD</span>
               </label>
@@ -544,7 +544,7 @@ export default function EnrollmentModal({
                   name="yakapRegistered"
                   checked={formData.yakapRegistered}
                   onChange={handleInputChange}
-                  className="w-3.5 h-3.5 rounded text-emerald-600 focus:ring-emerald-500"
+                  className="w-4 h-4 rounded accent-emerald-600"
                 />
                 <span className="text-slate-700 font-medium">YAKAP Registered</span>
               </label>
@@ -554,23 +554,23 @@ export default function EnrollmentModal({
             {formData.philhealthMember && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded mt-2">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">PhilHealth Number (PIN)</label>
+                  <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">PhilHealth Number (PIN)</label>
                   <input
                     type="text"
                     name="philhealthNumber"
                     value={formData.philhealthNumber}
                     onChange={handleInputChange}
                     placeholder="Enter PhilHealth PIN"
-                    className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">PhilHealth Category / Status</label>
+                  <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">PhilHealth Category / Status</label>
                   <select
                     name="philhealthStatus"
                     value={formData.philhealthStatus}
                     onChange={handleInputChange}
-                    className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                   >
                     <option value="">Select Category</option>
                     <option value="MEMBER">MEMBER</option>
@@ -578,14 +578,14 @@ export default function EnrollmentModal({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">Facility Household Number</label>
+                  <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Facility Household Number</label>
                   <input
                     type="text"
                     name="facilityHouseholdNumber"
                     value={formData.facilityHouseholdNumber}
                     onChange={handleInputChange}
                     placeholder="Enter Household No."
-                    className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                   />
                 </div>
               </div>
@@ -595,12 +595,12 @@ export default function EnrollmentModal({
             {formData.yakapRegistered && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded mt-2">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1">YAKAP Facility</label>
+                  <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">YAKAP Facility</label>
                   <select
                     name="yakapFacility"
                     value={formData.yakapFacility}
                     onChange={handleInputChange}
-                    className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-white"
+                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                   >
                     <option value="">Select Facility</option>
                     {BACOLOD_YAKAP_FACILITIES.map(facility => (
@@ -623,13 +623,13 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Health Facility *</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Health Facility *</label>
                 <select
                   name="consultingFacility"
                   value={formData.consultingFacility}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
                 >
                   <option value="">Select Facility</option>
                   {BACOLOD_HEALTH_FACILITIES.map(facility => (
@@ -641,12 +641,12 @@ export default function EnrollmentModal({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Requested Service / Type of Service *</label>
+                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Requested Service / Type of Service *</label>
                 <input
                   type="text"
                   readOnly
                   value={getServiceName(formData.selectedService || selectedService) || 'No Service Selected'}
-                  className="w-full px-2 py-1 border border-slate-300 rounded text-xs bg-slate-50 font-semibold text-slate-800"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 font-semibold text-slate-800 shadow-sm"
                 />
               </div>
             </div>
@@ -713,9 +713,9 @@ export default function EnrollmentModal({
                 checked={formData.dataPrivacyConsent}
                 onChange={handleInputChange}
                 required
-                className="w-3 h-3"
+                className="w-4 h-4 accent-emerald-600"
               />
-              <label htmlFor="dataPrivacyConsent" className="text-xs font-medium text-slate-700">
+              <label htmlFor="dataPrivacyConsent" className="text-sm font-medium text-slate-700">
                 I accept the Data Privacy Consent *
               </label>
             </div>
@@ -863,26 +863,26 @@ export default function EnrollmentModal({
               is emitted in print, forced onto PAGE 2 for a 2-page A4 layout. */}
 
           {/* Action Buttons */}
-          <div className="flex gap-2 pt-2 border-t border-slate-200 no-print">
+          <div className="flex gap-2.5 pt-3 border-t border-slate-200 no-print">
             <button
               type="button"
               onClick={handlePrint}
-              className="flex-1 px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs font-medium"
+              className="flex-1 px-3 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold transition hover:bg-slate-200 active:bg-slate-300"
             >
               Print
             </button>
             <button
               type="button"
               onClick={handleClose}
-              className="flex-1 px-2 py-1 bg-slate-100 text-slate-700 rounded text-xs font-medium"
+              className="flex-1 px-3 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold transition hover:bg-slate-200 active:bg-slate-300"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="flex-1 px-2 py-1 bg-emerald-600 text-white rounded text-xs font-medium"
+              className="flex-[2] px-3 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-600/25 transition hover:bg-emerald-700 active:bg-emerald-800"
             >
-              Save
+              Save & Book Appointment
             </button>
           </div>
         </form>

@@ -171,6 +171,38 @@ export default function AppointmentForm() {
     }
   }
 
+  const SERVICE_NAMES: Record<string, string> = {
+    'animal-bite': 'Animal Bite Treatment',
+    consultation: 'Medical Consultation',
+    'surgical-minor': 'Minor Surgery',
+    immunization: 'Immunization',
+    prenatal: 'Pre-Natal Checkup',
+    'health-certificate': 'Health Certificate',
+    'tb-consultation': 'TB Consultation',
+    dental: 'Dental Services',
+    'family-planning': 'Family Planning',
+    'social-hygiene': 'Social Hygiene Clinic',
+    'drug-testing': 'Drug Testing',
+    'medical-certificate': 'Medical Certificate',
+  }
+
+  const formatLongDate = (ds: string) =>
+    new Date(ds).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+
+  const handleDownloadQR = () => {
+    const canvas = document.querySelector('#appt-qr canvas') as HTMLCanvasElement | null
+    if (!canvas || !appointmentId) return
+    const a = document.createElement('a')
+    a.href = canvas.toDataURL('image/png')
+    a.download = `CHO-appointment-${appointmentId}.png`
+    a.click()
+  }
+
   const resetForm = () => {
     setStep(1)
     setSelectedDate(null)
@@ -211,8 +243,23 @@ export default function AppointmentForm() {
                 </p>
               </div>
 
+              <div className="mb-5 grid grid-cols-1 gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-left sm:grid-cols-3">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Date</p>
+                  <p className="mt-0.5 text-sm font-bold text-slate-900">{selectedDate ? formatLongDate(selectedDate) : '—'}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Service</p>
+                  <p className="mt-0.5 text-sm font-bold text-slate-900">{(selectedService && SERVICE_NAMES[selectedService]) || selectedService || '—'}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Facility</p>
+                  <p className="mt-0.5 text-sm font-bold text-slate-900">{enrollmentData?.consultingFacility || '—'}</p>
+                </div>
+              </div>
+
               <div className="mb-4 flex justify-center">
-                <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div id="appt-qr" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <QRCode
                     value={appointmentId}
                     size={200}
@@ -226,12 +273,20 @@ export default function AppointmentForm() {
                 Show this QR code to the staff when you arrive at the health office.
               </p>
 
-              <button
-                onClick={resetForm}
-                className="w-full rounded-xl bg-emerald-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:-translate-y-px hover:bg-emerald-700 hover:shadow-xl active:translate-y-0"
-              >
-                Book another appointment
-              </button>
+              <div className="flex flex-col gap-2.5 sm:flex-row">
+                <button
+                  onClick={handleDownloadQR}
+                  className="flex-1 rounded-xl border-2 border-emerald-600 px-8 py-3 font-semibold text-emerald-700 transition hover:bg-emerald-50 active:bg-emerald-100"
+                >
+                  Download QR
+                </button>
+                <button
+                  onClick={resetForm}
+                  className="flex-[2] rounded-xl bg-emerald-600 px-8 py-3.5 font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:-translate-y-px hover:bg-emerald-700 hover:shadow-xl active:translate-y-0"
+                >
+                  Book another appointment
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -279,10 +334,26 @@ export default function AppointmentForm() {
         <div className="cho-animate-in cho-animate-in-1 mb-6 flex justify-center">
           <ol className="flex w-full max-w-xl items-center gap-2 rounded-2xl border border-slate-200/80 bg-white px-4 py-3 shadow-sm sm:gap-3 sm:px-6">
             <li className="flex items-center gap-2">
-              <span className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold transition-all ${step >= 1 ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30' : 'bg-slate-200 text-slate-600'}`}>
-                1
-              </span>
-              <span className={`text-sm font-semibold ${step >= 1 ? 'text-slate-900' : 'text-slate-500'}`}>Date & Service</span>
+              {step === 2 ? (
+                <button
+                  type="button"
+                  onClick={() => setStep(1)}
+                  title="Back to Date & Service"
+                  className="flex items-center gap-2 rounded-full pr-1 transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500"
+                >
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold bg-emerald-600 text-white shadow-md shadow-emerald-600/30">
+                    1
+                  </span>
+                  <span className="text-sm font-semibold text-slate-900 underline decoration-emerald-300 decoration-2 underline-offset-4">Date & Service</span>
+                </button>
+              ) : (
+                <>
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold bg-emerald-600 text-white shadow-md shadow-emerald-600/30">
+                    1
+                  </span>
+                  <span className="text-sm font-semibold text-slate-900">Date & Service</span>
+                </>
+              )}
             </li>
             <li aria-hidden className={`h-1 min-w-8 flex-1 rounded-full transition-all sm:min-w-12 ${step >= 2 ? 'bg-emerald-500' : 'bg-slate-200'}`} />
             <li className="flex items-center gap-2">
