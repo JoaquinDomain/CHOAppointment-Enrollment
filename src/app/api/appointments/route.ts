@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getAppointmentRepository } from '@/lib/db/appointments'
+import { isHoliday, holidayName } from '@/constants/phHolidays'
 
 /**
  * Validate if a date is a weekend (Saturday = 6, Sunday = 0)
  */
 function isWeekend(dateString: string): boolean {
-  const date = new Date(dateString)
-  const day = date.getDay()
-  return day === 0 || day === 6
+  const d = new Date(dateString + 'T00:00:00')
+  return d.getDay() === 0 || d.getDay() === 6
 }
 
 /**
@@ -62,6 +62,13 @@ export async function POST(request: NextRequest) {
     if (isWeekend(body.appointment_date)) {
       return NextResponse.json(
         { error: 'Weekend appointments are not allowed. Please select a weekday (Monday-Friday).' },
+        { status: 400 }
+      )
+    }
+    // Validate Philippine holiday restriction
+    if (isHoliday(body.appointment_date)) {
+      return NextResponse.json(
+        { error: `No appointments on Philippine holiday "${holidayName(body.appointment_date)}".` },
         { status: 400 }
       )
     }
