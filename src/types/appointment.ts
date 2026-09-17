@@ -1,4 +1,4 @@
-// Shared appointment record shape used by every database provider.
+// Shared appointment DTO — client-safe (no server imports).
 // `id` is a UUID string on Supabase and a numeric identity (as string) on Oracle.
 
 export interface Appointment {
@@ -32,16 +32,3 @@ export interface Appointment {
 }
 
 export type AppointmentInput = Omit<Appointment, 'id' | 'created_at' | 'updated_at'>
-
-/** Provider-agnostic persistence contract for appointments. */
-export interface AppointmentRepository {
-  createAppointment(appointment: AppointmentInput): Promise<Appointment>
-  getAllAppointments(): Promise<Appointment[]>
-  getAppointmentById(id: string): Promise<Appointment | null>
-  getAppointmentsByDate(date: string): Promise<Appointment[]>
-  getAppointmentsByFacility(facility: string): Promise<Appointment[]>
-  searchAppointmentsByName(name: string): Promise<Appointment[]>
-  updateAppointment(id: string, updates: Partial<AppointmentInput>): Promise<Appointment>
-  deleteAppointment(id: string): Promise<void>
-  getAppointmentsCount(date: string, serviceType: string): Promise<number>
-}

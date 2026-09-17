@@ -1,18 +1,10 @@
-import oracledb from 'oracledb'
-import {
-  executeOracle,
-  fromNumber01,
-  toISOString,
-  toNumber01,
-} from './oracle'
-import type {
-  Appointment,
-  AppointmentInput,
-  AppointmentRepository,
-} from './types'
-
 // Server-only Oracle implementation of the appointment repository.
 // Expects the APPOINTMENTS table from docs/oracle-schema.sql.
+
+import oracledb from 'oracledb'
+import { executeOracle, fromNumber01, toISOString, toNumber01 } from '@/server/db/oracle-client'
+import type { Appointment, AppointmentInput } from '@/types/appointment'
+import type { AppointmentRepository } from './appointment.repository'
 
 interface OracleAppointmentRow {
   ID: number
@@ -213,14 +205,10 @@ export class OracleAppointmentRepository implements AppointmentRepository {
     void rows
     const outId = outBinds as { id?: number[] } | undefined
     const id = outId?.id?.[0]
-    if (id === undefined) {
-      throw new Error('Oracle insert did not return an ID.')
-    }
+    if (id === undefined) throw new Error('Oracle insert did not return an ID.')
 
     const created = await this.getAppointmentById(String(id))
-    if (!created) {
-      throw new Error('Failed to read back the created appointment.')
-    }
+    if (!created) throw new Error('Failed to read back the created appointment.')
     return created
   }
 
@@ -233,9 +221,7 @@ export class OracleAppointmentRepository implements AppointmentRepository {
 
   async getAppointmentById(id: string): Promise<Appointment | null> {
     const numericId = Number(id)
-    if (!Number.isInteger(numericId)) {
-      return null
-    }
+    if (!Number.isInteger(numericId)) return null
     const { rows } = await executeOracle<OracleAppointmentRow>(
       `SELECT ${BASE_COLUMNS} FROM APPOINTMENTS WHERE ID = :id`,
       { id: numericId }
@@ -273,43 +259,30 @@ export class OracleAppointmentRepository implements AppointmentRepository {
     return rows.map(mapRow)
   }
 
-  async updateAppointment(
-    id: string,
-    updates: Partial<AppointmentInput>
-  ): Promise<Appointment> {
+  async updateAppointment(id: string, updates: Partial<AppointmentInput>): Promise<Appointment> {
     const numericId = Number(id)
-    if (!Number.isInteger(numericId)) {
-      throw new Error(`Invalid appointment id: ${id}`)
-    }
+    if (!Number.isInteger(numericId)) throw new Error(`Invalid appointment id: ${id}`)
     const { clause, binds } = buildSetClause(updates)
     if (Object.keys(binds).length === 0) {
       const current = await this.getAppointmentById(id)
-      if (!current) {
-        throw new Error(`Appointment not found: ${id}`)
-      }
+      if (!current) throw new Error(`Appointment not found: ${id}`)
       return current
     }
 
-    await executeOracle(
-      `UPDATE APPOINTMENTS SET ${clause} WHERE ID = :id`,
-      { ...binds, id: numericId }
-    )
+    await executeOracle(`UPDATE APPOINTMENTS SET ${clause} WHERE ID = :id`, {
+      ...binds,
+      id: numericId,
+    })
 
     const updated = await this.getAppointmentById(id)
-    if (!updated) {
-      throw new Error(`Appointment not found: ${id}`)
-    }
+    if (!updated) throw new Error(`Appointment not found: ${id}`)
     return updated
   }
 
   async deleteAppointment(id: string): Promise<void> {
     const numericId = Number(id)
-    if (!Number.isInteger(numericId)) {
-      throw new Error(`Invalid appointment id: ${id}`)
-    }
-    await executeOracle(`DELETE FROM APPOINTMENTS WHERE ID = :id`, {
-      id: numericId,
-    })
+    if (!Number.isInteger(numericId)) throw new Error(`Invalid appointment id: ${id}`)
+    await executeOracle(`DELETE FROM APPOINTMENTS WHERE ID = :id`, { id: numericId })
   }
 
   async getAppointmentsCount(date: string, serviceType: string): Promise<number> {

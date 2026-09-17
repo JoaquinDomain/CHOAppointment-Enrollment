@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { Search, Filter, Scan, Download, Calendar, MapPin, User, CheckCircle, XCircle, QrCode, LogOut } from 'lucide-react'
 import { Html5QrcodeScanner } from 'html5-qrcode'
-import { Appointment } from '../lib/services/appointmentService'
+import type { Appointment } from '@/types/appointment'
 import SiteQRPoster from './SiteQRPoster'
 import { useRouter } from 'next/navigation'
 import { BACOLOD_HEALTH_FACILITIES } from '@/constants/facilities'

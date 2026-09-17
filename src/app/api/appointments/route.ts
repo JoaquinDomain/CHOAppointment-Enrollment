@@ -1,24 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAppointmentRepository } from '@/lib/db/appointments'
-import { isHoliday, holidayName } from '@/constants/phHolidays'
-
-/**
- * Validate if a date is a weekend (Saturday = 6, Sunday = 0)
- */
-function isWeekend(dateString: string): boolean {
-  const d = new Date(dateString + 'T00:00:00')
-  return d.getDay() === 0 || d.getDay() === 6
-}
-
-/**
- * Validate if a date is in the past
- */
-function isPastDate(dateString: string): boolean {
-  const date = new Date(dateString)
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  return date < today
-}
+import {
+  ValidationError,
+  getAppointmentService,
+} from '@/server/appointments'
 
 /**
  * GET /api/appointments - Fetch all appointments (admin only)
@@ -26,20 +10,16 @@ function isPastDate(dateString: string): boolean {
 export async function GET(request: NextRequest) {
   try {
     // Check for authentication header (in production, verify with Supabase auth)
-    const authHeader = request.headers.get('authorization')
-    
-    // For now, we'll allow public access for development
-    // In production, verify the user is authenticated admin
-    const repository = getAppointmentRepository()
-    const data = await repository.getAllAppointments()
+    void request.headers.get('authorization')
+
+    // For now, allow public access for development.
+    // In production, verify the user is an authenticated admin.
+    const data = await getAppointmentService().listAll()
 
     return NextResponse.json(data)
   } catch (error) {
     console.error('Failed to fetch appointments:', error)
-    return NextResponse.json(
-      { error: 'Failed to fetch appointments' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to fetch appointments' }, { status: 500 })
   }
 }
 
@@ -49,49 +29,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    
-    // Validate required fields
-    if (!body.appointment_date) {
-      return NextResponse.json(
-        { error: 'Appointment date is required' },
-        { status: 400 }
-      )
-    }
 
-    // Validate weekend restriction
-    if (isWeekend(body.appointment_date)) {
-      return NextResponse.json(
-        { error: 'Weekend appointments are not allowed. Please select a weekday (Monday-Friday).' },
-        { status: 400 }
-      )
-    }
-    // Validate Philippine holiday restriction
-    if (isHoliday(body.appointment_date)) {
-      return NextResponse.json(
-        { error: `No appointments on Philippine holiday "${holidayName(body.appointment_date)}".` },
-        { status: 400 }
-      )
-    }
-
-    // Validate past date restriction
-    if (isPastDate(body.appointment_date)) {
-      return NextResponse.json(
-        { error: 'Cannot book appointments in the past. Please select a future date.' },
-        { status: 400 }
-      )
-    }
-
-    // Validate other required fields
-    if (!body.full_name || !body.age || !body.consulting_facility || !body.service_type) {
-      return NextResponse.json(
-        { error: 'Missing required fields: full_name, age, consulting_facility, service_type' },
-        { status: 400 }
-      )
-    }
-
-    // Insert appointment into the configured database (Supabase or Oracle)
-    const repository = getAppointmentRepository()
-    const data = await repository.createAppointment({
+    // Validation + insert run in the service against the configured DB (Supabase or Oracle)
+    const data = await getAppointmentService().create({
       full_name: body.full_name,
       age: body.age,
       birthdate: body.birthdate,
@@ -115,15 +55,15 @@ export async function POST(request: NextRequest) {
       facility_household_number: body.facility_household_number,
       pwd: body.pwd,
       data_privacy_consent: body.data_privacy_consent,
-      notes: body.notes
+      notes: body.notes,
     })
 
     return NextResponse.json(data, { status: 201 })
   } catch (error) {
+    if (error instanceof ValidationError) {
+      return NextResponse.json({ error: error.message }, { status: 400 })
+    }
     console.error('API error:', error)
-    return NextResponse.json(
-      { error: 'Failed to create appointment' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to create appointment' }, { status: 500 })
   }
 }

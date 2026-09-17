@@ -1,21 +1,8 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js'
-import type {
-  Appointment,
-  AppointmentInput,
-  AppointmentRepository,
-} from './types'
-
 // Server-only Supabase implementation of the appointment repository.
-// Lazy client creation avoids build-time failures when env is missing.
 
-function getSupabaseClient(): SupabaseClient {
-  const supabaseUrl =
-    process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co'
-  const supabaseKey =
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || 'placeholder-key'
-
-  return createClient(supabaseUrl, supabaseKey)
-}
+import { getSupabaseClient } from '@/server/db/supabase-client'
+import type { Appointment, AppointmentInput } from '@/types/appointment'
+import type { AppointmentRepository } from './appointment.repository'
 
 export class SupabaseAppointmentRepository implements AppointmentRepository {
   async createAppointment(appointment: AppointmentInput): Promise<Appointment> {
@@ -26,9 +13,7 @@ export class SupabaseAppointmentRepository implements AppointmentRepository {
       .select()
       .single()
 
-    if (error) {
-      throw new Error(`Failed to create appointment: ${error.message}`)
-    }
+    if (error) throw new Error(`Failed to create appointment: ${error.message}`)
     return data as Appointment
   }
 
@@ -39,9 +24,7 @@ export class SupabaseAppointmentRepository implements AppointmentRepository {
       .select('*')
       .order('created_at', { ascending: false })
 
-    if (error) {
-      throw new Error(`Failed to fetch appointments: ${error.message}`)
-    }
+    if (error) throw new Error(`Failed to fetch appointments: ${error.message}`)
     return (data ?? []) as Appointment[]
   }
 
@@ -54,9 +37,7 @@ export class SupabaseAppointmentRepository implements AppointmentRepository {
       .single()
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        return null
-      }
+      if (error.code === 'PGRST116') return null
       throw new Error(`Failed to fetch appointment: ${error.message}`)
     }
     return data as Appointment
@@ -70,9 +51,7 @@ export class SupabaseAppointmentRepository implements AppointmentRepository {
       .eq('appointment_date', date)
       .order('created_at', { ascending: false })
 
-    if (error) {
-      throw new Error(`Failed to fetch appointments by date: ${error.message}`)
-    }
+    if (error) throw new Error(`Failed to fetch appointments by date: ${error.message}`)
     return (data ?? []) as Appointment[]
   }
 
@@ -84,11 +63,7 @@ export class SupabaseAppointmentRepository implements AppointmentRepository {
       .eq('consulting_facility', facility)
       .order('created_at', { ascending: false })
 
-    if (error) {
-      throw new Error(
-        `Failed to fetch appointments by facility: ${error.message}`
-      )
-    }
+    if (error) throw new Error(`Failed to fetch appointments by facility: ${error.message}`)
     return (data ?? []) as Appointment[]
   }
 
@@ -100,16 +75,11 @@ export class SupabaseAppointmentRepository implements AppointmentRepository {
       .ilike('full_name', `%${name}%`)
       .order('created_at', { ascending: false })
 
-    if (error) {
-      throw new Error(`Failed to search appointments: ${error.message}`)
-    }
+    if (error) throw new Error(`Failed to search appointments: ${error.message}`)
     return (data ?? []) as Appointment[]
   }
 
-  async updateAppointment(
-    id: string,
-    updates: Partial<AppointmentInput>
-  ): Promise<Appointment> {
+  async updateAppointment(id: string, updates: Partial<AppointmentInput>): Promise<Appointment> {
     const supabase = getSupabaseClient()
     const { data, error } = await supabase
       .from('appointments')
@@ -118,25 +88,17 @@ export class SupabaseAppointmentRepository implements AppointmentRepository {
       .select()
       .single()
 
-    if (error) {
-      throw new Error(`Failed to update appointment: ${error.message}`)
-    }
+    if (error) throw new Error(`Failed to update appointment: ${error.message}`)
     return data as Appointment
   }
 
   async deleteAppointment(id: string): Promise<void> {
     const supabase = getSupabaseClient()
     const { error } = await supabase.from('appointments').delete().eq('id', id)
-
-    if (error) {
-      throw new Error(`Failed to delete appointment: ${error.message}`)
-    }
+    if (error) throw new Error(`Failed to delete appointment: ${error.message}`)
   }
 
-  async getAppointmentsCount(
-    date: string,
-    serviceType: string
-  ): Promise<number> {
+  async getAppointmentsCount(date: string, serviceType: string): Promise<number> {
     const supabase = getSupabaseClient()
     const { count, error } = await supabase
       .from('appointments')
@@ -144,9 +106,7 @@ export class SupabaseAppointmentRepository implements AppointmentRepository {
       .eq('appointment_date', date)
       .eq('service_type', serviceType)
 
-    if (error) {
-      throw new Error(`Failed to count appointments: ${error.message}`)
-    }
+    if (error) throw new Error(`Failed to count appointments: ${error.message}`)
     return count || 0
   }
 }
