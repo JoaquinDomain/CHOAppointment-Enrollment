@@ -420,7 +420,6 @@ export default function AppointmentForm() {
                   Complete the record below. Saving submits your {selectedService ?? 'selected service'} booking for {selectedDate ?? 'your chosen date'}.
                 </p>
               </div>
-              <TurnstileWidget onToken={setTurnstileToken} />
               <EnrollmentModal
                 isOpen={true}
                 inline={true}
@@ -428,6 +427,7 @@ export default function AppointmentForm() {
                 onSave={handleEnrollmentSave}
                 initialData={enrollmentData ?? undefined}
                 selectedService={selectedService}
+                turnstileWidget={<TurnstileWidget onToken={setTurnstileToken} />}
               />
             </div>
           )}

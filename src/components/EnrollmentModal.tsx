@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, type ReactNode } from 'react'
 import { X, FileText, User, Shield, AlertCircle, MapPin } from 'lucide-react'
 import { BACOLOD_HEALTH_FACILITIES, BACOLOD_YAKAP_FACILITIES } from '@/constants/facilities'
 import PrintHeader from '@/components/PrintHeader'
@@ -75,6 +75,7 @@ interface EnrollmentModalProps {
   inline?: boolean
   selectedService?: string | null
   printOnly?: boolean
+  turnstileWidget?: ReactNode
 }
 
 export default function EnrollmentModal({
@@ -84,7 +85,8 @@ export default function EnrollmentModal({
   initialData,
   inline = false,
   selectedService,
-  printOnly = false
+  printOnly = false,
+  turnstileWidget
 }: EnrollmentModalProps) {
   const [formData, setFormData] = useState<EnrollmentData>({
     lastName: '',
@@ -673,6 +675,11 @@ export default function EnrollmentModal({
                 <div className="signature-label-compact">CHO/BHS Rep Sig / Date</div>
               </div>
             </div>
+            {!printOnly && turnstileWidget ? (
+              <div className="no-print flex w-full justify-center pt-3">
+                <div className="w-full max-w-sm">{turnstileWidget}</div>
+              </div>
+            ) : null}
             {/* Print-only Clinical Information — hidden on screen, rendered only in print.
                 PAGE 2: two copies displayed side by side (left/right).
                 Page 1 ends at signatures above.
