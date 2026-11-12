@@ -287,7 +287,7 @@ async function commandVerify(connection, migrations) {
   }
 
   const [tableRows] = await connection.query(
-    `SELECT table_name, table_collation
+    `SELECT TABLE_NAME AS table_name, TABLE_COLLATION AS table_collation
        FROM information_schema.tables
       WHERE table_schema = DATABASE()
         AND table_name IN (?)`,
