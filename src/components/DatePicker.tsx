@@ -11,10 +11,17 @@ interface DatePickerProps {
   maxDate?: Date
 }
 
-const MAX_DATE = new Date('2027-12-31')
+const MAX_DATE = (() => {
+  const date = new Date()
+  date.setFullYear(date.getFullYear() + 1)
+  return date
+})()
 
 function toISO(d: Date): string {
-  return d.toISOString().split('T')[0]
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 function parseISO(s: string): Date {
@@ -52,8 +59,6 @@ export default function DatePicker({
 
   const formatDisplay = (s: string) =>
     parseISO(s).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })
-
-  const getMinMax = () => ({ min: minISO, max: maxISO })
 
   const handleNativeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = e.target.value

@@ -4,22 +4,63 @@ import { useState, useEffect } from 'react'
 import { AlertTriangle, CheckCircle, Clock } from 'lucide-react'
 import DatePicker from './DatePicker'
 import ServiceSelector from './ServiceSelector'
-import EnrollmentModal from './EnrollmentModal'
+import EnrollmentModal, { type EnrollmentData } from './EnrollmentModal'
 import { QRCodeCanvas as QRCode } from 'qrcode.react'
+import { getServiceDefinition, getServiceName } from '@/constants/services'
+import PrivacyPolicyLink from '@/components/PrivacyPolicyLink'
+import TurnstileWidget from '@/components/TurnstileWidget'
 
 export default function AppointmentForm() {
   const [step, setStep] = useState(1)
   const [selectedDate, setSelectedDate] = useState<string | null>(null)
   const [selectedService, setSelectedService] = useState<string | null>(null)
-  const [enrollmentModalOpen, setEnrollmentModalOpen] = useState(false)
+  const [selectedTime, setSelectedTime] = useState<'AM' | 'PM' | null>(null)
   const [showConfirmation, setShowConfirmation] = useState(false)
   const [appointmentId, setAppointmentId] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [qrUrl, setQrUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [currentBookings, setCurrentBookings] = useState<{ [key: string]: number }>({})
+  const [loadedDate, setLoadedDate] = useState<string | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   // Enrollment data (single source of truth for patient info)
-  const [enrollmentData, setEnrollmentData] = useState<any>(null)
+  const [enrollmentData, setEnrollmentData] = useState<EnrollmentData | null>(null)
+
+  useEffect(() => {
+    if (!selectedDate) return
+
+    const controller = new AbortController()
+    fetch(`/api/availability?date=${encodeURIComponent(selectedDate)}`, {
+      signal: controller.signal,
+    })
+      .then(async response => {
+        const payload = await response.json().catch(() => null)
+        if (!response.ok) {
+          throw new Error(payload?.error || 'Unable to load availability')
+        }
+        const bookings: { [key: string]: number } = {}
+        for (const service of payload.services ?? []) {
+          bookings[service.id] = Number(service.booked ?? 0)
+        }
+        setCurrentBookings(bookings)
+        setSelectedService(current => {
+          if (!current) return current
+          const definition = getServiceDefinition(current)
+          return definition && bookings[current] >= definition.dailySlots ? null : current
+        })
+      })
+      .catch(fetchError => {
+        if (fetchError instanceof DOMException && fetchError.name === 'AbortError') return
+        setCurrentBookings({})
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoadedDate(selectedDate)
+      })
+
+    return () => controller.abort()
+  }, [selectedDate])
+
+  const availabilityLoading = selectedDate !== null && loadedDate !== selectedDate
 
   const validateStep1 = () => {
     if (!selectedDate) {
@@ -28,6 +69,10 @@ export default function AppointmentForm() {
     }
     if (!selectedService) {
       setError('Please select a service')
+      return false
+    }
+    if (selectedService === 'prenatal' && !selectedTime) {
+      setError('Please select an AM or PM time slot for Pre-Natal Checkup')
       return false
     }
     setError(null)
@@ -40,77 +85,9 @@ export default function AppointmentForm() {
     }
   }
 
-  const handleBack = () => {
-    if (step > 1) {
-      setStep(step - 1)
-    }
-  }
-
-  const handleSubmit = async () => {
-    // Check if enrollment data is required before submission
-    if (!enrollmentData) {
-      setError('Please complete the Patient Enrollment Record first')
-      setEnrollmentModalOpen(true)
-      return
-    }
-
-    setLoading(true)
-    setError(null)
-
-    try {
-      // Map enrollment data to API expected format
-      const appointmentData = {
-        service_type: selectedService!,
-        appointment_date: selectedDate!,
-        // Map enrollment data fields to API expected fields
-        full_name: `${enrollmentData.firstName} ${enrollmentData.middleName} ${enrollmentData.lastName}`.trim(),
-        age: enrollmentData.age,
-        birthdate: enrollmentData.birthdate,
-        gender: enrollmentData.gender,
-        civil_status: enrollmentData.civilStatus,
-        residential_address: enrollmentData.residentialAddress,
-        contact_number: enrollmentData.contactNumber,
-        spouse_name: enrollmentData.spouseName,
-        mothers_maiden_name: enrollmentData.mothersMaidenName,
-        employment_status: enrollmentData.employmentStatus,
-        primary_care_benefit_member: enrollmentData.primaryCareBenefitMember,
-        consulting_facility: enrollmentData.consultingFacility,
-        yakap_registered: enrollmentData.yakapRegistered,
-        yakap_facility: enrollmentData.yakapFacility,
-        philhealth_member: enrollmentData.philhealthMember,
-        philhealth_number: enrollmentData.philhealthNumber,
-        philhealth_status: enrollmentData.philhealthStatus,
-        facility_household_number: enrollmentData.facilityHouseholdNumber,
-        pwd: enrollmentData.pwd,
-        data_privacy_consent: enrollmentData.dataPrivacyConsent,
-      }
-
-      const response = await fetch('/api/appointments', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(appointmentData),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create appointment')
-      }
-
-      const result = await response.json()
-      setAppointmentId(result.id || null)
-      setShowConfirmation(true)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create appointment')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleEnrollmentSave = async (data: any) => {
+  const handleEnrollmentSave = async (data: EnrollmentData): Promise<boolean> => {
     setEnrollmentData(data)
-    await submitAppointmentWithData(data)
+    return submitAppointmentWithData(data)
   }
 
   const handleEnrollmentClose = () => {
@@ -118,34 +95,44 @@ export default function AppointmentForm() {
     setError(null)
   }
 
-  const submitAppointmentWithData = async (data: any) => {
-    setLoading(true)
+  const submitAppointmentWithData = async (data: EnrollmentData): Promise<boolean> => {
+    if (!selectedService || !selectedDate) {
+      setError('Please complete the date and service selection first')
+      setStep(1)
+      return false
+    }
+
     setError(null)
 
     try {
       const appointmentData = {
-        service_type: selectedService!,
-        appointment_date: selectedDate!,
-        full_name: `${data.firstName} ${data.middleName} ${data.lastName}`.trim(),
-        age: data.age,
+        first_name: data.firstName,
+        middle_name: data.middleName,
+        last_name: data.lastName,
+        suffix: data.suffix,
         birthdate: data.birthdate,
         gender: data.gender,
-        civil_status: data.civilStatus,
+        civil_status: data.civilStatus || undefined,
         residential_address: data.residentialAddress,
         contact_number: data.contactNumber,
-        spouse_name: data.spouseName,
-        mothers_maiden_name: data.mothersMaidenName,
-        employment_status: data.employmentStatus,
+        spouse_name: data.spouseName || undefined,
+        mothers_maiden_name: data.mothersMaidenName || undefined,
+        employment_status: data.employmentStatus || undefined,
         primary_care_benefit_member: data.primaryCareBenefitMember,
         consulting_facility: data.consultingFacility,
         yakap_registered: data.yakapRegistered,
-        yakap_facility: data.yakapFacility,
+        yakap_facility: data.yakapFacility || undefined,
+        service_type: selectedService,
+        appointment_date: selectedDate,
+        appointment_time:
+          selectedService === 'prenatal' ? selectedTime ?? undefined : undefined,
         philhealth_member: data.philhealthMember,
-        philhealth_number: data.philhealthNumber,
-        philhealth_status: data.philhealthStatus,
-        facility_household_number: data.facilityHouseholdNumber,
+        philhealth_number: data.philhealthNumber || undefined,
+        philhealth_status: data.philhealthStatus || undefined,
+        facility_household_number: data.facilityHouseholdNumber || undefined,
         pwd: data.pwd,
         data_privacy_consent: data.dataPrivacyConsent,
+        ...(turnstileToken ? { turnstile_token: turnstileToken } : {}),
       }
 
       const response = await fetch('/api/appointments', {
@@ -156,38 +143,23 @@ export default function AppointmentForm() {
         body: JSON.stringify(appointmentData),
       })
 
+      const result = await response.json().catch(() => null)
       if (!response.ok) {
-        const errorData = await response.json()
-        throw new Error(errorData.error || 'Failed to create appointment')
+        throw new Error(result?.error || 'Failed to create appointment')
       }
 
-      const result = await response.json()
-      setAppointmentId(result.id || null)
+      setAppointmentId(result.public_id || null)
+      setQrUrl(result.qr_url || null)
       setShowConfirmation(true)
+      return true
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create appointment')
-    } finally {
-      setLoading(false)
+      return false
     }
   }
 
-  const SERVICE_NAMES: Record<string, string> = {
-    'animal-bite': 'Animal Bite Treatment',
-    consultation: 'Medical Consultation',
-    'surgical-minor': 'Minor Surgery',
-    immunization: 'Immunization',
-    prenatal: 'Pre-Natal Checkup',
-    'health-certificate': 'Health Certificate',
-    'tb-consultation': 'TB Consultation',
-    dental: 'Dental Services',
-    'family-planning': 'Family Planning',
-    'social-hygiene': 'Social Hygiene Clinic',
-    'drug-testing': 'Drug Testing',
-    'medical-certificate': 'Medical Certificate',
-  }
-
   const formatLongDate = (ds: string) =>
-    new Date(ds).toLocaleDateString('en-US', {
+    new Date(`${ds}T00:00:00`).toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -207,9 +179,14 @@ export default function AppointmentForm() {
     setStep(1)
     setSelectedDate(null)
     setSelectedService(null)
+    setSelectedTime(null)
     setEnrollmentData(null)
     setShowConfirmation(false)
     setAppointmentId(null)
+    setQrUrl(null)
+    setCurrentBookings({})
+    setLoadedDate(null)
+    setTurnstileToken(null)
     setError(null)
   }
 
@@ -246,11 +223,16 @@ export default function AppointmentForm() {
               <div className="mb-5 grid grid-cols-1 gap-2 rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-left sm:grid-cols-3">
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Date</p>
-                  <p className="mt-0.5 text-sm font-bold text-slate-900">{selectedDate ? formatLongDate(selectedDate) : '—'}</p>
+                  <p className="mt-0.5 text-sm font-bold text-slate-900">
+                    {selectedDate ? formatLongDate(selectedDate) : '—'}
+                    {selectedService === 'prenatal' && selectedTime ? ` · ${selectedTime}` : ''}
+                  </p>
                 </div>
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Service</p>
-                  <p className="mt-0.5 text-sm font-bold text-slate-900">{(selectedService && SERVICE_NAMES[selectedService]) || selectedService || '—'}</p>
+                  <p className="mt-0.5 text-sm font-bold text-slate-900">
+                    {selectedService ? getServiceName(selectedService) : '—'}
+                  </p>
                 </div>
                 <div>
                   <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-slate-500">Facility</p>
@@ -261,7 +243,7 @@ export default function AppointmentForm() {
               <div className="mb-4 flex justify-center">
                 <div id="appt-qr" className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                   <QRCode
-                    value={appointmentId}
+                    value={qrUrl ?? appointmentId}
                     size={200}
                     level="H"
                     includeMargin={true}
@@ -269,8 +251,14 @@ export default function AppointmentForm() {
                 </div>
               </div>
 
-              <p className="mb-7 text-center text-sm text-slate-500">
+              <p className="mb-4 text-center text-sm text-slate-500">
                 Show this QR code to the staff when you arrive at the health office.
+              </p>
+
+              <p className="mb-6 text-center text-xs leading-relaxed text-slate-500">
+                The City Health Office publishes how your personal and health information is
+                collected, used, stored, and protected.{' '}
+                <PrivacyPolicyLink className="text-xs" />
               </p>
 
               <div className="flex flex-col gap-2.5 sm:flex-row">
@@ -383,20 +371,35 @@ export default function AppointmentForm() {
                 onDateSelect={setSelectedDate}
               />
               
-              <ServiceSelector 
+              <ServiceSelector
                 selectedService={selectedService}
-                onServiceSelect={setSelectedService}
+                onServiceSelect={service => {
+                  setSelectedService(service)
+                  setSelectedTime(null)
+                  setError(null)
+                }}
                 selectedDate={selectedDate}
                 currentBookings={currentBookings}
+                selectedTime={selectedTime}
+                onTimeSelect={setSelectedTime}
+                availabilityLoading={availabilityLoading}
               />
 
               <div className="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
-                <p className="text-xs font-medium text-slate-500">
-                  Slots refresh per date · weekends closed · bring a valid ID.
-                </p>
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-slate-500">
+                    Slots refresh per date · weekends closed · bring a valid ID.
+                  </p>
+                  <PrivacyPolicyLink className="text-xs" />
+                </div>
                 <button
                   onClick={handleNext}
-                  disabled={!selectedDate || !selectedService}
+                  disabled={
+                    !selectedDate ||
+                    !selectedService ||
+                    (selectedService === 'prenatal' && !selectedTime) ||
+                    availabilityLoading
+                  }
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-7 py-3 font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all hover:-translate-y-px hover:bg-emerald-700 hover:shadow-xl active:translate-y-0 disabled:translate-y-0 disabled:opacity-40 disabled:shadow-none"
                 >
                   Continue
@@ -417,12 +420,13 @@ export default function AppointmentForm() {
                   Complete the record below. Saving submits your {selectedService ?? 'selected service'} booking for {selectedDate ?? 'your chosen date'}.
                 </p>
               </div>
+              <TurnstileWidget onToken={setTurnstileToken} />
               <EnrollmentModal
                 isOpen={true}
                 inline={true}
                 onClose={handleEnrollmentClose}
                 onSave={handleEnrollmentSave}
-                initialData={enrollmentData}
+                initialData={enrollmentData ?? undefined}
                 selectedService={selectedService}
               />
             </div>

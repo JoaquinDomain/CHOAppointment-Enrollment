@@ -1,7 +1,32 @@
 'use client'
 
-import { useState } from 'react'
-import { Check, Calendar, Stethoscope, Baby, Syringe, FileText, Heart, Activity, MoreHorizontal } from 'lucide-react'
+import {
+  Activity,
+  Baby,
+  Calendar,
+  Check,
+  FileText,
+  Heart,
+  MoreHorizontal,
+  Stethoscope,
+  Syringe,
+} from 'lucide-react'
+import { LABORATORY_SERVICES } from '@/constants/services'
+
+const SERVICE_ICONS: Record<string, React.ReactNode> = {
+  'animal-bite': <Activity className="w-6 h-6" />,
+  consultation: <Stethoscope className="w-6 h-6" />,
+  'surgical-minor': <MoreHorizontal className="w-6 h-6" />,
+  immunization: <Syringe className="w-6 h-6" />,
+  prenatal: <Baby className="w-6 h-6" />,
+  'health-certificate': <FileText className="w-6 h-6" />,
+  'tb-consultation': <Stethoscope className="w-6 h-6" />,
+  dental: <MoreHorizontal className="w-6 h-6" />,
+  'family-planning': <Heart className="w-6 h-6" />,
+  'social-hygiene': <Activity className="w-6 h-6" />,
+  'drug-testing': <FileText className="w-6 h-6" />,
+  'medical-certificate': <FileText className="w-6 h-6" />,
+}
 
 interface ServiceOption {
   id: string
@@ -13,110 +38,37 @@ interface ServiceOption {
   externalLink?: string
 }
 
-const serviceOptions: ServiceOption[] = [
-  {
-    id: 'animal-bite',
-    name: 'Animal Bite Treatment',
-    icon: <Activity className="w-6 h-6" />,
-    dailySlots: 150,
-    description: 'Post-exposure prophylaxis for animal bites'
-  },
-  {
-    id: 'consultation',
-    name: 'Medical Consultation',
-    icon: <Stethoscope className="w-6 h-6" />,
-    dailySlots: 50,
-    description: 'General medical and pediatric consultation'
-  },
-  {
-    id: 'surgical-minor',
-    name: 'Minor Surgery',
-    icon: <MoreHorizontal className="w-6 h-6" />,
-    dailySlots: 10,
-    description: 'Minor surgical procedures'
-  },
-  {
-    id: 'immunization',
-    name: 'Immunization',
-    icon: <Syringe className="w-6 h-6" />,
-    dailySlots: 30,
-    description: 'Vaccination services'
-  },
-  {
-    id: 'prenatal',
-    name: 'Pre-Natal Checkup',
-    icon: <Baby className="w-6 h-6" />,
-    dailySlots: 30,
-    requiresTimeSlot: true,
-    description: '30 slots AM / 30 slots PM'
-  },
-  {
-    id: 'health-certificate',
-    name: 'Health Certificate',
-    icon: <FileText className="w-6 h-6" />,
-    dailySlots: 0,
-    externalLink: 'https://envi.system.com',
-    description: 'Redirect to ENVI System'
-  },
-  {
-    id: 'tb-consultation',
-    name: 'TB Consultation',
-    icon: <Stethoscope className="w-6 h-6" />,
-    dailySlots: 20,
-    description: 'Tuberculosis screening and consultation'
-  },
-  {
-    id: 'dental',
-    name: 'Dental Services',
-    icon: <MoreHorizontal className="w-6 h-6" />,
-    dailySlots: 25,
-    description: 'Dental checkup and procedures'
-  },
-  {
-    id: 'family-planning',
-    name: 'Family Planning',
-    icon: <Heart className="w-6 h-6" />,
-    dailySlots: 15,
-    description: 'Reproductive health services'
-  },
-  {
-    id: 'social-hygiene',
-    name: 'Social Hygiene Clinic',
-    icon: <Activity className="w-6 h-6" />,
-    dailySlots: 20,
-    description: 'STD/HIV screening and treatment'
-  },
-  {
-    id: 'drug-testing',
-    name: 'Drug Testing',
-    icon: <FileText className="w-6 h-6" />,
-    dailySlots: 15,
-    description: 'Drug screening services'
-  },
-  {
-    id: 'medical-certificate',
-    name: 'Medical Certificate',
-    icon: <FileText className="w-6 h-6" />,
-    dailySlots: 30,
-    description: 'Medical certificate issuance'
-  }
-]
+const serviceOptions: ServiceOption[] = LABORATORY_SERVICES.map(service => ({
+  id: service.id,
+  name: service.name,
+  icon: SERVICE_ICONS[service.id] ?? <MoreHorizontal className="w-6 h-6" />,
+  dailySlots: service.dailySlots,
+  requiresTimeSlot: service.requiresTimeSlot,
+  description: service.description,
+  externalLink: service.externalUrl,
+}))
+
+type AppointmentTimeSlot = 'AM' | 'PM'
 
 interface ServiceSelectorProps {
   selectedService: string | null
   onServiceSelect: (serviceId: string) => void
   selectedDate?: string | null
   currentBookings?: { [key: string]: number }
+  selectedTime?: AppointmentTimeSlot | null
+  onTimeSelect?: (timeSlot: AppointmentTimeSlot) => void
+  availabilityLoading?: boolean
 }
 
-export default function ServiceSelector({ 
-  selectedService, 
+export default function ServiceSelector({
+  selectedService,
   onServiceSelect,
   selectedDate,
-  currentBookings = {}
+  currentBookings = {},
+  selectedTime = null,
+  onTimeSelect,
+  availabilityLoading = false,
 }: ServiceSelectorProps) {
-  const [hoveredService, setHoveredService] = useState<string | null>(null)
-
   const isSlotAvailable = (service: ServiceOption) => {
     if (service.externalLink) return true
     if (!selectedDate) return true
@@ -153,7 +105,9 @@ export default function ServiceSelector({
         </div>
         {selectedDate && (
           <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200 sm:inline-block">
-            {Object.values(currentBookings).reduce((a, b) => a + b, 0)} booked
+            {availabilityLoading
+              ? 'Checking availability…'
+              : `${Object.values(currentBookings).reduce((a, b) => a + b, 0)} booked`}
           </span>
         )}
       </div>
@@ -169,8 +123,6 @@ export default function ServiceSelector({
               type="button"
               key={service.id}
               onClick={() => isAvailable && handleServiceClick(service)}
-              onMouseEnter={() => setHoveredService(service.id)}
-              onMouseLeave={() => setHoveredService(null)}
               disabled={!isAvailable}
               aria-pressed={isSelected}
               aria-label={`${service.name}${remainingSlots !== null ? `, ${remainingSlots} slots left` : ''}`}
@@ -238,8 +190,10 @@ export default function ServiceSelector({
 
               {/* Unavailable Overlay */}
               {!isAvailable && (
-                <div aria-hidden className="absolute inset-0 rounded-2xl bg-slate-100/80 flex items-center justify-center">
-                  <span className="text-slate-600 font-medium">Fully Booked</span>
+                <div aria-hidden className="absolute inset-0 flex items-center justify-center rounded-2xl bg-slate-100/80">
+                  <span className="px-3 text-center text-sm font-medium text-slate-600">
+                    {service.dailySlots === 0 ? 'Not available online' : 'Fully booked'}
+                  </span>
                 </div>
               )}
             </button>
@@ -249,23 +203,24 @@ export default function ServiceSelector({
 
       {/* Time Slot Selection for Pre-Natal */}
       {selectedService === 'prenatal' && (
-        <div className="mt-4 p-4 bg-emerald-50 rounded border border-emerald-200">
-          <h3 className="font-semibold text-emerald-900 mb-2">Select Time Slot</h3>
-          <div className="flex gap-4">
-            <button
-              className={`px-4 py-2 rounded border transition-colors ${
-                'border-emerald-300 bg-white hover:bg-emerald-100'
-              }`}
-            >
-              Morning (AM)
-            </button>
-            <button
-              className={`px-4 py-2 rounded border transition-colors ${
-                'border-emerald-300 bg-white hover:bg-emerald-100'
-              }`}
-            >
-              Afternoon (PM)
-            </button>
+        <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
+          <h3 className="mb-2 font-semibold text-emerald-900">Select time slot *</h3>
+          <div className="flex gap-3">
+            {(['AM', 'PM'] as const).map(slot => (
+              <button
+                key={slot}
+                type="button"
+                onClick={() => onTimeSelect?.(slot)}
+                aria-pressed={selectedTime === slot}
+                className={`rounded-xl border px-4 py-2 text-sm font-semibold transition ${
+                  selectedTime === slot
+                    ? 'border-emerald-600 bg-emerald-600 text-white shadow-md shadow-emerald-600/20'
+                    : 'border-emerald-300 bg-white text-emerald-800 hover:bg-emerald-100'
+                }`}
+              >
+                {slot === 'AM' ? 'Morning (AM)' : 'Afternoon (PM)'}
+              </button>
+            ))}
           </div>
         </div>
       )}

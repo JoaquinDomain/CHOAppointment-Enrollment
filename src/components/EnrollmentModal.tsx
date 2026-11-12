@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, FileText, User, Shield, AlertCircle, MapPin, Stethoscope, Printer, Save } from 'lucide-react'
+import { X, FileText, User, Shield, AlertCircle, MapPin } from 'lucide-react'
 import { BACOLOD_HEALTH_FACILITIES, BACOLOD_YAKAP_FACILITIES } from '@/constants/facilities'
 import PrintHeader from '@/components/PrintHeader'
+import PrivacyPolicyLink from '@/components/PrivacyPolicyLink'
 
 const SERVICE_OPTIONS = [
   { id: 'animal-bite', name: 'Animal Bite Treatment' },
@@ -28,7 +29,7 @@ const getServiceName = (serviceKey?: string | null): string => {
   return found ? found.name : serviceKey
 }
 
-interface EnrollmentData {
+export interface EnrollmentData {
   // Demographics
   lastName: string
   firstName: string
@@ -69,110 +70,21 @@ interface EnrollmentData {
 interface EnrollmentModalProps {
   isOpen: boolean
   onClose: () => void
-  onSave: (data: EnrollmentData) => void
+  onSave: (data: EnrollmentData) => boolean | Promise<boolean>
   initialData?: Partial<EnrollmentData>
-  requireSave?: boolean
   inline?: boolean
   selectedService?: string | null
+  printOnly?: boolean
 }
-
-const ClinicalInformationSection = () => (
-  <div className="space-y-3 sm:space-y-4">
-    {/* Chief Complaint */}
-    <div className="w-full flex flex-col gap-1">
-      <label className="block text-xs sm:text-sm font-medium text-slate-700">Chief Complaint</label>
-      <div className="w-full min-h-12 sm:min-h-14 border-b border-slate-300"></div>
-    </div>
-
-    {/* Vital Signs */}
-    <div className="w-full flex flex-col gap-2">
-      <label className="block text-xs sm:text-sm font-medium text-slate-700">Vital Signs</label>
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 sm:gap-3">
-        <div>
-          <label className="block text-xs text-slate-600 mb-1">PR</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-        <div>
-          <label className="block text-xs text-slate-600 mb-1">CR</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-        <div>
-          <label className="block text-xs text-slate-600 mb-1">BP</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-        <div>
-          <label className="block text-xs text-slate-600 mb-1">RR</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-        <div>
-          <label className="block text-xs text-slate-600 mb-1">O₂ Sat</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-      </div>
-    </div>
-
-    {/* Height, Weight, Waist */}
-    <div className="w-full flex flex-col gap-2">
-      <div className="grid grid-cols-3 gap-2 sm:gap-3">
-        <div>
-          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Ht</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-        <div>
-          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Wt</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-        <div>
-          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Waist</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-      </div>
-    </div>
-
-    {/* SOAP Notes */}
-    <div className="w-full flex flex-col gap-2">
-      <label className="block text-xs font-medium text-slate-700">SOAP Notes</label>
-      <div className="w-full min-h-16 sm:min-h-20 border-b border-slate-300"></div>
-    </div>
-
-    {/* Labs & Prescriptions */}
-    <div className="w-full flex flex-col gap-2">
-      <div className="grid grid-cols-2 gap-2 sm:gap-3">
-        <div>
-          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Labs</label>
-          <div className="h-12 sm:h-14 border-b border-slate-300"></div>
-        </div>
-        <div>
-          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Prescriptions</label>
-          <div className="h-12 sm:h-14 border-b border-slate-300"></div>
-        </div>
-      </div>
-    </div>
-
-    {/* Physician Signature & Date */}
-    <div className="w-full flex flex-col gap-2">
-      <div className="grid grid-cols-2 gap-2 sm:gap-3">
-        <div>
-          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Physician Sig</label>
-          <div className="h-10 border-b border-slate-300"></div>
-        </div>
-        <div>
-          <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Date</label>
-          <div className="h-8 border-b border-slate-300"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-)
 
 export default function EnrollmentModal({
   isOpen,
   onClose,
   onSave,
   initialData,
-  requireSave = false,
   inline = false,
-  selectedService
+  selectedService,
+  printOnly = false
 }: EnrollmentModalProps) {
   const [formData, setFormData] = useState<EnrollmentData>({
     lastName: '',
@@ -199,25 +111,29 @@ export default function EnrollmentModal({
     yakapFacility: '',
 
     consultingFacility: '',
+    selectedService: initialData?.selectedService ?? selectedService ?? undefined,
 
     chiefComplaint1: '',
     chiefComplaint2: '',
 
-    dataPrivacyConsent: false
+    dataPrivacyConsent: false,
+    ...initialData,
   })
 
   const [printTimestamp, setPrintTimestamp] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [previousInitialData, setPreviousInitialData] = useState(initialData)
+  const [previousSelectedService, setPreviousSelectedService] = useState(selectedService)
 
-  useEffect(() => {
+  if (initialData !== previousInitialData) {
+    setPreviousInitialData(initialData)
     if (initialData) {
       setFormData(prev => ({ ...prev, ...initialData }))
     }
-  }, [initialData])
+  }
 
-  // Dynamic service binding: whatever the patient selects in the UI
-  // (radio buttons, checkboxes, or interactive ServiceSelector cards)
-  // is mapped to the printable checklist on the PATIENT ENROLLMENT RECORD / ITR.
-  useEffect(() => {
+  if (selectedService !== previousSelectedService) {
+    setPreviousSelectedService(selectedService)
     if (selectedService) {
       setFormData(prev =>
         prev.selectedService === selectedService
@@ -225,7 +141,7 @@ export default function EnrollmentModal({
           : { ...prev, selectedService }
       )
     }
-  }, [selectedService])
+  }
 
   useEffect(() => {
     const handleBeforePrint = () => {
@@ -265,10 +181,16 @@ export default function EnrollmentModal({
     return age
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    onSave(formData)
-    onClose()
+    if (saving || printOnly) return
+    setSaving(true)
+    try {
+      const saved = await onSave(formData)
+      if (saved) onClose()
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handlePrint = () => {
@@ -282,7 +204,7 @@ export default function EnrollmentModal({
   if (!isOpen) return null
 
   const formContent = (
-    <div className={`bg-white overflow-hidden ${inline ? 'rounded-xl border border-slate-200 shadow-sm' : 'rounded-lg shadow-lg max-w-4xl w-full max-h-[95vh] overflow-y-auto'}`}>
+    <div className={`bg-white overflow-hidden ${printOnly ? '' : 'print:hidden'} ${inline ? 'rounded-xl border border-slate-200 shadow-sm' : 'rounded-lg shadow-lg max-w-4xl w-full max-h-[95vh] overflow-y-auto'}`}>
       {/* Header */}
       <div className="bg-emerald-600 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between no-print">
         <div className="flex items-center gap-2 sm:gap-3">
@@ -292,15 +214,26 @@ export default function EnrollmentModal({
             <p className="text-emerald-100 text-xs sm:text-sm">Individual Treatment Record</p>
           </div>
         </div>
-        {!inline && (
-          <button
-            onClick={handleClose}
-            className="p-2 hover:bg-emerald-700 rounded transition-colors text-white"
-            type="button"
-          >
-            <X className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
-        )}
+        <div className="flex items-center gap-2">
+          {printOnly && (
+            <button
+              onClick={handlePrint}
+              className="rounded-xl bg-white px-4 py-2 text-sm font-bold text-emerald-700 shadow-sm transition hover:bg-emerald-50"
+              type="button"
+            >
+              Print ITR
+            </button>
+          )}
+          {!inline && (
+            <button
+              onClick={handleClose}
+              className="p-2 hover:bg-emerald-700 rounded transition-colors text-white"
+              type="button"
+            >
+              <X className="w-5 h-5 sm:w-6 sm:h-6" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Printable Form */}
@@ -317,7 +250,11 @@ export default function EnrollmentModal({
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-3 sm:space-y-4"
+          inert={printOnly ? true : undefined}
+        >
           {/* Section 1: Patient Demographics */}
           <div className="space-y-2 sm:space-y-3">
             <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
@@ -719,6 +656,11 @@ export default function EnrollmentModal({
                 I accept the Data Privacy Consent *
               </label>
             </div>
+            <p className="no-print pt-1 text-xs leading-relaxed text-slate-600">
+              The City Health Office publishes its full privacy notice, including how your
+              personal and health information is collected, used, stored, and protected.{' '}
+              <PrivacyPolicyLink className="text-xs" />
+            </p>
             {/* Print-order: Signatures Block terminates Page 1 directly below Section II consent.
                 Web UI unchanged: .print-only-clinical-info stays display:none on screen. */}
             <div className="signature-row-compact signature-page1-end">
@@ -863,28 +805,24 @@ export default function EnrollmentModal({
               is emitted in print, forced onto PAGE 2 for a 2-page A4 layout. */}
 
           {/* Action Buttons */}
-          <div className="flex gap-2.5 pt-3 border-t border-slate-200 no-print">
-            <button
-              type="button"
-              onClick={handlePrint}
-              className="flex-1 px-3 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold transition hover:bg-slate-200 active:bg-slate-300"
-            >
-              Print
-            </button>
-            <button
-              type="button"
-              onClick={handleClose}
-              className="flex-1 px-3 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold transition hover:bg-slate-200 active:bg-slate-300"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-[2] px-3 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-600/25 transition hover:bg-emerald-700 active:bg-emerald-800"
-            >
-              Save & Book Appointment
-            </button>
-          </div>
+          {!printOnly && (
+            <div className="flex gap-2.5 pt-3 border-t border-slate-200 no-print">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="flex-1 px-3 py-2.5 bg-slate-100 text-slate-700 rounded-xl text-sm font-semibold transition hover:bg-slate-200 active:bg-slate-300"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving}
+                className="flex-[2] px-3 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-600/25 transition hover:bg-emerald-700 active:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving ? 'Booking�?�' : 'Save & Book Appointment'}
+              </button>
+            </div>
+          )}
         </form>
       </div>
 

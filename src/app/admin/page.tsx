@@ -1,10 +1,25 @@
-import AdminWrapper from '@/components/AdminWrapper'
+import { redirect } from 'next/navigation'
 import AdminDashboard from '@/components/AdminDashboard'
+import { getAdminSession, type AdminRole } from '@/server/auth/session'
 
-export default function AdminPage() {
+export const dynamic = 'force-dynamic'
+
+export default async function AdminPage() {
+  let session
+  try {
+    session = await getAdminSession()
+  } catch {
+    redirect('/admin/login')
+  }
+
+  if (!session) {
+    redirect('/admin/login')
+  }
+
   return (
-    <AdminWrapper>
-      <AdminDashboard />
-    </AdminWrapper>
+    <AdminDashboard
+      adminUsername={session.username}
+      adminRole={session.role as AdminRole}
+    />
   )
 }

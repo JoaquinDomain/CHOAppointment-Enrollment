@@ -1,15 +1,46 @@
-// Provider-agnostic persistence contract for appointments.
+import type {
+  AdminAppointment,
+  AdminAppointmentDetail,
+  AppointmentAvailability,
+  AppointmentStatus,
+  AppointmentSummary,
+  PublicAppointmentStatus,
+} from '@/types/appointment'
+import type { NormalizedAppointmentInput } from './appointment.validation'
 
-import type { Appointment, AppointmentInput } from '@/types/appointment'
+export interface AdminListFilters {
+  search: string | null
+  facility: string | null
+  status: AppointmentStatus | null
+  date: string | null
+  limit: number
+}
+
+export interface BookingContext {
+  ip: string
+  userAgent: string
+  requestId: string
+}
 
 export interface AppointmentRepository {
-  createAppointment(appointment: AppointmentInput): Promise<Appointment>
-  getAllAppointments(): Promise<Appointment[]>
-  getAppointmentById(id: string): Promise<Appointment | null>
-  getAppointmentsByDate(date: string): Promise<Appointment[]>
-  getAppointmentsByFacility(facility: string): Promise<Appointment[]>
-  searchAppointmentsByName(name: string): Promise<Appointment[]>
-  updateAppointment(id: string, updates: Partial<AppointmentInput>): Promise<Appointment>
-  deleteAppointment(id: string): Promise<void>
-  getAppointmentsCount(date: string, serviceType: string): Promise<number>
+  createAppointment(
+    input: NormalizedAppointmentInput,
+    context: BookingContext
+  ): Promise<AppointmentSummary>
+  listForAdmin(filters: AdminListFilters): Promise<AdminAppointment[]>
+  getAdminDetail(id: string): Promise<AdminAppointmentDetail | null>
+  getAdminDetailByPublicId(publicId: string): Promise<AdminAppointmentDetail | null>
+  getByPublicId(publicId: string): Promise<PublicAppointmentStatus | null>
+  getAvailability(date: string): Promise<AppointmentAvailability>
+  updateStatus(
+    id: string,
+    status: AppointmentStatus,
+    audit: {
+      adminId: number
+      adminUsername: string
+      ip: string
+      userAgent: string
+      requestId: string
+    }
+  ): Promise<AdminAppointmentDetail>
 }

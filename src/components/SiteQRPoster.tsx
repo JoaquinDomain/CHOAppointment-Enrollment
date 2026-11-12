@@ -9,7 +9,9 @@ interface SiteQRPosterProps {
 }
 
 export default function SiteQRPoster({ 
-  siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://cho-lab-appointment.vercel.app',
+  siteUrl =
+    process.env.NEXT_PUBLIC_APP_URL ||
+    'https://cho-appointment-services.bacolodcity.gov.ph',
   printable = false 
 }: SiteQRPosterProps) {
   const handlePrint = () => {
@@ -110,7 +112,7 @@ export default function SiteQRPoster({
       <div className="bg-white/10 rounded-lg p-4 mb-6">
         <h4 className="font-semibold text-white mb-2">How to Use:</h4>
         <ol className="text-teal-50 text-sm space-y-1 list-decimal list-inside">
-          <li>Open your phone's camera or QR scanner app</li>
+          <li>Open your phone&apos;s camera or QR scanner app</li>
           <li>Point it at the QR code above</li>
           <li>Follow the instructions to book your appointment</li>
           <li>Bring your confirmation QR code on your appointment date</li>
@@ -120,7 +122,7 @@ export default function SiteQRPoster({
       {/* Footer */}
       <div className="text-center">
         <p className="text-teal-50 text-xs">
-          © 2024 City Health Office Bacolod • Serving the Community
+          © {new Date().getFullYear()} City Health Office Bacolod • Serving the Community
         </p>
       </div>
 
