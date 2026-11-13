@@ -1,4 +1,4 @@
-﻿import {
+import {
   createPool,
   type ExecuteValues,
   type Pool,
@@ -47,9 +47,13 @@ function createDatabasePool(): Pool {
   })
 
   pool.on('connection', connection => {
-    connection
-      .query("SET SESSION time_zone = '+00:00'")
-      .catch(error => logError('mysql.session_timezone_failed', error))
+    const callbackConnection = connection as unknown as {
+      query: (sql: string, callback: (error: Error | null) => void) => unknown
+    }
+
+    callbackConnection.query("SET SESSION time_zone = '+00:00'", error => {
+      if (error) logError('mysql.session_timezone_failed', error)
+    })
   })
 
   ;(
@@ -242,7 +246,7 @@ export async function checkDatabaseConnection(): Promise<void> {
 
 export async function checkRequiredTables(): Promise<string[]> {
   const rows = await dbQuery<Array<RowDataPacket & { table_name: string }>>(
-    `SELECT table_name
+    `SELECT TABLE_NAME AS table_name
        FROM information_schema.tables
       WHERE table_schema = DATABASE()
         AND table_name IN (
