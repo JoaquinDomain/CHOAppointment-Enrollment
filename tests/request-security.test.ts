@@ -21,9 +21,12 @@ beforeEach(() => {
 })
 
 describe('client address handling', () => {
-  it('uses the forwarded client address only when a proxy is trusted', () => {
+  it('uses proxy-overwritten X-Real-IP instead of client-supplied X-Forwarded-For', () => {
     const forwarded = request('/api/appointments', {
-      headers: { 'X-Forwarded-For': '203.0.113.5, 198.51.100.7' },
+      headers: {
+        'X-Real-IP': '203.0.113.5',
+        'X-Forwarded-For': '198.51.100.7, 203.0.113.9',
+      },
     })
 
     expect(getClientIp(forwarded)).toBe('203.0.113.5')
@@ -39,9 +42,12 @@ describe('client address handling', () => {
     expect(getClientIp(forwarded)).toBe('unknown')
   })
 
-  it('rejects a forwarded value that is not an IP address', () => {
+  it('rejects an invalid X-Real-IP even when X-Forwarded-For contains a valid IP', () => {
     const forwarded = request('/api/appointments', {
-      headers: { 'X-Forwarded-For': 'not-an-ip' },
+      headers: {
+        'X-Real-IP': 'not-an-ip',
+        'X-Forwarded-For': '203.0.113.5',
+      },
     })
 
     expect(getClientIp(forwarded)).toBe('unknown')
@@ -66,9 +72,12 @@ describe('client address handling', () => {
     expect(identifier.startsWith('fp:')).toBe(true)
   })
 
-  it('uses the client address for rate limiting when it is available', () => {
+  it('uses the trusted proxy address for rate limiting', () => {
     const forwarded = request('/api/availability', {
-      headers: { 'X-Forwarded-For': '203.0.113.5' },
+      headers: {
+        'X-Real-IP': '203.0.113.5',
+        'X-Forwarded-For': '198.51.100.7',
+      },
     })
 
     expect(getRateLimitIdentifier(forwarded)).toBe('203.0.113.5')

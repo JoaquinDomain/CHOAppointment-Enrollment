@@ -16,16 +16,12 @@ export function getRequestId(request: NextRequest): string {
 
 export function getClientIp(request: NextRequest): string {
   const config = getAppConfig()
-  if (config.trustProxy) {
-    const forwarded = request.headers.get('x-forwarded-for')
-    if (forwarded) {
-      const first = forwarded.split(',')[0]?.trim()
-      if (first && isIP(first)) return first
-    }
-    const realIp = request.headers.get('x-real-ip')?.trim()
-    if (realIp && isIP(realIp)) return realIp
-  }
-  return 'unknown'
+  if (!config.trustProxy) return "unknown"
+
+  // Nginx overwrites X-Real-IP with $remote_addr. Do not trust X-Forwarded-For,
+  // which can contain client-supplied values appended by the proxy.
+  const realIp = request.headers.get("x-real-ip")?.trim()
+  return realIp && isIP(realIp) ? realIp : "unknown"
 }
 
 export function getUserAgent(request: NextRequest): string {
