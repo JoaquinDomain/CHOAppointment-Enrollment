@@ -28,6 +28,41 @@ function parseISO(s: string): Date {
   return new Date(s + 'T00:00:00')
 }
 
+export interface CalendarDayStyleState {
+  isSelected: boolean
+  isToday: boolean
+  disabled: boolean
+  holiday: boolean
+  weekend: boolean
+}
+
+const DAY_BASE_CLASS =
+  'relative flex h-9 w-full items-center justify-center rounded-xl text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-500'
+
+export function getCalendarDayClassName({
+  isSelected,
+  isToday,
+  disabled,
+  holiday,
+  weekend,
+}: CalendarDayStyleState): string {
+  if (isSelected) {
+    return `${DAY_BASE_CLASS} bg-emerald-600 text-white shadow-md ring-2 ring-emerald-500 ring-offset-1`
+  }
+
+  if (disabled) {
+    if (holiday) {
+      return `${DAY_BASE_CLASS} bg-amber-100 text-amber-700 line-through decoration-amber-700/60 cursor-not-allowed`
+    }
+    if (weekend) {
+      return `${DAY_BASE_CLASS} bg-slate-100 text-slate-400 cursor-not-allowed`
+    }
+    return `${DAY_BASE_CLASS} bg-slate-50 text-slate-300 cursor-not-allowed`
+  }
+
+  return `${DAY_BASE_CLASS} border border-slate-200 bg-white text-slate-800 hover:bg-emerald-50 hover:text-emerald-900${isToday ? ' font-bold text-emerald-700' : ''}`
+}
+
 export default function DatePicker({
   selectedDate,
   onDateSelect,
@@ -158,21 +193,20 @@ export default function DatePicker({
                   disabled={disabled}
                   title={title}
                   aria-label={`${iso}${holiday ? ` ${holidayName(iso)}` : ''}${disabled ? ' unavailable' : ''}`}
-                  className={[
-                    'relative flex h-9 w-full items-center justify-center rounded-xl text-sm font-semibold transition',
-                    isSelected
-                      ? 'bg-emerald-600 text-white shadow-md'
-                      : disabled
-                        ? holiday
-                          ? 'bg-amber-100 text-amber-700 line-through decoration-amber-700/60 cursor-not-allowed'
-                          : weekend
-                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
-                            : 'bg-slate-50 text-slate-300 cursor-not-allowed'
-                        : 'bg-white text-slate-800 hover:bg-emerald-50 hover:text-emerald-900 border border-slate-200',
-                    isToday && !isSelected ? 'ring-2 ring-emerald-500 ring-offset-1' : '',
-                  ].join(' ')}
+                  aria-current={isToday ? 'date' : undefined}
+                  aria-pressed={isSelected}
+                  data-selected={isSelected ? 'true' : undefined}
+                  data-today={isToday ? 'true' : undefined}
+                  className={getCalendarDayClassName({ isSelected, isToday, disabled, holiday, weekend })}
                 >
                   {day}
+                  {isToday && (
+                    <span
+                      aria-hidden
+                      data-today-indicator
+                      className={`pointer-events-none absolute bottom-1 h-1 w-1 rounded-full ${isSelected ? 'bg-white' : 'bg-emerald-600'}`}
+                    />
+                  )}
                 </button>
               )
             })}
@@ -180,7 +214,8 @@ export default function DatePicker({
           <div className="mt-3 flex flex-wrap gap-3 border-t border-slate-100 pt-3 text-[11px] font-medium text-slate-500">
             <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded-md bg-slate-100 border border-slate-200" /> Weekend</span>
             <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded-md bg-amber-100 border border-amber-200" /> PH holiday</span>
-            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded-md bg-emerald-600" /> Selected</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-600" /> Today</span>
+            <span className="inline-flex items-center gap-1.5"><span className="h-3 w-3 rounded-md bg-emerald-600 ring-2 ring-emerald-500 ring-offset-1" /> Selected</span>
           </div>
         </div>
 
