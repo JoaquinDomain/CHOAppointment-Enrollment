@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import PrivacyPolicyLink from "@/components/PrivacyPolicyLink";
+import { FIRST_LOAD_REFRESH_SCRIPT } from "@/lib/firstLoadRefresh";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,10 +22,16 @@ export const metadata: Metadata = {
     "Book laboratory appointments online with the City Health Office Bacolod. Schedule your visit, manage enrollment records, and access healthcare services efficiently.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+
   return (
     <html lang="en" className={`${inter.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
+        <script
+          nonce={nonce}
+          dangerouslySetInnerHTML={{ __html: FIRST_LOAD_REFRESH_SCRIPT }}
+        />
         <Navigation />
         <main className="flex-1">{children}</main>
         <footer className="border-t border-slate-200/80 bg-white/70 backdrop-blur">
