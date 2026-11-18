@@ -3,9 +3,10 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import HydrationPing from "@/components/HydrationPing";
 import Navigation from "@/components/Navigation";
 import PrivacyPolicyLink from "@/components/PrivacyPolicyLink";
-import { FIRST_LOAD_REFRESH_SCRIPT } from "@/lib/firstLoadRefresh";
+import { PAGE_HEALTH_SCRIPT } from "@/lib/pageHealth";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -30,8 +31,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="flex min-h-full flex-col">
         <script
           nonce={nonce}
-          dangerouslySetInnerHTML={{ __html: FIRST_LOAD_REFRESH_SCRIPT }}
+          dangerouslySetInnerHTML={{ __html: PAGE_HEALTH_SCRIPT }}
         />
+        <HydrationPing />
         <Navigation />
         <main className="flex-1">{children}</main>
         <footer className="border-t border-slate-200/80 bg-white/70 backdrop-blur">

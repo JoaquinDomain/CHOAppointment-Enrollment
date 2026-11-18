@@ -1,142 +1,394 @@
-import { describe, expect, it, vi } from 'vitest'
+// @vitest-environment jsdom
+
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import {
-  FIRST_LOAD_REFRESH_SCRIPT,
-  FIRST_LOAD_REFRESH_STORAGE_KEY,
-  installFirstLoadRefresh,
-} from '@/lib/firstLoadRefresh'
+  CHUNK_RECOVERY_DELAY_MS,
+  CHUNK_RECOVERY_STORAGE_KEY,
+  HYDRATION_WATCHDOG_MS,
+  LOAD_NOTICE_ID,
+  PAGE_HEALTH_SCRIPT,
+  installPageHealth,
+  markHydrated,
+} from '@/lib/pageHealth'
 
 const ORIGIN = 'https://cho-appointment-services.bacolodcity.gov.ph'
 
 class MemoryStorage {
-  private values = new Map<string, string>()
+  readonly values = new Map<string, string>()
 
-  getItem(key: string): string | null {
-    return this.values.get(key) ?? null
-  }
+  readonly getItem = vi.fn((key: string) => this.values.get(key) ?? null)
 
-  setItem(key: string, value: string): void {
+  readonly setItem = vi.fn((key: string, value: string) => {
     this.values.set(key, value)
-  }
+  })
+
+  readonly removeItem = vi.fn((key: string) => {
+    this.values.delete(key)
+  })
 }
 
 interface FakeWindowOptions {
-  href?: string
-  existingFlag?: string
-  getItem?: (key: string) => string | null
-  setItem?: (key: string, value: string) => void
+  existingGuard?: boolean
+  failStorage?: 'get' | 'set' | 'remove' | 'all'
 }
 
-function createFakeWindow({
-  href = `${ORIGIN}/?service=laboratory`,
-  existingFlag,
-  getItem,
-  setItem,
-}: FakeWindowOptions = {}) {
+function createFakeWindow(options: FakeWindowOptions = {}) {
   const storage = new MemoryStorage()
-  if (existingFlag !== undefined) storage.setItem(FIRST_LOAD_REFRESH_STORAGE_KEY, existingFlag)
+  if (options.existingGuard) storage.values.set(CHUNK_RECOVERY_STORAGE_KEY, '1')
 
-  const reload = vi.fn()
-  const addEventListener = vi.fn()
-  const win = {
-    sessionStorage: {
-      getItem: getItem ?? ((key: string) => storage.getItem(key)),
-      setItem: setItem ?? ((key: string, value: string) => storage.setItem(key, value)),
-    },
-    location: { href, reload },
-    addEventListener,
+  if (options.failStorage === 'get' || options.failStorage === 'all') {
+    storage.getItem.mockImplementation(() => {
+      throw new Error('storage unavailable')
+    })
+  }
+  if (options.failStorage === 'set' || options.failStorage === 'all') {
+    storage.setItem.mockImplementation(() => {
+      throw new Error('storage unavailable')
+    })
+  }
+  if (options.failStorage === 'remove' || options.failStorage === 'all') {
+    storage.removeItem.mockImplementation(() => {
+      throw new Error('storage unavailable')
+    })
   }
 
-  return { win: win as unknown as Window, storage, reload, addEventListener }
+  const reload = vi.fn()
+  const win = {
+    sessionStorage: storage,
+    location: { href: `${ORIGIN}/`, reload },
+    setTimeout: (handler: () => void, timeout?: number) =>
+      globalThis.setTimeout(handler, timeout),
+    clearTimeout: (id?: ReturnType<typeof setTimeout>) => globalThis.clearTimeout(id),
+  }
+
+  return { win: win as unknown as Window, storage, reload }
 }
 
-function run(fake: ReturnType<typeof createFakeWindow>) {
-  return installFirstLoadRefresh(fake.win, FIRST_LOAD_REFRESH_STORAGE_KEY)
+let doc: Document
+
+function startPageHealth(options: FakeWindowOptions = {}) {
+  const fake = createFakeWindow(options)
+  installPageHealth(fake.win, doc, CHUNK_RECOVERY_STORAGE_KEY)
+  return fake
 }
 
-describe('first-load refresh', () => {
-  it('sets the session flag before reloading and preserves the URL', () => {
-    const fake = createFakeWindow()
-    let flagAtReload: string | null = null
-    fake.reload.mockImplementation(() => {
-      flagAtReload = fake.win.sessionStorage.getItem(FIRST_LOAD_REFRESH_STORAGE_KEY)
-    })
+function dispatchScriptError(src: string) {
+  const script = doc.createElement('script')
+  script.setAttribute('src', src)
+  doc.body.appendChild(script)
+  script.dispatchEvent(new Event('error'))
+}
 
-    expect(run(fake)).toBe(true)
+function dispatchErrorOn(tagName: string) {
+  const element = doc.createElement(tagName)
+  doc.body.appendChild(element)
+  element.dispatchEvent(new Event('error'))
+}
 
-    expect(flagAtReload).toBe('1')
-    expect(fake.reload).toHaveBeenCalledTimes(1)
-    expect(fake.win.location.href).toBe(`${ORIGIN}/?service=laboratory`)
+beforeEach(() => {
+  vi.useFakeTimers()
+  doc = document.implementation.createHTMLDocument('page-health-test')
+})
+
+afterEach(() => {
+  vi.useRealTimers()
+})
+
+describe('page-health chunk recovery', () => {
+  it('does not reload a healthy page automatically', () => {
+    const fake = startPageHealth()
+
+    vi.advanceTimersByTime(CHUNK_RECOVERY_DELAY_MS)
+
+    expect(fake.reload).not.toHaveBeenCalled()
+    expect(fake.storage.values.has(CHUNK_RECOVERY_STORAGE_KEY)).toBe(false)
   })
 
-  it('does not reload again after the first automatic refresh', () => {
-    const fake = createFakeWindow()
+  it('schedules exactly one automatic retry for a failed /_next/static/ script', () => {
+    const fake = startPageHealth()
 
-    expect(run(fake)).toBe(true)
-    expect(run(fake)).toBe(false)
+    expect(fake.win.__choReady).toBe(false)
 
+    dispatchScriptError('https://example.test/_next/static/chunks/app.js')
+
+    expect(fake.storage.values.get(CHUNK_RECOVERY_STORAGE_KEY)).toBe('1')
+    expect(fake.reload).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(CHUNK_RECOVERY_DELAY_MS - 1)
+    expect(fake.reload).not.toHaveBeenCalled()
+
+    vi.advanceTimersByTime(1)
     expect(fake.reload).toHaveBeenCalledTimes(1)
   })
 
-  it('does not reload when the session flag already exists', () => {
-    const fake = createFakeWindow({ existingFlag: '1' })
+  it('ignores failures from unrelated scripts and non-script elements', () => {
+    const fake = startPageHealth()
 
-    expect(run(fake)).toBe(false)
+    dispatchScriptError('https://example.test/scripts/analytics.js')
+    dispatchErrorOn('img')
+
+    vi.advanceTimersByTime(CHUNK_RECOVERY_DELAY_MS)
+
+    expect(fake.reload).not.toHaveBeenCalled()
+    expect(fake.storage.values.has(CHUNK_RECOVERY_STORAGE_KEY)).toBe(false)
+  })
+
+  it('does not retry when a previous retry guard is already set', () => {
+    const fake = startPageHealth({ existingGuard: true })
+
+    dispatchScriptError('/_next/static/chunks/app.js')
+    vi.advanceTimersByTime(CHUNK_RECOVERY_DELAY_MS)
+
+    expect(fake.reload).not.toHaveBeenCalled()
+    expect(fake.storage.values.get(CHUNK_RECOVERY_STORAGE_KEY)).toBe('1')
+  })
+
+  const userInputCases: Array<[string, () => HTMLElement]> = [
+    [
+      'a text input',
+      () => {
+        const input = doc.createElement('input')
+        input.value = 'Jane Doe'
+        doc.body.appendChild(input)
+        return input
+      },
+    ],
+    [
+      'a textarea',
+      () => {
+        const textarea = doc.createElement('textarea')
+        textarea.value = 'Notes'
+        doc.body.appendChild(textarea)
+        return textarea
+      },
+    ],
+    [
+      'a select',
+      () => {
+        const select = doc.createElement('select')
+        const option = doc.createElement('option')
+        option.value = 'laboratory'
+        option.textContent = 'Laboratory'
+        select.appendChild(option)
+        select.value = 'laboratory'
+        doc.body.appendChild(select)
+        return select
+      },
+    ],
+    [
+      'a checked checkbox',
+      () => {
+        const checkbox = doc.createElement('input')
+        checkbox.type = 'checkbox'
+        checkbox.checked = true
+        doc.body.appendChild(checkbox)
+        return checkbox
+      },
+    ],
+    [
+      'a checked radio button',
+      () => {
+        const radio = doc.createElement('input')
+        radio.type = 'radio'
+        radio.checked = true
+        doc.body.appendChild(radio)
+        return radio
+      },
+    ],
+    [
+      'a file input with a selected file',
+      () => {
+        const fileInput = doc.createElement('input')
+        fileInput.type = 'file'
+        Object.defineProperty(fileInput, 'files', {
+          value: [{ name: 'id.png' }],
+          configurable: true,
+        })
+        doc.body.appendChild(fileInput)
+        return fileInput
+      },
+    ],
+    [
+      'a contenteditable element with text',
+      () => {
+        const editor = doc.createElement('div')
+        editor.setAttribute('contenteditable', 'true')
+        editor.textContent = 'Typed text'
+        doc.body.appendChild(editor)
+        return editor
+      },
+    ],
+  ]
+
+  it.each(userInputCases)(
+    'never automatically reloads after %s contains user input',
+    (_label, addInput) => {
+      const fake = startPageHealth()
+      addInput()
+
+      dispatchScriptError('/_next/static/chunks/app.js')
+      vi.advanceTimersByTime(CHUNK_RECOVERY_DELAY_MS)
+
+      expect(fake.reload).not.toHaveBeenCalled()
+    }
+  )
+
+  it('remembers typing and then deleting text as user interaction', () => {
+    const fake = startPageHealth()
+    const input = doc.createElement('input')
+    doc.body.appendChild(input)
+
+    input.value = 'temporary'
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+    input.value = ''
+    input.dispatchEvent(new Event('input', { bubbles: true }))
+
+    dispatchScriptError('/_next/static/chunks/app.js')
+    vi.advanceTimersByTime(CHUNK_RECOVERY_DELAY_MS)
+
     expect(fake.reload).not.toHaveBeenCalled()
   })
 
-  it('does not reload when reading sessionStorage fails', () => {
-    const fake = createFakeWindow({
-      getItem: () => {
-        throw new Error('storage unavailable')
-      },
-    })
-    const setItem = vi.spyOn(fake.win.sessionStorage, 'setItem')
+  it('cancels a scheduled reload when input arrives during the delay', () => {
+    const fake = startPageHealth()
 
-    expect(run(fake)).toBe(false)
+    dispatchScriptError('/_next/static/chunks/app.js')
+    vi.advanceTimersByTime(CHUNK_RECOVERY_DELAY_MS - 500)
 
-    expect(setItem).not.toHaveBeenCalled()
+    const input = doc.createElement('input')
+    doc.body.appendChild(input)
+    input.value = 'late input'
+    input.dispatchEvent(new Event('change', { bubbles: true }))
+
+    vi.advanceTimersByTime(500)
+
     expect(fake.reload).not.toHaveBeenCalled()
   })
 
-  it('does not reload when writing sessionStorage fails', () => {
-    const fake = createFakeWindow({
-      setItem: () => {
-        throw new Error('storage unavailable')
-      },
-    })
+  it('does not auto-reload or loop when sessionStorage is inaccessible', () => {
+    const fake = startPageHealth({ failStorage: 'all' })
 
-    expect(run(fake)).toBe(false)
+    dispatchScriptError('/_next/static/chunks/app.js')
+    vi.advanceTimersByTime(HYDRATION_WATCHDOG_MS)
+
     expect(fake.reload).not.toHaveBeenCalled()
   })
+})
 
-  it('does not reload when sessionStorage itself is unavailable', () => {
-    const reload = vi.fn()
-    const win = {
-      get sessionStorage(): Storage {
-        throw new Error('security error')
-      },
-      location: { href: `${ORIGIN}/`, reload },
-    } as unknown as Window
+describe('hydration watchdog', () => {
+  it('shows an accessible notice after 10 seconds without hydration', () => {
+    startPageHealth()
 
-    expect(installFirstLoadRefresh(win, FIRST_LOAD_REFRESH_STORAGE_KEY)).toBe(false)
-    expect(reload).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(HYDRATION_WATCHDOG_MS - 1)
+    expect(doc.getElementById(LOAD_NOTICE_ID)).toBeNull()
+
+    vi.advanceTimersByTime(1)
+
+    const notice = doc.getElementById(LOAD_NOTICE_ID)
+    const button = notice?.querySelector('button')
+
+    expect(notice).not.toBeNull()
+    expect(notice?.getAttribute('role')).toBe('status')
+    expect(notice?.textContent).toContain('taking longer than usual')
+    expect(button?.textContent).toBe('Refresh')
   })
 
-  it('does not attach error or navigation listeners', () => {
-    const fake = createFakeWindow()
+  it('reloads the page when the notice Refresh button is clicked', () => {
+    const fake = startPageHealth()
 
-    run(fake)
+    vi.advanceTimersByTime(HYDRATION_WATCHDOG_MS)
+    const button = doc.querySelector(`#${LOAD_NOTICE_ID} button`)
 
-    expect(fake.addEventListener).not.toHaveBeenCalled()
-  })
-
-  it('runs once as a standalone inline script', () => {
-    const fake = createFakeWindow()
-
-    new Function('window', FIRST_LOAD_REFRESH_SCRIPT)(fake.win)
-    new Function('window', FIRST_LOAD_REFRESH_SCRIPT)(fake.win)
+    expect(button).not.toBeNull()
+    button?.dispatchEvent(new MouseEvent('click', { bubbles: true }))
 
     expect(fake.reload).toHaveBeenCalledTimes(1)
-    expect(fake.win.sessionStorage.getItem(FIRST_LOAD_REFRESH_STORAGE_KEY)).toBe('1')
+  })
+
+  it('removes the watchdog immediately after successful hydration', () => {
+    const fake = startPageHealth()
+
+    vi.advanceTimersByTime(HYDRATION_WATCHDOG_MS)
+    expect(doc.getElementById(LOAD_NOTICE_ID)).not.toBeNull()
+
+    markHydrated(fake.win, CHUNK_RECOVERY_STORAGE_KEY)
+
+    expect(fake.win.__choReady).toBe(true)
+    expect(doc.getElementById(LOAD_NOTICE_ID)).toBeNull()
+
+    vi.advanceTimersByTime(HYDRATION_WATCHDOG_MS)
+    expect(doc.getElementById(LOAD_NOTICE_ID)).toBeNull()
+    expect(fake.reload).not.toHaveBeenCalled()
+  })
+
+  it('clears the sessionStorage retry guard on successful hydration', () => {
+    const fake = startPageHealth({ existingGuard: true })
+
+    expect(fake.storage.values.get(CHUNK_RECOVERY_STORAGE_KEY)).toBe('1')
+
+    markHydrated(fake.win, CHUNK_RECOVERY_STORAGE_KEY)
+
+    expect(fake.storage.values.has(CHUNK_RECOVERY_STORAGE_KEY)).toBe(false)
+    expect(fake.storage.removeItem).toHaveBeenCalledWith(CHUNK_RECOVERY_STORAGE_KEY)
+  })
+
+  it('handles a sessionStorage cleanup failure during hydration safely', () => {
+    const fake = startPageHealth({ failStorage: 'remove' })
+    fake.win.__choReady = false
+
+    expect(() => markHydrated(fake.win, CHUNK_RECOVERY_STORAGE_KEY)).not.toThrow()
+    expect(fake.win.__choReady).toBe(true)
+  })
+})
+
+describe('page-health integration', () => {
+  it('runs as a standalone inline script with the expected storage guard', () => {
+    const fake = createFakeWindow()
+
+    new Function('window', 'document', PAGE_HEALTH_SCRIPT)(fake.win, doc)
+    expect(fake.win.__choReady).toBe(false)
+
+    dispatchScriptError('/_next/static/chunks/app.js')
+    vi.advanceTimersByTime(CHUNK_RECOVERY_DELAY_MS)
+
+    expect(fake.reload).toHaveBeenCalledTimes(1)
+  })
+
+  it('is included in the root layout with the request nonce and HydrationPing', () => {
+    const layout = readFileSync(
+      join(process.cwd(), 'src/app/layout.tsx'),
+      'utf8'
+    )
+
+    expect(layout).toContain(
+      'const nonce = (await headers()).get("x-nonce") ?? undefined;'
+    )
+    expect(layout).toMatch(
+      /<script\s+nonce=\{nonce\}\s+dangerouslySetInnerHTML=\{\{ __html: PAGE_HEALTH_SCRIPT \}\}\s+\/>/
+    )
+    expect(layout).toContain('<HydrationPing />')
+    expect(layout).toContain('<Navigation />')
+    expect(layout).toContain('<main className="flex-1">{children}</main>')
+    expect(layout).toContain('PrivacyPolicyLink')
+    expect(layout).not.toContain('FIRST_LOAD_REFRESH_SCRIPT')
+  })
+
+  it('uses addEventListener and no inline HTML event handlers', () => {
+    expect(PAGE_HEALTH_SCRIPT).toContain('addEventListener')
+    expect(PAGE_HEALTH_SCRIPT).not.toMatch(/onclick\s*=/i)
+  })
+
+  it('keeps the nonce-based strict CSP without unsafe-inline in script-src', () => {
+    const proxy = readFileSync(join(process.cwd(), 'src/proxy.ts'), 'utf8')
+    const scriptSrcLine = proxy
+      .split('\n')
+      .find(line => line.includes("script-src 'self'"))
+
+    expect(scriptSrcLine).toBeDefined()
+    expect(scriptSrcLine).toContain("'nonce-${nonce}'")
+    expect(scriptSrcLine).toContain("'strict-dynamic'")
+    expect(scriptSrcLine).not.toContain("'unsafe-inline'")
   })
 })
