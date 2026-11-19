@@ -40,11 +40,13 @@ declare global {
 
 interface TurnstileWidgetProps {
   onToken: (token: string | null) => void
+  resetKey?: number
 }
 
-export default function TurnstileWidget({ onToken }: TurnstileWidgetProps) {
+export default function TurnstileWidget({ onToken, resetKey = 0 }: TurnstileWidgetProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const widgetIdRef = useRef<string | null>(null)
+  const lastResetKeyRef = useRef(resetKey)
   const [failed, setFailed] = useState(false)
 
   useEffect(() => {
@@ -103,6 +105,23 @@ export default function TurnstileWidget({ onToken }: TurnstileWidgetProps) {
       }
     }
   }, [onToken])
+
+  useEffect(() => {
+    if (lastResetKeyRef.current === resetKey) return
+    lastResetKeyRef.current = resetKey
+    onToken(null)
+
+    const widgetId = widgetIdRef.current
+    if (!widgetId || !window.turnstile) return
+
+    try {
+      window.turnstile.reset(widgetId)
+      queueMicrotask(() => setFailed(false))
+    } catch {
+      queueMicrotask(() => setFailed(true))
+      onToken(null)
+    }
+  }, [onToken, resetKey])
 
   if (!SITE_KEY) return null
 

@@ -22,6 +22,7 @@ export default function AppointmentForm() {
   const [currentBookings, setCurrentBookings] = useState<{ [key: string]: number }>({})
   const [loadedDate, setLoadedDate] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
+  const [turnstileResetKey, setTurnstileResetKey] = useState(0)
 
   // Enrollment data (single source of truth for patient info)
   const [enrollmentData, setEnrollmentData] = useState<EnrollmentData | null>(null)
@@ -153,6 +154,8 @@ export default function AppointmentForm() {
       setShowConfirmation(true)
       return true
     } catch (err) {
+      setTurnstileToken(null)
+      setTurnstileResetKey(key => key + 1)
       setError(err instanceof Error ? err.message : 'Failed to create appointment')
       return false
     }
@@ -427,7 +430,12 @@ export default function AppointmentForm() {
                 onSave={handleEnrollmentSave}
                 initialData={enrollmentData ?? undefined}
                 selectedService={selectedService}
-                turnstileWidget={<TurnstileWidget onToken={setTurnstileToken} />}
+                turnstileWidget={
+                  <TurnstileWidget
+                    onToken={setTurnstileToken}
+                    resetKey={turnstileResetKey}
+                  />
+                }
               />
             </div>
           )}
