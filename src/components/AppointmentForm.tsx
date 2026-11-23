@@ -20,6 +20,11 @@ export default function AppointmentForm() {
   const [qrUrl, setQrUrl] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [currentBookings, setCurrentBookings] = useState<{ [key: string]: number }>({})
+  const [serviceCapacities, setServiceCapacities] = useState<{ [key: string]: number }>({})
+  const [serviceStates, setServiceStates] = useState<Record<
+    string,
+    { isActive: boolean; isExternal: boolean }
+  > | null>(null)
   const [loadedDate, setLoadedDate] = useState<string | null>(null)
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
   const [turnstileResetKey, setTurnstileResetKey] = useState(0)
@@ -40,19 +45,33 @@ export default function AppointmentForm() {
           throw new Error(payload?.error || 'Unable to load availability')
         }
         const bookings: { [key: string]: number } = {}
+        const capacities: { [key: string]: number } = {}
+        const states: Record<string, { isActive: boolean; isExternal: boolean }> = {}
         for (const service of payload.services ?? []) {
           bookings[service.id] = Number(service.booked ?? 0)
+          capacities[service.id] = Number(service.capacity ?? 0)
+          states[service.id] = {
+            isActive: service.is_active !== false,
+            isExternal: Boolean(service.external_url),
+          }
         }
         setCurrentBookings(bookings)
+        setServiceCapacities(capacities)
+        setServiceStates(states)
         setSelectedService(current => {
           if (!current) return current
+          const state = states[current]
           const definition = getServiceDefinition(current)
-          return definition && bookings[current] >= definition.dailySlots ? null : current
+          const capacity = capacities[current] ?? definition?.dailySlots ?? 0
+          const active = state ? state.isActive : true
+          return !active || bookings[current] >= capacity ? null : current
         })
       })
       .catch(fetchError => {
         if (fetchError instanceof DOMException && fetchError.name === 'AbortError') return
         setCurrentBookings({})
+        setServiceCapacities({})
+        setServiceStates(null)
       })
       .finally(() => {
         if (!controller.signal.aborted) setLoadedDate(selectedDate)
@@ -188,6 +207,8 @@ export default function AppointmentForm() {
     setAppointmentId(null)
     setQrUrl(null)
     setCurrentBookings({})
+    setServiceCapacities({})
+    setServiceStates(null)
     setLoadedDate(null)
     setTurnstileToken(null)
     setError(null)
@@ -383,6 +404,8 @@ export default function AppointmentForm() {
                 }}
                 selectedDate={selectedDate}
                 currentBookings={currentBookings}
+                serviceCapacities={serviceCapacities}
+                serviceStates={serviceStates}
                 selectedTime={selectedTime}
                 onTimeSelect={setSelectedTime}
                 availabilityLoading={availabilityLoading}

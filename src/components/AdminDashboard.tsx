@@ -13,6 +13,7 @@ import {
   QrCode,
   Scan,
   Search,
+  Settings2,
   User,
   XCircle,
 } from 'lucide-react'
@@ -22,6 +23,7 @@ import type {
   AdminAppointmentDetail,
   AppointmentStatus,
 } from '@/types/appointment'
+import ServiceManager from './ServiceManager'
 import SiteQRPoster from './SiteQRPoster'
 import { useRouter } from 'next/navigation'
 import { BACOLOD_HEALTH_FACILITIES } from '@/constants/facilities'
@@ -107,6 +109,7 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
   const [detailLoading, setDetailLoading] = useState(false)
   const [showQRScanner, setShowQRScanner] = useState(false)
   const [showQRPoster, setShowQRPoster] = useState(false)
+  const [showServiceManager, setShowServiceManager] = useState(false)
   const [scannerError, setScannerError] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [actionLoading, setActionLoading] = useState(false)
@@ -375,8 +378,15 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
             </div>
             <div className="flex flex-wrap gap-2.5">
               <button
-                onClick={() => setShowQRPoster(true)}
+                onClick={() => setShowServiceManager(true)}
                 className="flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 shadow-md transition-all hover:-translate-y-px hover:shadow-lg"
+              >
+                <Settings2 className="h-4 w-4" />
+                Manage services
+              </button>
+              <button
+                onClick={() => setShowQRPoster(true)}
+                className="flex items-center gap-2 rounded-xl bg-white/10 px-4 py-2.5 text-sm font-bold text-white ring-1 ring-white/25 transition-all hover:bg-white/20"
               >
                 <QrCode className="h-4 w-4" />
                 Site QR poster
@@ -835,6 +845,17 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
             <div className="p-6">
               <SiteQRPoster printable={false} />
             </div>
+          </div>
+        </div>
+      )}
+
+      {showServiceManager && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+          <div className="max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white shadow-2xl">
+            <ServiceManager
+              adminFetch={adminFetch}
+              onClose={() => setShowServiceManager(false)}
+            />
           </div>
         </div>
       )}

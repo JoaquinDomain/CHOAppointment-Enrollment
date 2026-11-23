@@ -108,6 +108,8 @@ interface AvailabilityRow extends RowDataPacket {
   name: string
   daily_capacity: number
   booked_count: number | null
+  is_active: number
+  external_url: string | null
 }
 
 const DETAIL_SELECT = `
@@ -437,12 +439,10 @@ export class MySqlAppointmentRepository implements AppointmentRepository {
 
   async getAvailability(date: string): Promise<AppointmentAvailability> {
     const rows = await dbQuery<AvailabilityRow[]>(
-      `SELECT s.id, s.name, s.daily_capacity, c.booked_count
+      `SELECT s.id, s.name, s.daily_capacity, s.is_active, s.external_url, c.booked_count
          FROM laboratory_services s
          LEFT JOIN service_daily_capacity c
            ON c.service_id = s.id AND c.appointment_date = ?
-        WHERE s.is_active = 1
-          AND s.external_url IS NULL
         ORDER BY s.id ASC`,
       [date]
     )
@@ -459,6 +459,8 @@ export class MySqlAppointmentRepository implements AppointmentRepository {
           capacity,
           booked,
           remaining: Math.max(0, capacity - booked),
+          is_active: row.is_active === 1,
+          external_url: row.external_url,
         }
       }),
     }

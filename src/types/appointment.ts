@@ -98,6 +98,8 @@ export interface AppointmentAvailability {
     capacity: number
     booked: number
     remaining: number
+    is_active: boolean
+    external_url: string | null
   }>
 }
 

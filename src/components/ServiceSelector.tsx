@@ -55,6 +55,8 @@ interface ServiceSelectorProps {
   onServiceSelect: (serviceId: string) => void
   selectedDate?: string | null
   currentBookings?: { [key: string]: number }
+  serviceCapacities?: { [key: string]: number }
+  serviceStates?: Record<string, { isActive: boolean; isExternal: boolean }> | null
   selectedTime?: AppointmentTimeSlot | null
   onTimeSelect?: (timeSlot: AppointmentTimeSlot) => void
   availabilityLoading?: boolean
@@ -65,22 +67,34 @@ export default function ServiceSelector({
   onServiceSelect,
   selectedDate,
   currentBookings = {},
+  serviceCapacities = {},
+  serviceStates = null,
   selectedTime = null,
   onTimeSelect,
   availabilityLoading = false,
 }: ServiceSelectorProps) {
+  const capacityFor = (service: ServiceOption) =>
+    serviceCapacities[service.id] ?? service.dailySlots
+
+  const isDisabledByAdmin = (service: ServiceOption) => {
+    if (!serviceStates) return false
+    const state = serviceStates[service.id]
+    return state ? !state.isActive : false
+  }
+
   const isSlotAvailable = (service: ServiceOption) => {
+    if (isDisabledByAdmin(service)) return false
     if (service.externalLink) return true
     if (!selectedDate) return true
-    
+
     const currentBookingsCount = currentBookings[service.id] || 0
-    return currentBookingsCount < service.dailySlots
+    return currentBookingsCount < capacityFor(service)
   }
 
   const getRemainingSlots = (service: ServiceOption) => {
     if (service.externalLink) return null
     const currentBookingsCount = currentBookings[service.id] || 0
-    return Math.max(0, service.dailySlots - currentBookingsCount)
+    return Math.max(0, capacityFor(service) - currentBookingsCount)
   }
 
   const handleServiceClick = (service: ServiceOption) => {
@@ -165,7 +179,7 @@ export default function ServiceSelector({
               {remainingSlots !== null && (
                 <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
                   <div className="text-xs text-slate-500">
-                    Daily Limit: <span className="font-semibold text-slate-800">{service.dailySlots}</span>
+                    Daily Limit: <span className="font-semibold text-slate-800">{capacityFor(service)}</span>
                   </div>
                   <div className={`
                     px-2.5 py-0.5 rounded-full text-xs font-semibold tracking-tight
@@ -192,7 +206,11 @@ export default function ServiceSelector({
               {!isAvailable && (
                 <div aria-hidden className="absolute inset-0 flex items-center justify-center rounded-2xl bg-slate-100/80">
                   <span className="px-3 text-center text-sm font-medium text-slate-600">
-                    {service.dailySlots === 0 ? 'Not available online' : 'Fully booked'}
+                    {isDisabledByAdmin(service)
+                      ? 'Currently unavailable'
+                      : capacityFor(service) === 0
+                        ? 'Not available online'
+                        : 'Fully booked'}
                   </span>
                 </div>
               )}
