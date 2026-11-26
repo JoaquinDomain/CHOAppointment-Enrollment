@@ -83,13 +83,19 @@ npm run db:verify
 
 The migration runner creates `schema_migrations` and applies every file in `mysql/migrations/` in order, including the laboratory service catalogue. It does not create the database or an administrator. See [`docs/DATABASE_MIGRATION.md`](docs/DATABASE_MIGRATION.md) for the migration rules and production procedure.
 
-4. Create an administrator:
+4. Create the first administrator, then promote it to Super Admin:
 
 ```bash
-npm run admin:create -- --username admin --role superadmin
+printf '%s' "$ADMIN_PASSWORD" | npm run admin:create -- --username admin --password-stdin
+npm run admin:promote -- --username admin --confirm admin
 ```
 
-The password is resolved from `--password-stdin`, then `ADMIN_PASSWORD`, or generated randomly and printed once. The command reads `.env.local` / `.env` automatically.
+`admin:create` is create-only: it always creates an `ADMIN`, refuses an existing
+username without changing it, and rejects `--role superadmin`. Promotion is the only
+supported way to create a Super Admin, and it requires the exact username twice.
+The password is resolved from `--password-stdin` or `ADMIN_PASSWORD`; it is never
+generated, printed, or accepted as a command-line argument. Both commands read
+`.env.local` / `.env` automatically.
 
 5. Start the development server:
 
@@ -154,12 +160,17 @@ Database architecture, pooling, integrity rules, permissions, and backup guidanc
 | `/privacy` | Privacy notice |
 | `/admin/login` | Admin sign-in |
 | `/admin` | Admin dashboard (session required) |
+| `/admin/users` | Administrator management (Super Admin only) |
+| `/admin/appointments/[id]/print` | Printable ITR (session required) |
 | `POST /api/appointments` | Create an appointment |
 | `GET /api/availability?date=YYYY-MM-DD` | Service availability for a date |
 | `GET /api/health` | Database health check |
 | `/api/admin/login`, `/api/admin/logout`, `/api/admin/check-auth` | Admin session endpoints |
 | `GET /api/appointments`, `GET/PATCH /api/admin/appointments/[id]` | Admin list, detail, status updates |
 | `POST /api/admin/scan` | Validate a scanned QR token |
+| `GET /api/admin/services`, `PATCH /api/admin/services/[id]` | List services; update capacity and activation |
+| `GET/POST /api/admin/users`, `PATCH /api/admin/users/[id]` | Administrator management (Super Admin only) |
+| `GET /api/admin/audit-logs?limit=100` | Administrative audit entries (Super Admin only) |
 
 ## Scripts
 
@@ -176,7 +187,8 @@ Database architecture, pooling, integrity rules, permissions, and backup guidanc
 | `npm run db:migrate` | Apply pending migrations |
 | `npm run db:migrate:status` | Show applied and pending migrations |
 | `npm run db:verify` | Verify connection, checksums, required tables, and collation |
-| `npm run admin:create` | Create or update an administrator |
+| `npm run admin:create` | Create a new ADMIN account (create-only; never resets or promotes) |
+| `npm run admin:promote` | Promote an existing active administrator to Super Admin |
 
 ## Security
 
@@ -234,10 +246,10 @@ templates, SELinux/firewall notes, and the list of actions MICT must perform.
 1. MICT creates a dedicated MySQL 8.0 database and least-privilege application account. Do not share a database with the CHO Services Appointment System.
 2. Configure the production environment from `.env.example`. Use HTTPS and set `APP_URL`, `NEXT_PUBLIC_APP_URL`, `COOKIE_SECURE=true`, `TRUST_PROXY=true`, a strong `APP_SECRET`, and the real `DB_*` values.
 3. Install dependencies and build: `npm ci`, `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
-4. Apply migrations with authorization: `npm run db:migrate`, then `npm run db:verify`.
-5. Create the first administrator with `npm run admin:create`.
+4. Apply migrations with authorization: `npm run db:migrate`, then `npm run db:verify`. Migration `0003` adds `administrators.display_name` and `idx_administrators_role_active`; startup fails fast if either is missing.
+5. Create the first administrator with `npm run admin:create`, then promote it with `npm run admin:promote -- --username <name> --confirm <name>`.
 6. Start the systemd service and verify through Nginx with `GET /api/health`, the security headers, and a test booking.
-7. Confirm the reverse proxy overwrites `X-Forwarded-For`; appending would let clients spoof their address and bypass rate limits.
+7. Confirm the reverse proxy overwrites `X-Real-IP`; the application ignores `X-Forwarded-For` so a client-supplied value cannot spoof its address or bypass rate limits.
 
 ## Project Structure
 

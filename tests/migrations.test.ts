@@ -77,4 +77,29 @@ describe('migration files', () => {
     expect(schema).toContain('npm run db:migrate')
     expect(schema).toContain('mysql/migrations/')
   })
+
+  it('adds the RBAC schema with guarded, compatible DDL', () => {
+    const sql = read('0003_admin_rbac.sql')
+
+    expect(sql).toMatch(/ADD COLUMN display_name VARCHAR\(150\) NULL/i)
+    expect(sql).toMatch(/ADD INDEX idx_administrators_role_active \(role, is_active\)/i)
+    expect(sql).toMatch(/information_schema\.columns/i)
+    expect(sql).toMatch(/information_schema\.statistics/i)
+    expect(sql).toMatch(/PREPARE stmt FROM @ddl/i)
+  })
+
+  it('verifies the RBAC column and index after migration', () => {
+    const verifyScript = readFileSync(path.resolve('scripts', 'db-migrate.mjs'), 'utf8')
+    const dbModule = readFileSync(
+      path.resolve('src', 'server', 'db', 'mysql.ts'),
+      'utf8'
+    )
+
+    for (const source of [verifyScript, dbModule]) {
+      expect(source).toContain('display_name')
+      expect(source).toContain('idx_administrators_role_active')
+      expect(source).toMatch(/information_schema\.columns/i)
+      expect(source).toMatch(/information_schema\.statistics/i)
+    }
+  })
 })

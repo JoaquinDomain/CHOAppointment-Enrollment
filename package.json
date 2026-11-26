@@ -14,7 +14,8 @@
     "db:migrate": "node scripts/db-migrate.mjs up",
     "db:migrate:status": "node scripts/db-migrate.mjs status",
     "db:verify": "node scripts/db-migrate.mjs verify",
-    "admin:create": "node scripts/create-admin.mjs"
+    "admin:create": "node scripts/create-admin.mjs",
+    "admin:promote": "node scripts/promote-superadmin.mjs"
   },
   "dependencies": {
     "html5-qrcode": "^2.3.8",

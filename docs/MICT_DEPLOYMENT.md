@@ -345,20 +345,30 @@ If MICT requires migrations to be applied by a DBA account, the DBA runs the
 same runner with the DBA credentials in a temporary environment, then the
 application account is granted only runtime DML privileges.
 
-### 7.3 Create the first administrator
+### 7.3 Create the first administrator and the first Super Admin
+
+`admin:create` is create-only. It always creates an `ADMIN`, never changes an
+existing account, never resets a password, and rejects `--role superadmin`.
+Super Admin is granted only by the separate, confirmed promotion command.
 
 ```bash
 set -a
 . /etc/cho-appointment/cho-appointment.env
 set +a
 
-npm run admin:create -- --username admin --role superadmin
+printf '%s' "$NEW_ADMIN_PASSWORD" | npm run admin:create -- --username admin --password-stdin
+npm run admin:promote -- --username admin --confirm admin
 ```
 
-Prefer `--password-stdin` or `ADMIN_PASSWORD` so the password is not written to
-shell history. The command prints a generated password once if neither is
-supplied. Store it in the CHO's approved password manager and require a change
+A password is required: `--password-stdin` or `ADMIN_PASSWORD`. The command does
+not generate or print one. Use `--password-stdin` so the secret is not written to
+shell history, deliver it through the CHO's approved channel, and require a change
 at first sign-in through CHO procedure.
+
+The promotion requires the exact username twice, locks the administrator row,
+refuses a missing or inactive account, and commits the role change together with
+an `admin.user.bootstrap_promoted` audit record. It takes effect immediately
+because the role is re-read from MySQL on every authenticated request.
 
 ---
 

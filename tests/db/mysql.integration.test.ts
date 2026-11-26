@@ -57,6 +57,13 @@ function nextBookableDate(): string {
   throw new Error('No bookable date found in the test window')
 }
 
+function sequenceToLetters(sequence: number): string {
+  return String(sequence)
+    .split('')
+    .map(digit => 'ABCDEFGHIJ'[Number(digit)])
+    .join('')
+}
+
 function bookingInput(
   sequence: number,
   overrides: Partial<Parameters<ValidationModule['parseAndValidateAppointmentInput']>[0]> = {}
@@ -66,7 +73,7 @@ function bookingInput(
   return validation.parseAndValidateAppointmentInput({
     first_name: 'Integration',
     middle_name: 'Test',
-    last_name: `Patient${sequence}`,
+    last_name: `Patient${sequenceToLetters(sequence)}`,
     birthdate: '1990-01-15',
     gender: 'Female',
     civil_status: 'Single',
@@ -151,6 +158,29 @@ describeDb('MySQL 8.0 integration', () => {
 
     await expect(db.checkDatabaseConnection()).resolves.toBeUndefined()
     await expect(db.checkRequiredTables()).resolves.toEqual([])
+    await expect(db.checkRequiredSchema()).resolves.toEqual([])
+  })
+
+  it('creates the administrator RBAC schema after the migration runner runs', async () => {
+    const [columns] = await testPool.query<RowDataPacket[]>(
+      `SELECT column_name
+         FROM information_schema.columns
+        WHERE table_schema = DATABASE()
+          AND table_name = 'administrators'
+          AND column_name = 'display_name'`
+    )
+    expect(columns).toHaveLength(1)
+
+    const [indexes] = await testPool.query<RowDataPacket[]>(
+      `SELECT index_name
+         FROM information_schema.statistics
+        WHERE table_schema = DATABASE()
+          AND table_name = 'administrators'
+          AND index_name = 'idx_administrators_role_active'`
+    )
+    expect(indexes.length).toBeGreaterThan(0)
+
+    await expect(db.checkRequiredSchema()).resolves.toEqual([])
   })
 
   it('serves concurrent queries through the pool', async () => {

@@ -89,8 +89,10 @@ export function getPool(): Pool {
  * hang. If the timeout wins the race, the pending acquisition is released as
  * soon as it resolves so the pool does not leak a connection.
  */
-async function acquireConnection(timeoutMs: number): Promise<PoolConnection> {
-  const pool = getPool()
+async function acquireConnectionFromPool(
+  pool: Pool,
+  timeoutMs: number
+): Promise<PoolConnection> {
   const acquisition = pool.getConnection()
   let timer: NodeJS.Timeout | undefined
 
@@ -117,7 +119,7 @@ async function acquireConnection(timeoutMs: number): Promise<PoolConnection> {
 }
 
 async function withConnection<T>(operation: (connection: PoolConnection) => Promise<T>): Promise<T> {
-  const connection = await acquireConnection(configuredAcquireTimeoutMs)
+  const connection = await acquireConnectionFromPool(getPool(), configuredAcquireTimeoutMs)
   try {
     return await operation(connection)
   } finally {
@@ -160,17 +162,27 @@ function isRetryableTransactionError(error: unknown): boolean {
   return typeof code === 'string' && RETRYABLE_TRANSACTION_ERRORS.has(code)
 }
 
-export async function withTransaction<T>(
+/**
+ * Runs an operation inside a transaction on the given pool.
+ *
+ * The pool can be the application pool or an independent pool (for example, a
+ * second connection used by a concurrency test). Retryable InnoDB errors such
+ * as deadlocks are retried a bounded number of times; every retry re-runs the
+ * whole operation so no partial writes ever survive.
+ */
+export async function withTransactionOnPool<T>(
+  pool: Pool,
   operation: (connection: PoolConnection) => Promise<T>,
-  options: { retries?: number } = {}
+  options: { retries?: number; acquireTimeoutMs?: number } = {}
 ): Promise<T> {
   const retries = options.retries ?? 2
+  const acquireTimeoutMs = options.acquireTimeoutMs ?? DEFAULT_ACQUIRE_TIMEOUT_MS
   let attempt = 0
 
   while (true) {
     let connection: PoolConnection | null = null
     try {
-      connection = await acquireConnection(configuredAcquireTimeoutMs)
+      connection = await acquireConnectionFromPool(pool, acquireTimeoutMs)
       await connection.beginTransaction()
       const result = await operation(connection)
       await connection.commit()
@@ -194,6 +206,16 @@ export async function withTransaction<T>(
       connection?.release()
     }
   }
+}
+
+export async function withTransaction<T>(
+  operation: (connection: PoolConnection) => Promise<T>,
+  options: { retries?: number } = {}
+): Promise<T> {
+  return withTransactionOnPool(getPool(), operation, {
+    retries: options.retries,
+    acquireTimeoutMs: configuredAcquireTimeoutMs,
+  })
 }
 
 export function isUniqueConstraintError(error: unknown): boolean {
@@ -271,6 +293,58 @@ export async function checkRequiredTables(): Promise<string[]> {
     'schema_migrations',
   ]
   return required.filter(table => !present.has(table))
+}
+
+const REQUIRED_COLUMNS = [
+  { table: 'administrators', column: 'display_name' },
+] as const
+
+const REQUIRED_INDEXES = [
+  { table: 'administrators', index: 'idx_administrators_role_active' },
+] as const
+
+/**
+ * Verifies that the RBAC columns and indexes added by migration 0003 exist.
+ *
+ * The administrator management code queries administrators.display_name and
+ * relies on the (role, is_active) index for its super-admin guard reads, so a
+ * deployment that skipped the migration must fail fast instead of surfacing
+ * confusing runtime errors.
+ */
+export async function checkRequiredSchema(): Promise<string[]> {
+  const problems: string[] = []
+
+  for (const requirement of REQUIRED_COLUMNS) {
+    const rows = await dbQuery<RowDataPacket[]>(
+      `SELECT 1 AS present
+         FROM information_schema.columns
+        WHERE table_schema = DATABASE()
+          AND table_name = ?
+          AND column_name = ?
+        LIMIT 1`,
+      [requirement.table, requirement.column]
+    )
+    if (rows.length === 0) {
+      problems.push(`Missing required column: ${requirement.table}.${requirement.column}`)
+    }
+  }
+
+  for (const requirement of REQUIRED_INDEXES) {
+    const rows = await dbQuery<RowDataPacket[]>(
+      `SELECT 1 AS present
+         FROM information_schema.statistics
+        WHERE table_schema = DATABASE()
+          AND table_name = ?
+          AND index_name = ?
+        LIMIT 1`,
+      [requirement.table, requirement.index]
+    )
+    if (rows.length === 0) {
+      problems.push(`Missing required index: ${requirement.table}.${requirement.index}`)
+    }
+  }
+
+  return problems
 }
 
 export async function closeDatabasePool(): Promise<void> {

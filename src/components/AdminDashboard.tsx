@@ -14,6 +14,7 @@ import {
   Scan,
   Search,
   Settings2,
+  ShieldCheck,
   User,
   XCircle,
 } from 'lucide-react'
@@ -377,6 +378,15 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
               </p>
             </div>
             <div className="flex flex-wrap gap-2.5">
+              {adminRole === 'superadmin' && (
+                <a
+                  href="/admin/users"
+                  className="flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 shadow-md transition-all hover:-translate-y-px hover:shadow-lg"
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                  Manage administrators
+                </a>
+              )}
               <button
                 onClick={() => setShowServiceManager(true)}
                 className="flex items-center gap-2 rounded-xl bg-white px-4 py-2.5 text-sm font-bold text-emerald-900 shadow-md transition-all hover:-translate-y-px hover:shadow-lg"

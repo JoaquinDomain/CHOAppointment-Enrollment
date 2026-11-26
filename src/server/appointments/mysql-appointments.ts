@@ -263,6 +263,19 @@ export class MySqlAppointmentRepository implements AppointmentRepository {
         throw new Error('Failed to persist patient record')
       }
 
+      // Lock the capacity row before taking any gap locks on the appointments
+      // index. Every booking for a service acquires this row lock first, which
+      // gives concurrent transactions a consistent lock order and prevents the
+      // capacity-row/appointments-gap deadlock that a mixed order can produce.
+      await executeOn<ResultSetHeader>(
+        connection,
+        `INSERT INTO service_daily_capacity
+           (service_id, appointment_date, booked_count, capacity)
+         VALUES (?, ?, 0, ?)
+         ON DUPLICATE KEY UPDATE service_id = service_id`,
+        [input.service.id, input.appointmentDate, capacity]
+      )
+
       const existingRows = await executeOn<ExistingAppointmentRow[]>(
         connection,
         `SELECT id
@@ -278,15 +291,6 @@ export class MySqlAppointmentRepository implements AppointmentRepository {
       if (existingRows.length > 0) {
         throw new DuplicateBookingError()
       }
-
-      await executeOn<ResultSetHeader>(
-        connection,
-        `INSERT INTO service_daily_capacity
-           (service_id, appointment_date, booked_count, capacity)
-         VALUES (?, ?, 0, ?)
-         ON DUPLICATE KEY UPDATE service_id = service_id`,
-        [input.service.id, input.appointmentDate, capacity]
-      )
 
       const reservation = await executeOn<ResultSetHeader>(
         connection,

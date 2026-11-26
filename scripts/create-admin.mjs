@@ -4,7 +4,7 @@ import { randomBytes, scrypt as scryptCallback } from 'node:crypto'
 import { promisify } from 'node:util'
 import process from 'node:process'
 import mysql from 'mysql2/promise'
-import { databaseOptions, loadEnvFiles } from './lib/env.mjs'
+import { databaseOptions, describeDatabaseTarget, loadEnvFiles } from './lib/env.mjs'
 
 const scrypt = promisify(scryptCallback)
 
@@ -19,6 +19,10 @@ const MIN_PASSWORD_LENGTH = 12
 const MAX_PASSWORD_LENGTH = 200
 const MAX_MEMORY_BYTES = 256 * 1024 * 1024
 
+const PROMOTE_HINT =
+  'Super Admin accounts are never created here. Create an ADMIN, then use ' +
+  '"npm run admin:promote -- --username <name> --confirm <name>" (scripts/promote-superadmin.mjs).'
+
 function parseArgs(argv) {
   const args = { username: process.env.ADMIN_USERNAME?.trim() || '', role: 'admin', passwordStdin: false }
   for (let index = 0; index < argv.length; index += 1) {
@@ -27,7 +31,7 @@ function parseArgs(argv) {
       args.username = argv[index + 1]?.trim() || ''
       index += 1
     } else if (arg === '--role') {
-      args.role = argv[index + 1]?.trim() || ''
+      args.role = (argv[index + 1]?.trim() || '').toLowerCase()
       index += 1
     } else if (arg === '--password-stdin') {
       args.passwordStdin = true
@@ -42,12 +46,20 @@ function parseArgs(argv) {
 
 function printUsage() {
   console.log(`Usage:
-  node scripts/create-admin.mjs --username <name> [--role admin|superadmin] [--password-stdin]
+  node scripts/create-admin.mjs --username <name> [--role admin] --password-stdin
 
-Password resolution order:
+Create-only: this command always creates a new ADMIN account. It never changes
+an existing account, never resets a password, never reactivates a disabled
+account, and never creates or promotes a SUPER_ADMIN. Super Admin promotion uses
+scripts/promote-superadmin.mjs.
+
+Password resolution (required):
   1. --password-stdin (recommended when piping a secret)
   2. ADMIN_PASSWORD environment variable
-  3. Cryptographically random password, printed once
+
+An existing username is rejected. The existing account is left completely
+unchanged, including its password, role, and activation state. A new password is
+never printed to stdout.
 
 Environment:
   DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME, DB_SSL, DB_SSL_REJECT_UNAUTHORIZED, DB_SSL_CA
@@ -58,10 +70,6 @@ async function readStdin() {
   const chunks = []
   for await (const chunk of process.stdin) chunks.push(chunk)
   return Buffer.concat(chunks).toString('utf8').replace(/\r?\n$/, '')
-}
-
-function generatePassword() {
-  return randomBytes(24).toString('base64url')
 }
 
 async function hashPassword(password) {
@@ -88,6 +96,11 @@ async function hashPassword(password) {
   ].join('$')
 }
 
+function isUniqueConstraintError(error) {
+  if (!error || typeof error !== 'object') return false
+  return error.code === 'ER_DUP_ENTRY' || error.errno === 1062
+}
+
 async function main() {
   loadEnvFiles()
   const args = parseArgs(process.argv.slice(2))
@@ -99,50 +112,69 @@ async function main() {
   if (!/^[A-Za-z0-9._-]{3,100}$/.test(args.username)) {
     throw new Error('Username must be 3-100 characters and use only letters, numbers, dot, dash, or underscore')
   }
-  if (!['admin', 'superadmin'].includes(args.role)) {
-    throw new Error('Role must be admin or superadmin')
+  if (args.role === 'superadmin') {
+    throw new Error(PROMOTE_HINT)
+  }
+  if (args.role !== 'admin') {
+    throw new Error('Role must be admin. ' + PROMOTE_HINT)
   }
 
   let password = process.env.ADMIN_PASSWORD || ''
-  let generated = false
   if (args.passwordStdin) {
     password = await readStdin()
   } else if (!password) {
-    password = generatePassword()
-    generated = true
+    throw new Error(
+      'A password is required. Provide it with --password-stdin or the ADMIN_PASSWORD environment variable.'
+    )
   }
   password = password.replace(/\r?\n$/, '')
 
   const passwordHash = await hashPassword(password)
-  const connection = await mysql.createConnection(databaseOptions())
+  const options = databaseOptions()
+  console.log(`Target: ${describeDatabaseTarget(options)}`)
+
+  const connection = await mysql.createConnection(options)
 
   try {
     await connection.beginTransaction()
-    await connection.execute(
+
+    // Create-only: a plain INSERT means an existing username raises a duplicate
+    // key error instead of silently overwriting the stored password, role, or
+    // activation state. The transaction is rolled back below, so the existing
+    // account is never touched.
+    const [result] = await connection.execute(
       `INSERT INTO administrators (username, password_hash, role, is_active)
-       VALUES (?, ?, ?, 1)
-       ON DUPLICATE KEY UPDATE
-         password_hash = VALUES(password_hash),
-         role = VALUES(role),
-         is_active = 1,
-         failed_login_count = 0,
-         locked_until = NULL`,
-      [args.username, passwordHash, args.role]
+       VALUES (?, ?, 'admin', 1)`,
+      [args.username, passwordHash]
     )
 
     await connection.execute(
       `INSERT INTO audit_logs (actor_type, action, entity_type, entity_id, metadata)
-       VALUES ('system', 'administrator.provisioned', 'administrator', ?, ?)`,
-      [args.username, JSON.stringify({ role: args.role, generatedPassword: generated })]
+       VALUES ('system', 'admin.user.created', 'administrator', ?, ?)`,
+      [
+        String(result.insertId),
+        JSON.stringify({ target_username: args.username, role: 'admin', source: 'cli' }),
+      ]
     )
+
     await connection.commit()
 
-    console.log(`Administrator "${args.username}" (${args.role}) is ready.`)
-    if (generated) {
-      console.log('Generated password (shown once, store it in a password manager):')
-      console.log(password)
-    }
+    console.log(`Administrator "${args.username}" (ADMIN) was created.`)
+    console.log(`Record id: ${result.insertId}`)
     console.log('Sign in at /admin/login and rotate this password through your normal process.')
+  } catch (error) {
+    try {
+      await connection.rollback()
+    } catch {
+      // The original failure is more useful than a rollback failure.
+    }
+    if (isUniqueConstraintError(error)) {
+      throw new Error(
+        `Administrator "${args.username}" already exists. The existing account was left unchanged. ` +
+          'This command never resets passwords or changes roles.'
+      )
+    }
+    throw error
   } finally {
     await connection.end()
   }

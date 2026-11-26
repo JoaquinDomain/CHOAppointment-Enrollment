@@ -7,7 +7,9 @@ export async function register(): Promise<void> {
     getStartupSummary,
     validateServerEnv,
   } = await import('@/server/config/env')
-  const { checkDatabaseConnection, checkRequiredTables } = await import('@/server/db/mysql')
+  const { checkDatabaseConnection, checkRequiredTables, checkRequiredSchema } = await import(
+    '@/server/db/mysql'
+  )
   const { logError, logInfo } = await import('@/server/logging/logger')
 
   try {
@@ -18,9 +20,14 @@ export async function register(): Promise<void> {
     if (databaseConfig.verifyOnStartup) {
       await checkDatabaseConnection()
       const missingTables = await checkRequiredTables()
-      if (missingTables.length > 0) {
+      const missingSchema = await checkRequiredSchema()
+      const problems = [
+        ...missingTables.map(table => `table ${table}`),
+        ...missingSchema,
+      ]
+      if (problems.length > 0) {
         throw new Error(
-          `Missing required database tables: ${missingTables.join(', ')}. ` +
+          `Missing or outdated database schema: ${problems.join(', ')}. ` +
             'Run "npm run db:migrate" before starting the application.'
         )
       }

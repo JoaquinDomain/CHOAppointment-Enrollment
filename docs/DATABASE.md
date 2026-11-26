@@ -266,7 +266,8 @@ cp .env.example .env.local
 # edit .env.local with local DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
 npm run db:migrate
 npm run db:verify
-npm run admin:create -- --username admin --role superadmin
+npm run admin:create -- --username admin --password-stdin   # create ADMIN
+npm run admin:promote -- --username admin --confirm admin   # then promote to Super Admin
 npm run dev
 ```
 

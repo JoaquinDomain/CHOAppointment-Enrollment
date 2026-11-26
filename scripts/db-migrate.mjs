@@ -28,6 +28,16 @@ const REQUIRED_TABLES = [
   'schema_migrations',
 ]
 
+// Columns and indexes introduced by the administrator RBAC migration. These
+// are checked explicitly so a database that is missing a required column fails
+// verification instead of breaking the administrator management APIs at
+// runtime.
+const REQUIRED_COLUMNS = [{ table: 'administrators', column: 'display_name' }]
+
+const REQUIRED_INDEXES = [
+  { table: 'administrators', index: 'idx_administrators_role_active' },
+]
+
 const MIGRATIONS_TABLE_SQL = `
   CREATE TABLE IF NOT EXISTS schema_migrations (
     version VARCHAR(20) NOT NULL,
@@ -308,6 +318,41 @@ async function commandVerify(connection, migrations) {
 
   console.log(`Required tables: ${REQUIRED_TABLES.length}`)
   console.log(`Present tables: ${tableRows.length}`)
+
+  for (const requirement of REQUIRED_COLUMNS) {
+    const [columnRows] = await connection.query(
+      `SELECT 1 AS present
+         FROM information_schema.columns
+        WHERE table_schema = DATABASE()
+          AND table_name = ?
+          AND column_name = ?
+        LIMIT 1`,
+      [requirement.table, requirement.column]
+    )
+    if (columnRows.length === 0) {
+      problems.push(
+        `Missing required column: ${requirement.table}.${requirement.column}. Run "npm run db:migrate".`
+      )
+    }
+  }
+
+  for (const requirement of REQUIRED_INDEXES) {
+    const [indexRows] = await connection.query(
+      `SELECT 1 AS present
+         FROM information_schema.statistics
+        WHERE table_schema = DATABASE()
+          AND table_name = ?
+          AND index_name = ?
+        LIMIT 1`,
+      [requirement.table, requirement.index]
+    )
+    if (indexRows.length === 0) {
+      problems.push(
+        `Missing required index: ${requirement.table}.${requirement.index}. Run "npm run db:migrate".`
+      )
+    }
+  }
+
   for (const warning of warnings) console.warn(`WARNING: ${warning}`)
 
   if (problems.length > 0) {
