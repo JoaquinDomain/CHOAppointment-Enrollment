@@ -7,6 +7,7 @@ import {
   Check,
   FileText,
   Heart,
+  Info,
   MoreHorizontal,
   Stethoscope,
   Syringe,
@@ -47,6 +48,11 @@ const serviceOptions: ServiceOption[] = LABORATORY_SERVICES.map(service => ({
   description: service.description,
   externalLink: service.externalUrl,
 }))
+
+const SERVICE_NOTES: Record<string, string> = {
+  immunization: 'Under 5 years old only and Wednesday only.',
+  'medical-certificate': 'Only afternoon.',
+}
 
 type AppointmentTimeSlot = 'AM' | 'PM'
 
@@ -131,17 +137,22 @@ export default function ServiceSelector({
           const isSelected = selectedService === service.id
           const isAvailable = isSlotAvailable(service)
           const remainingSlots = getRemainingSlots(service)
+          const serviceNote = SERVICE_NOTES[service.id]
+          const noteId = `${service.id}-note`
           
           return (
+            <div key={service.id} className="flex flex-col">
             <button
               type="button"
-              key={service.id}
               onClick={() => isAvailable && handleServiceClick(service)}
               disabled={!isAvailable}
               aria-pressed={isSelected}
+              aria-describedby={
+                isSelected && serviceNote ? noteId : undefined
+              }
               aria-label={`${service.name}${remainingSlots !== null ? `, ${remainingSlots} slots left` : ''}`}
               className={`
-                group relative rounded-2xl border p-4 transition-all duration-200 text-left
+                group relative w-full flex-1 rounded-2xl border p-4 transition-all duration-200 text-left
                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2
                 disabled:cursor-not-allowed
                 ${isSelected
@@ -215,6 +226,19 @@ export default function ServiceSelector({
                 </div>
               )}
             </button>
+
+            {isSelected && serviceNote && (
+              <div
+                id={noteId}
+                role="status"
+                aria-live="polite"
+                className="mt-2 flex items-start gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs font-medium text-emerald-900"
+              >
+                <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+                <p>{serviceNote}</p>
+              </div>
+            )}
+            </div>
           )
         })}
       </div>

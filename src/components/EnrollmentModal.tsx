@@ -1,8 +1,10 @@
 'use client'
 
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { X, FileText, User, Shield, AlertCircle, MapPin } from 'lucide-react'
 import { BACOLOD_HEALTH_FACILITIES, BACOLOD_YAKAP_FACILITIES } from '@/constants/facilities'
+import { validateEnrollment } from '@/lib/enrollmentValidation'
+import { focusFirstInvalidField } from '@/lib/formErrorFocus'
 import PrintHeader from '@/components/PrintHeader'
 import PrivacyPolicyLink from '@/components/PrivacyPolicyLink'
 
@@ -27,6 +29,30 @@ const getServiceName = (serviceKey?: string | null): string => {
     s => s.id === serviceKey || s.name.toLowerCase() === serviceKey.toLowerCase()
   )
   return found ? found.name : serviceKey
+}
+
+/**
+ * Original control classes. The printable ITR uses the same component with
+ * `printOnly`, so that path must keep the exact classes it had before the
+ * interactive validation work. Do not change these strings.
+ */
+const PRINT_CONTROL_CLASS =
+  'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+const PRINT_CONTROL_CLASS_WHITE =
+  'w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null
+
+  return (
+    <p id={id} className="mt-1 flex items-start gap-1 text-xs font-semibold text-red-700">
+      <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden />
+      <span>
+        <span className="sr-only">Error: </span>
+        {message}
+      </span>
+    </p>
+  )
 }
 
 export interface EnrollmentData {
@@ -124,6 +150,11 @@ export default function EnrollmentModal({
 
   const [printTimestamp, setPrintTimestamp] = useState('')
   const [saving, setSaving] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [submitAttempt, setSubmitAttempt] = useState(0)
+  const formRef = useRef<HTMLFormElement>(null)
+  const pendingFocusRef = useRef(false)
+  const submittingRef = useRef(false)
   const [previousInitialData, setPreviousInitialData] = useState(initialData)
   const [previousSelectedService, setPreviousSelectedService] = useState(selectedService)
 
@@ -153,12 +184,40 @@ export default function EnrollmentModal({
     return () => window.removeEventListener('beforeprint', handleBeforePrint)
   }, [])
 
+  useEffect(() => {
+    if (!pendingFocusRef.current) return
+    pendingFocusRef.current = false
+    if (formRef.current) focusFirstInvalidField(formRef.current)
+  }, [submitAttempt])
+
+  const clearFieldError = (name: string) => {
+    setFieldErrors(prev => {
+      if (!(name in prev)) return prev
+      const next = { ...prev }
+      delete next[name]
+      return next
+    })
+  }
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
+    const checked = type === 'checkbox' ? (e.target as HTMLInputElement).checked : undefined
+
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }))
+
+    clearFieldError(name)
+
+    if (name === 'philhealthMember' && checked === false) {
+      clearFieldError('philhealthNumber')
+      clearFieldError('philhealthStatus')
+      clearFieldError('facilityHouseholdNumber')
+    }
+    if (name === 'yakapRegistered' && checked === false) {
+      clearFieldError('yakapFacility')
+    }
   }
 
   const handleBirthdateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,6 +228,7 @@ export default function EnrollmentModal({
       birthdate,
       age
     }))
+    clearFieldError('birthdate')
   }
 
   const calculateAgeFromDOB = (birthdate: string): number => {
@@ -185,12 +245,28 @@ export default function EnrollmentModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (saving || printOnly) return
+    if (saving || printOnly || submittingRef.current) return
+
+    const errors = validateEnrollment(formData)
+    if (errors.length > 0) {
+      const nextErrors: Record<string, string> = {}
+      for (const error of errors) {
+        if (!(error.field in nextErrors)) nextErrors[error.field] = error.message
+      }
+      setFieldErrors(nextErrors)
+      pendingFocusRef.current = true
+      setSubmitAttempt(attempt => attempt + 1)
+      return
+    }
+
+    setFieldErrors({})
+    submittingRef.current = true
     setSaving(true)
     try {
       const saved = await onSave(formData)
       if (saved) onClose()
     } finally {
+      submittingRef.current = false
       setSaving(false)
     }
   }
@@ -201,6 +277,25 @@ export default function EnrollmentModal({
 
   const handleClose = () => {
     onClose()
+  }
+
+  const fieldId = (name: string) => `enrollment-${name}`
+  const errorId = (name: string) => `${fieldId(name)}-error`
+  const printControlClass = (name: string) =>
+    name === 'philhealthNumber' || name === 'philhealthStatus' || name === 'yakapFacility'
+      ? PRINT_CONTROL_CLASS_WHITE
+      : PRINT_CONTROL_CLASS
+  const controlClass = (name: string) => {
+    // Preserve the printable ITR exactly: no validation classes, no bg-white
+    // on fields that did not have it before.
+    if (printOnly) return printControlClass(name)
+
+    return [
+      'w-full px-3 py-2 border rounded-lg text-sm shadow-sm transition focus:outline-none',
+      fieldErrors[name]
+        ? 'border-red-500 bg-red-50/50 focus:border-red-500 focus:ring-2 focus:ring-red-200'
+        : 'border-slate-300 bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200',
+    ].join(' ')
   }
 
   if (!isOpen) return null
@@ -253,10 +348,25 @@ export default function EnrollmentModal({
         </div>
 
         <form
+          ref={formRef}
           onSubmit={handleSubmit}
+          noValidate={printOnly ? undefined : true}
           className="space-y-3 sm:space-y-4"
           inert={printOnly ? true : undefined}
         >
+          {!printOnly && Object.keys(fieldErrors).length > 0 && (
+            <div
+              role="alert"
+              className="no-print flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-800"
+            >
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+              <div>
+                <p className="font-bold">Please correct the highlighted fields.</p>
+                <p className="mt-0.5 text-xs font-medium">{Object.values(fieldErrors)[0]}</p>
+              </div>
+            </div>
+          )}
+
           {/* Section 1: Patient Demographics */}
           <div className="space-y-2 sm:space-y-3">
             <div className="flex items-center gap-2 pb-2 border-b border-slate-200">
@@ -266,32 +376,41 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3">
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Last Name *</label>
+                <label htmlFor={fieldId('lastName')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Last Name *</label>
                 <input
                   type="text"
                   name="lastName"
+                  id={fieldId('lastName')}
                   value={formData.lastName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                  aria-invalid={fieldErrors.lastName ? true : undefined}
+                  aria-describedby={fieldErrors.lastName ? errorId('lastName') : undefined}
+                  className={controlClass('lastName')}
                 />
+                <FieldError id={errorId('lastName')} message={fieldErrors.lastName} />
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">First Name *</label>
+                <label htmlFor={fieldId('firstName')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">First Name *</label>
                 <input
                   type="text"
                   name="firstName"
+                  id={fieldId('firstName')}
                   value={formData.firstName}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                  aria-invalid={fieldErrors.firstName ? true : undefined}
+                  aria-describedby={fieldErrors.firstName ? errorId('firstName') : undefined}
+                  className={controlClass('firstName')}
                 />
+                <FieldError id={errorId('firstName')} message={fieldErrors.firstName} />
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Middle Name</label>
+                <label htmlFor={fieldId('middleName')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Middle Name</label>
                 <input
                   type="text"
                   name="middleName"
+                  id={fieldId('middleName')}
                   value={formData.middleName}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
@@ -301,9 +420,10 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Suffix</label>
+                <label htmlFor={fieldId('suffix')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Suffix</label>
                 <select
                   name="suffix"
+                  id={fieldId('suffix')}
                   value={formData.suffix}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
@@ -317,21 +437,26 @@ export default function EnrollmentModal({
                 </select>
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Birthdate *</label>
+                <label htmlFor={fieldId('birthdate')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Birthdate *</label>
                 <input
                   type="date"
                   name="birthdate"
+                  id={fieldId('birthdate')}
                   value={formData.birthdate}
                   onChange={handleBirthdateChange}
                   required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                  aria-invalid={fieldErrors.birthdate ? true : undefined}
+                  aria-describedby={fieldErrors.birthdate ? errorId('birthdate') : undefined}
+                  className={controlClass('birthdate')}
                 />
+                <FieldError id={errorId('birthdate')} message={fieldErrors.birthdate} />
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Age</label>
+                <label htmlFor={fieldId('age')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Age</label>
                 <input
                   type="number"
                   name="age"
+                  id={fieldId('age')}
                   value={formData.age}
                   onChange={handleInputChange}
                   readOnly
@@ -339,26 +464,31 @@ export default function EnrollmentModal({
                 />
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Gender *</label>
+                <label htmlFor={fieldId('gender')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Gender *</label>
                 <select
                   name="gender"
+                  id={fieldId('gender')}
                   value={formData.gender}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                  aria-invalid={fieldErrors.gender ? true : undefined}
+                  aria-describedby={fieldErrors.gender ? errorId('gender') : undefined}
+                  className={controlClass('gender')}
                 >
                   <option value="">Select</option>
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                 </select>
+                <FieldError id={errorId('gender')} message={fieldErrors.gender} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Civil Status</label>
+                <label htmlFor={fieldId('civilStatus')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Civil Status</label>
                 <select
                   name="civilStatus"
+                  id={fieldId('civilStatus')}
                   value={formData.civilStatus}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
@@ -371,9 +501,10 @@ export default function EnrollmentModal({
                 </select>
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Employment Status</label>
+                <label htmlFor={fieldId('employmentStatus')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Employment Status</label>
                 <select
                   name="employmentStatus"
+                  id={fieldId('employmentStatus')}
                   value={formData.employmentStatus}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
@@ -390,10 +521,11 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Spouse Name (if applicable)</label>
+                <label htmlFor={fieldId('spouseName')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Spouse Name (if applicable)</label>
                 <input
                   type="text"
                   name="spouseName"
+                  id={fieldId('spouseName')}
                   value={formData.spouseName}
                   onChange={handleInputChange}
                   placeholder="Enter spouse name"
@@ -401,10 +533,11 @@ export default function EnrollmentModal({
                 />
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Mother&apos;s Maiden Name</label>
+                <label htmlFor={fieldId('mothersMaidenName')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Mother&apos;s Maiden Name</label>
                 <input
                   type="text"
                   name="mothersMaidenName"
+                  id={fieldId('mothersMaidenName')}
                   value={formData.mothersMaidenName}
                   onChange={handleInputChange}
                   placeholder="Enter mother's maiden name"
@@ -415,26 +548,36 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
               <div className="sm:col-span-2">
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Residential Address *</label>
+                <label htmlFor={fieldId('residentialAddress')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Residential Address *</label>
                 <input
                   type="text"
                   name="residentialAddress"
+                  id={fieldId('residentialAddress')}
                   value={formData.residentialAddress}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                  aria-invalid={fieldErrors.residentialAddress ? true : undefined}
+                  aria-describedby={fieldErrors.residentialAddress ? errorId('residentialAddress') : undefined}
+                  className={controlClass('residentialAddress')}
                 />
+                <FieldError id={errorId('residentialAddress')} message={fieldErrors.residentialAddress} />
               </div>
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Contact Number *</label>
+                <label htmlFor={fieldId('contactNumber')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Contact Number *</label>
                 <input
                   type="tel"
                   name="contactNumber"
+                  id={fieldId('contactNumber')}
                   value={formData.contactNumber}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                  autoComplete="tel"
+                  inputMode="tel"
+                  aria-invalid={fieldErrors.contactNumber ? true : undefined}
+                  aria-describedby={fieldErrors.contactNumber ? errorId('contactNumber') : undefined}
+                  className={controlClass('contactNumber')}
                 />
+                <FieldError id={errorId('contactNumber')} message={fieldErrors.contactNumber} />
               </div>
             </div>
           </div>
@@ -493,34 +636,44 @@ export default function EnrollmentModal({
             {formData.philhealthMember && (
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded mt-2">
                 <div>
-                  <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">PhilHealth Number (PIN)</label>
+                  <label htmlFor={fieldId('philhealthNumber')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">PhilHealth Number (PIN)</label>
                   <input
                     type="text"
                     name="philhealthNumber"
+                    id={fieldId('philhealthNumber')}
                     value={formData.philhealthNumber}
                     onChange={handleInputChange}
                     placeholder="Enter PhilHealth PIN"
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                    inputMode="numeric"
+                    aria-invalid={fieldErrors.philhealthNumber ? true : undefined}
+                    aria-describedby={fieldErrors.philhealthNumber ? errorId('philhealthNumber') : undefined}
+                    className={controlClass('philhealthNumber')}
                   />
+                  <FieldError id={errorId('philhealthNumber')} message={fieldErrors.philhealthNumber} />
                 </div>
                 <div>
-                  <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">PhilHealth Category / Status</label>
+                  <label htmlFor={fieldId('philhealthStatus')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">PhilHealth Category / Status</label>
                   <select
                     name="philhealthStatus"
+                    id={fieldId('philhealthStatus')}
                     value={formData.philhealthStatus}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                    aria-invalid={fieldErrors.philhealthStatus ? true : undefined}
+                    aria-describedby={fieldErrors.philhealthStatus ? errorId('philhealthStatus') : undefined}
+                    className={controlClass('philhealthStatus')}
                   >
                     <option value="">Select Category</option>
                     <option value="MEMBER">MEMBER</option>
                     <option value="DEPENDENT">DEPENDENT</option>
                   </select>
+                  <FieldError id={errorId('philhealthStatus')} message={fieldErrors.philhealthStatus} />
                 </div>
                 <div>
-                  <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Facility Household Number</label>
+                  <label htmlFor={fieldId('facilityHouseholdNumber')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Facility Household Number</label>
                   <input
                     type="text"
                     name="facilityHouseholdNumber"
+                    id={fieldId('facilityHouseholdNumber')}
                     value={formData.facilityHouseholdNumber}
                     onChange={handleInputChange}
                     placeholder="Enter Household No."
@@ -534,12 +687,15 @@ export default function EnrollmentModal({
             {formData.yakapRegistered && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 p-2.5 bg-slate-50 border border-slate-200 rounded mt-2">
                 <div>
-                  <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">YAKAP Facility</label>
+                  <label htmlFor={fieldId('yakapFacility')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">YAKAP Facility</label>
                   <select
                     name="yakapFacility"
+                    id={fieldId('yakapFacility')}
                     value={formData.yakapFacility}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-white shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                    aria-invalid={fieldErrors.yakapFacility ? true : undefined}
+                    aria-describedby={fieldErrors.yakapFacility ? errorId('yakapFacility') : undefined}
+                    className={controlClass('yakapFacility')}
                   >
                     <option value="">Select Facility</option>
                     {BACOLOD_YAKAP_FACILITIES.map(facility => (
@@ -548,6 +704,7 @@ export default function EnrollmentModal({
                       </option>
                     ))}
                   </select>
+                  <FieldError id={errorId('yakapFacility')} message={fieldErrors.yakapFacility} />
                 </div>
               </div>
             )}
@@ -562,13 +719,16 @@ export default function EnrollmentModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Health Facility *</label>
+                <label htmlFor={fieldId('consultingFacility')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Health Facility *</label>
                 <select
                   name="consultingFacility"
+                  id={fieldId('consultingFacility')}
                   value={formData.consultingFacility}
                   onChange={handleInputChange}
                   required
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm shadow-sm transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none"
+                  aria-invalid={fieldErrors.consultingFacility ? true : undefined}
+                  aria-describedby={fieldErrors.consultingFacility ? errorId('consultingFacility') : undefined}
+                  className={controlClass('consultingFacility')}
                 >
                   <option value="">Select Facility</option>
                   {BACOLOD_HEALTH_FACILITIES.map(facility => (
@@ -577,12 +737,14 @@ export default function EnrollmentModal({
                     </option>
                   ))}
                 </select>
+                <FieldError id={errorId('consultingFacility')} message={fieldErrors.consultingFacility} />
               </div>
 
               <div>
-                <label className="block text-[13px] font-semibold text-slate-700 mb-1.5">Requested Service / Type of Service *</label>
+                <label htmlFor={fieldId('requestedService')} className="block text-[13px] font-semibold text-slate-700 mb-1.5">Requested Service / Type of Service *</label>
                 <input
                   type="text"
+                  id={fieldId('requestedService')}
                   readOnly
                   value={getServiceName(formData.selectedService || selectedService) || 'No Service Selected'}
                   className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm bg-slate-50 font-semibold text-slate-800 shadow-sm"
@@ -652,12 +814,19 @@ export default function EnrollmentModal({
                 checked={formData.dataPrivacyConsent}
                 onChange={handleInputChange}
                 required
-                className="w-4 h-4 accent-emerald-600"
+                aria-invalid={fieldErrors.dataPrivacyConsent ? true : undefined}
+                aria-describedby={fieldErrors.dataPrivacyConsent ? errorId('dataPrivacyConsent') : undefined}
+                className={
+                  fieldErrors.dataPrivacyConsent
+                    ? 'w-4 h-4 accent-emerald-600 outline outline-2 outline-offset-2 outline-red-500'
+                    : 'w-4 h-4 accent-emerald-600'
+                }
               />
               <label htmlFor="dataPrivacyConsent" className="text-sm font-medium text-slate-700">
                 I accept the Data Privacy Consent *
               </label>
             </div>
+            <FieldError id={errorId('dataPrivacyConsent')} message={fieldErrors.dataPrivacyConsent} />
             <p className="no-print pt-1 text-xs leading-relaxed text-slate-600">
               The City Health Office publishes its full privacy notice, including how your
               personal and health information is collected, used, stored, and protected.{' '}
@@ -826,7 +995,7 @@ export default function EnrollmentModal({
                 disabled={saving}
                 className="flex-[2] px-3 py-2.5 bg-emerald-600 text-white rounded-xl text-sm font-bold shadow-md shadow-emerald-600/25 transition hover:bg-emerald-700 active:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                {saving ? 'Booking�?�' : 'Save & Book Appointment'}
+                {saving ? 'Booking…' : 'Save & Book Appointment'}
               </button>
             </div>
           )}

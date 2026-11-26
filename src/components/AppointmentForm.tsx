@@ -325,18 +325,11 @@ export default function AppointmentForm() {
               City Health Office · Bacolod City
             </p>
             <h1 className="max-w-2xl text-[1.65rem] font-extrabold leading-[1.12] tracking-tight sm:text-4xl">
-              BACOLOD CITY HEALTH LABORATORY APPOINTMENT SYSTEM
+              BACOLOD CITY HEALTH APPOINTMENT SYSTEM
             </h1>
-            <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-semibold">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-emerald-900 shadow-sm">
-                <Clock className="h-3.5 w-3.5 text-emerald-600" />
-                Lab opens 8:00 AM
-              </span>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs font-semibold">
               <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-950/30 px-3 py-1.5 text-white ring-1 ring-white/25">
                 Mon – Fri only
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-950/30 px-3 py-1.5 text-white ring-1 ring-white/25">
-                QR check-in
               </span>
             </div>
           </div>
@@ -381,7 +374,10 @@ export default function AppointmentForm() {
         <div className="cho-animate-in cho-animate-in-2 rounded-3xl border border-slate-200/80 bg-white p-5 shadow-xl shadow-slate-900/5 sm:p-8">
           {/* Error Message */}
           {error && (
-            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm">
+            <div
+              role="alert"
+              className="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 p-4 shadow-sm"
+            >
               <AlertTriangle className="mt-0.5 h-5 w-5 flex-shrink-0 text-red-600" />
               <p className="text-sm font-medium text-red-800">{error}</p>
             </div>
@@ -413,10 +409,9 @@ export default function AppointmentForm() {
 
               <div className="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-medium text-slate-500">
+                  <p className="text-center text-xs font-medium text-slate-500 text-balance">
                     Slots refresh per date · weekends closed · bring a valid ID.
                   </p>
-                  <PrivacyPolicyLink className="text-xs" />
                 </div>
                 <button
                   onClick={handleNext}

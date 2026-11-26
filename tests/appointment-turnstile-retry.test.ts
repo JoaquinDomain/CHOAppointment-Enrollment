@@ -132,6 +132,7 @@ vi.mock('qrcode.react', async () => {
 })
 
 import AppointmentForm from '@/components/AppointmentForm'
+import { BACOLOD_HEALTH_FACILITIES } from '@/constants/facilities'
 
 let container: HTMLDivElement
 let root: Root | undefined
@@ -280,6 +281,39 @@ describe('appointment Turnstile retry flow', () => {
 
     const form = container.querySelector('form')
     if (!form) throw new Error('Enrollment form was not rendered')
+
+    const setInput = (name: string, value: string) => {
+      const element = container.querySelector<HTMLInputElement>(`[name="${name}"]`)
+      if (!element) throw new Error(`Field ${name} was not rendered`)
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value',
+      )?.set
+      setter?.call(element, value)
+      element.dispatchEvent(new Event('input', { bubbles: true }))
+    }
+
+    const setSelect = (name: string, value: string) => {
+      const element = container.querySelector<HTMLSelectElement>(`[name="${name}"]`)
+      if (!element) throw new Error(`Field ${name} was not rendered`)
+      const setter = Object.getOwnPropertyDescriptor(
+        HTMLSelectElement.prototype,
+        'value',
+      )?.set
+      setter?.call(element, value)
+      element.dispatchEvent(new Event('change', { bubbles: true }))
+    }
+
+    await act(async () => {
+      setInput('lastName', 'Santos')
+      setInput('firstName', 'Maria')
+      setInput('birthdate', '1990-01-15')
+      setSelect('gender', 'Female')
+      setInput('residentialAddress', '123 Lacson Street')
+      setInput('contactNumber', '09171234567')
+      setSelect('consultingFacility', BACOLOD_HEALTH_FACILITIES[0])
+      container.querySelector<HTMLInputElement>('[name="dataPrivacyConsent"]')?.click()
+    })
 
     const submitButton = container.querySelector(
       'button[type="submit"]',

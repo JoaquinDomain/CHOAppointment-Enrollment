@@ -138,12 +138,12 @@ export default function DatePicker({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center gap-2.5">
-        <span className="cho-section-icon"><Calendar className="h-4 w-4" /></span>
-        <div>
+      <div className="space-y-1">
+        <div className="flex items-center gap-2.5">
+          <span className="cho-section-icon"><Calendar className="h-4 w-4" /></span>
           <h2 className="text-lg font-bold tracking-tight text-slate-900">Appointment date</h2>
-          <p className="text-xs font-medium text-slate-500">Weekdays only · 8:00 AM onwards · PH holidays excluded.</p>
         </div>
+        <p className="text-center text-xs font-medium text-slate-500 text-balance">Weekdays only · 8:00 AM onwards · PH holidays excluded.</p>
       </div>
 
       <div className="space-y-3">
