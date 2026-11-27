@@ -44,7 +44,7 @@ Examples:
 ```text
 0001_initial_schema.sql
 0002_query_indexes.sql
-0003_add_patient_reference.sql
+0004_add_patient_reference.sql
 ```
 
 The four-digit version must be unique and strictly increasing. The runner sorts
@@ -56,6 +56,7 @@ Current history:
 | --- | --- | --- |
 | `0001` | `0001_initial_schema.sql` | Tables, foreign keys, indexes, service seed |
 | `0002` | `0002_query_indexes.sql` | Duplicate-check, facility, and status indexes |
+| `0003` | `0003_admin_rbac.sql` | `administrators.display_name` and `idx_administrators_role_active` |
 
 ---
 
@@ -143,7 +144,9 @@ The old schema already contains the tables. The new baseline is written with
    the service seed uses `ON DUPLICATE KEY UPDATE` without overwriting
    `daily_capacity`.
 3. It applies `0002_query_indexes.sql`; indexes are added only if absent.
-4. It records both versions.
+4. It applies `0003_admin_rbac.sql`; the `display_name` column and RBAC index
+   are added only if absent.
+5. It records all applied versions.
 
 Always take a verified backup before the first run against a database that
 contains real records.
@@ -155,7 +158,7 @@ contains real records.
 1. Create the next numbered file:
 
    ```text
-   mysql/migrations/0003_add_something.sql
+   mysql/migrations/0004_add_something.sql
    ```
 
 2. Keep the migration narrow and explain why it is needed in comments.

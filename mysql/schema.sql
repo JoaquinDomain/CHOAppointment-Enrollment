@@ -22,5 +22,6 @@
 -- For a manual DBA review, read the files in mysql/migrations/ in order:
 --   0001_initial_schema.sql
 --   0002_query_indexes.sql
+--   0003_admin_rbac.sql
 --
 -- See docs/DATABASE_MIGRATION.md for the full procedure.

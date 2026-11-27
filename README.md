@@ -246,8 +246,8 @@ templates, SELinux/firewall notes, and the list of actions MICT must perform.
 1. MICT creates a dedicated MySQL 8.0 database and least-privilege application account. Do not share a database with the CHO Services Appointment System.
 2. Configure the production environment from `.env.example`. Use HTTPS and set `APP_URL`, `NEXT_PUBLIC_APP_URL`, `COOKIE_SECURE=true`, `TRUST_PROXY=true`, a strong `APP_SECRET`, and the real `DB_*` values.
 3. Install dependencies and build: `npm ci`, `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`.
-4. Apply migrations with authorization: `npm run db:migrate`, then `npm run db:verify`. Migration `0003` adds `administrators.display_name` and `idx_administrators_role_active`; startup fails fast if either is missing.
-5. Create the first administrator with `npm run admin:create`, then promote it with `npm run admin:promote -- --username <name> --confirm <name>`.
+4. Apply migrations with authorization: `npm run db:migrate:status` from the **new release**, then `npm run db:migrate`, then `npm run db:verify`. Migration `0003` adds `administrators.display_name` and `idx_administrators_role_active`; startup fails fast if either is missing.
+5. Check for an existing active Super Admin before creating anything. If one exists, skip the creation and promotion in this step. Otherwise create the first administrator with `npm run admin:create`, then promote it with `npm run admin:promote -- --username <name> --confirm <name>`.
 6. Start the systemd service and verify through Nginx with `GET /api/health`, the security headers, and a test booking.
 7. Confirm the reverse proxy overwrites `X-Real-IP`; the application ignores `X-Forwarded-For` so a client-supplied value cannot spoof its address or bypass rate limits.
 
