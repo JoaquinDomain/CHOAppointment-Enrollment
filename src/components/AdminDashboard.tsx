@@ -107,6 +107,8 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
   const [facilityFilter, setFacilityFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState<'' | AppointmentStatus>('')
   const [selectedAppointment, setSelectedAppointment] = useState<AdminAppointmentDetail | null>(null)
+  const detailPanelRef = useRef<HTMLDivElement>(null)
+  const selectedAppointmentId = selectedAppointment?.id
   const [detailLoading, setDetailLoading] = useState(false)
   const [showQRScanner, setShowQRScanner] = useState(false)
   const [showQRPoster, setShowQRPoster] = useState(false)
@@ -180,6 +182,23 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
     const matchesStatus = !statusFilter || appointment.status === statusFilter
     return matchesSearch && matchesFacility && matchesStatus
   })
+
+  useEffect(() => {
+    if (!selectedAppointmentId) return
+
+    const panel = detailPanelRef.current
+    if (!panel) return
+
+    const reduceMotion =
+      typeof window.matchMedia === 'function' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    panel.scrollIntoView({
+      block: 'start',
+      behavior: reduceMotion ? 'auto' : 'smooth',
+    })
+    panel.focus({ preventScroll: true })
+  }, [selectedAppointmentId])
 
   const viewDetails = async (id: string) => {
     setDetailLoading(true)
@@ -456,7 +475,13 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
         )}
 
         {selectedAppointment && (
-          <div className="cho-animate-in mb-6 rounded-2xl border border-emerald-200 bg-white p-5 shadow-md shadow-emerald-900/5 ring-1 ring-emerald-100 sm:p-6">
+          <div
+            ref={detailPanelRef}
+            tabIndex={-1}
+            role="region"
+            aria-label="Appointment details"
+            className="cho-animate-in mb-6 scroll-mt-24 rounded-2xl border border-emerald-200 bg-white p-5 shadow-md shadow-emerald-900/5 ring-1 ring-emerald-100 focus:outline-none sm:p-6"
+          >
             <div className="mb-4 flex items-center justify-between gap-3">
               <h2 className="flex items-center gap-2 text-base font-extrabold tracking-tight text-slate-900">
                 <CheckCircle className="h-5 w-5 text-emerald-600" />
@@ -751,14 +776,14 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-slate-200/80">
+              <table className="w-full table-auto divide-y divide-slate-200/80">
                 <thead className="bg-slate-50/80">
                   <tr>
                     {['Patient', 'Age', 'Date', 'Facility', 'Status', 'YAKAP', 'Service', 'Booked', 'Actions'].map(
                       header => (
                         <th
                           key={header}
-                          className="whitespace-nowrap px-6 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500"
+                          className="whitespace-nowrap px-3 py-3.5 text-left text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500"
                         >
                           {header}
                         </th>
@@ -769,25 +794,29 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
                 <tbody className="divide-y divide-slate-100 bg-white">
                   {filteredAppointments.map(appointment => (
                     <tr key={appointment.id} className="transition-colors hover:bg-emerald-50/50">
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td className="px-3 py-4">
                         <div className="flex items-center">
                           <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-emerald-100 ring-1 ring-emerald-200/60">
                             <User className="h-5 w-5 text-emerald-700" />
                           </div>
                           <div className="ml-3.5">
-                            <div className="text-sm font-bold tracking-tight text-slate-900">
+                            <button
+                              type="button"
+                              onClick={() => void viewDetails(appointment.id)}
+                              className="text-left text-sm font-bold tracking-tight text-slate-900 underline-offset-2 hover:text-emerald-700 hover:underline focus-visible:rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2"
+                            >
                               {appointment.full_name}
-                            </div>
+                            </button>
                             <div className="font-mono text-[11px] font-medium text-slate-400">
                               {appointment.public_id.slice(0, 8)}…
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-900">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-900">
                         {appointment.age}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-900">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-900">
                         {formatDate(appointment.appointment_date)}
                         {appointment.appointment_time ? (
                           <span className="ml-1 text-xs text-slate-500">
@@ -795,17 +824,17 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
                           </span>
                         ) : null}
                       </td>
-                      <td className="min-w-[180px] px-6 py-4 text-sm text-slate-900 break-words">
+                      <td className="min-w-0 px-3 py-4 text-sm text-slate-900 break-words">
                         {appointment.consulting_facility}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td className="whitespace-nowrap px-3 py-4">
                         <span
                           className={`inline-flex rounded-full px-2.5 py-1 text-xs font-bold ring-1 ${STATUS_BADGES[appointment.status]}`}
                         >
                           {STATUS_LABELS[appointment.status]}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td className="whitespace-nowrap px-3 py-4">
                         {appointment.yakap_registered ? (
                           <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-bold text-emerald-800 ring-1 ring-emerald-200">
                             <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden />
@@ -817,13 +846,13 @@ export default function AdminDashboard({ adminUsername, adminRole }: AdminDashbo
                           </span>
                         )}
                       </td>
-                      <td className="min-w-[200px] px-6 py-4 text-sm text-slate-900 break-words">
+                      <td className="min-w-0 px-3 py-4 text-sm text-slate-900 break-words">
                         {appointment.service_name}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-600">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-slate-600">
                         {formatDateTime(appointment.created_at ?? '')}
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">
                         <button
                           onClick={() => void viewDetails(appointment.id)}
                           className="font-medium text-emerald-600 hover:text-emerald-800"
