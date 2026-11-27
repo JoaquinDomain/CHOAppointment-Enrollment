@@ -37,5 +37,5 @@ Write-Host "Repository URL: $githubUrl" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Yellow
 Write-Host "1. Visit $githubUrl to verify the repository" -ForegroundColor White
-Write-Host "2. Follow the deployment guide in DEPLOYMENT.md for Vercel setup" -ForegroundColor White
+Write-Host "2. Follow the deployment guide in docs/MICT_DEPLOYMENT.md for production server setup" -ForegroundColor White
 Write-Host ""
